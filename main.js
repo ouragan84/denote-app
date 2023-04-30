@@ -26,7 +26,7 @@ const createWindow = async () => {
 
     window.loadURL(path.join('file://', __dirname, 'index.html'));
 
-    window.setTitle('Slant');
+    window.setTitle('Denote');
 
     window.setMinimumSize(400, 300);
 
@@ -35,7 +35,7 @@ const createWindow = async () => {
     // adding menu with File and Edit options to the window
     const menu = Menu.buildFromTemplate([
         {
-            label: 'Slant',
+            label: 'Denote',
             submenu: [
                 {role: 'quit', label: 'Quit Slant', accelerator: 'CmdOrCtrl+Q', click: () => {console.log('quit clicked')}},
                 {role: 'close', label: 'Close Window', accelerator: 'CmdOrCtrl+W', click: () => {console.log('close clicked')}},
