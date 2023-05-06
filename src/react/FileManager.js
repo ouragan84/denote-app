@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import './styles.css';
-
 
 function FileManager(props) {
     
@@ -10,7 +8,16 @@ function FileManager(props) {
         return (
             <>
                 <div style={{marginTop:5}}>
-                    <div className="folder" onClick={()=>setExpand(!expand)}>
+                    <div style={{
+                        marginTop: '6px',
+                        backgroundColor: 'lightgray',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '2px',
+                        width: '300px',
+                        cursor: 'pointer',
+                    }} onClick={()=>setExpand(!expand)}>
                         <span>🗂️ {explorerData.name}</span>
                     </div> 
                     <div style={{display: expand ? 'block': 'none', paddingLeft: 25}}>
@@ -22,7 +29,13 @@ function FileManager(props) {
             </>
         );
     }else{
-        return <span className="file">📄 {explorerData.name}</span>
+        return <span style={{    
+            marginTop: '5px',
+            paddingLeft: '5px',
+            display: 'flex',
+            flexDirection: 'column',
+            cursor: 'pointer',
+        }}>📄 {explorerData.name}</span>
     }
   }
   

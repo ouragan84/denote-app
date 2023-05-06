@@ -37,9 +37,9 @@ const createWindow = async () => {
         {
             label: 'Denote',
             submenu: [
-                {role: 'quit', label: 'Quit Slant', accelerator: 'CmdOrCtrl+Q', click: () => {console.log('quit clicked')}},
+                {role: 'quit', label: 'Quit Denote', accelerator: 'CmdOrCtrl+Q', click: () => {console.log('quit clicked')}},
                 {role: 'close', label: 'Close Window', accelerator: 'CmdOrCtrl+W', click: () => {console.log('close clicked')}},
-                {role: 'about', label: 'About Slant', accelerator: 'CmdOrCtrl+I', click: () => {console.log('about clicked')}},
+                {role: 'about', label: 'About Denote', accelerator: 'CmdOrCtrl+I', click: () => {console.log('about clicked')}},
             ]
         },
         {
