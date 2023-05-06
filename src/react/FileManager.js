@@ -15,7 +15,7 @@ function FileManager(props) {
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         padding: '2px',
-                        width: '300px',
+                        width: '200px',
                         cursor: 'pointer',
                     }} onClick={()=>setExpand(!expand)}>
                         <span>🗂️ {explorerData.name}</span>

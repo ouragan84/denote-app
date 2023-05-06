@@ -1,7 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
-import { platform } from "os";
-import {SketchField, Tools} from 'react-sketch';
-import Editor from "./Editor";
+import TextEditor from './Editor';
 import FileManager from "./FileManager"
 import './styles.css';
 
@@ -77,61 +75,11 @@ const explorer = {
   };
 
 export default () => {
+  const [content, setContent] = useState('Poop');
 
-    window.EXCALIDRAW_ASSET_PATH = "/";
-
-    const tools = [
-        Tools.Pencil,
-        Tools.Rectangle,
-        Tools.Circle,
-        Tools.Line,
-        Tools.Select,
-        Tools.Pan,
-        Tools.Text
-    ];
-
-    const colors = [
-        'black',
-        'white',
-        'red',
-        'orange',
-        'yellow',
-        'green',
-        'blue',
-        'purple',
-        'pink',
-    ]
-    
-    const [tool, setTool] = useState(0);
-    const [color, setColor] = useState(0);
-
-
-    useEffect(() => {
-        // on click t, set tool to text
-        const handleKeyDown = (e) => {
-            if (e.key === "t") {
-                setTool((tool+1) % tools.length);
-                console.log("t was pressed")
-            }
-            if (e.key === "c") {
-                setColor((color+1) % colors.length);
-                console.log("c was pressed")
-            }
-        };
-        window.addEventListener("keydown", handleKeyDown);
-    }, [tool, color]);
-
-    const [editorLoaded, setEditorLoaded] = useState(false);
-    const [data, setData] = useState("");
-    const [value, setValue] = useState({});
-  
-    useEffect(() => {
-      setEditorLoaded(true);
-    }, []);
-
-    useEffect(() => {
-        console.log("value changed", value)
-    }, [value]);
+  const handleEditorChange = (newContent) => {
+    setContent(newContent);
+  };
 
     return (
         <>
@@ -139,35 +87,9 @@ export default () => {
                 <div style={{width:'20vw', height:'100vh', backgroundColor:'#dfe4f2', position:'absolute',top:0, left:0}}>
                     <FileManager explorer={explorer}/>
                 </div>
-                <div style={{width:'80vw', height:'100vh', backgroundColor:'white', position:'absolute', top:0, left:'20vw'}}>
-                <h1 style={{ textAlign: "center" }}>Text Edit area</h1>
-                {/* 
-                <div style={{height:'85vh'}}>
-                    <h2>Tool: {tools[tool]}, Color: {colors[color]}</h2>
-                    < SketchField width='1024px' 
-                                height='768px' 
-                                tool={tools[tool]}
-                                lineColor={colors[color]}
-                                lineWidth={3}
-                                value={value}
-                                setValue={setValue}
-                                />
-                </div>
-
-                <div style={{height:'20vh'}}>
-                    
-                </div>
-
-                <div style={{height:'85vh'}}>
-                    <Editor
-                        name="description"
-                        onChange={(data) => {
-                            setData(data);
-                        }}
-                        editorLoaded={editorLoaded}
-                    />
-                    {JSON.stringify(data)}
-                </div> */}
+                <div style={{width:'80vw', height:'100vh', backgroundColor:'white', position:'absolute', left:'20vw'}}>
+                    <TextEditor content={content} setContent={handleEditorChange} />
+                    <p>{content}</p>
                 </div>
             </div>
         </>

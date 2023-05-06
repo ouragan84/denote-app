@@ -1,42 +1,34 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState } from 'react';
+import ReactQuill from 'react-quill';
+import EditorToolbar, { modules, formats } from "./EditorToolbar";
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
+import 'react-quill/dist/quill.core.css';
 
-function Editor({ onChange, editorLoaded, name, value }) {
-    const editorRef = useRef();
-    const { CKEditor, ClassicEditor } = editorRef.current || {};
-  
-    useEffect(() => {
-      editorRef.current = {
-        CKEditor: require("@ckeditor/ckeditor5-react").CKEditor, // v3+
-        ClassicEditor: require("@ckeditor/ckeditor5-build-classic")
-      };
-    }, []);
-  
-    return (
-      <div>
-        {editorLoaded ? (
-          <CKEditor
-            type=""
-            name={name}
-            editor={ClassicEditor}
-            config={{
-              ckfinder: {
-                // Upload the images to the server using the CKFinder QuickUpload command
-                // You have to change this address to your server that has the ckfinder php connector
-                uploadUrl: "" //Enter your upload url
-              }
-            }}
-            data={value}
-            onChange={(event, editor) => {
-              const data = editor.getData();
-              // console.log({ event, editor, data })
-              onChange(data);
-            }}
-          />
-        ) : (
-          <div>Editor loading</div>
-        )}
+export default ({content, setContent}) => {
+
+  return (
+    <>
+      <div className="text-editor" style={{
+        display: 'flex',
+        flexDirection: 'column',
+        top: 0,
+        left: 0
+
+      }}>
+        <EditorToolbar />
+        <ReactQuill
+          theme="snow"
+          value={content}
+          onChange={setContent}
+          placeholder={"Write something awesome..."}
+          modules={modules}
+          formats={formats}
+          style={{
+            height: '80vh'
+          }}
+        />
       </div>
-    );
-  }
-  
-  export default Editor;
+    </>
+  );
+}
