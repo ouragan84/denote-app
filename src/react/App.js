@@ -87,9 +87,14 @@ export default () => {
                 <div style={{width:'20vw', height:'100vh', backgroundColor:'#dfe4f2', position:'absolute',top:0, left:0}}>
                     <FileManager explorer={explorer}/>
                 </div>
-                <div style={{width:'80vw', height:'100vh', backgroundColor:'white', position:'absolute', left:'20vw'}}>
-                    <TextEditor content={content} setContent={handleEditorChange} />
-                    <p>{content}</p>
+                <div style={{width:'80vw', height:'1', backgroundColor:'white', position:'absolute', left:'20vw', height: '100vh'}}>
+                    <TextEditor 
+                      content={content} 
+                      setContent={handleEditorChange} 
+                      style={{
+                        height: '100%'
+                      }}
+                    />
                 </div>
             </div>
         </>

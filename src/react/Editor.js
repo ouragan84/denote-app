@@ -10,11 +10,7 @@ export default ({content, setContent}) => {
   return (
     <>
       <div className="text-editor" style={{
-        display: 'flex',
-        flexDirection: 'column',
-        top: 0,
-        left: 0
-
+        height: '100%',
       }}>
         <EditorToolbar />
         <ReactQuill
@@ -25,7 +21,7 @@ export default ({content, setContent}) => {
           modules={modules}
           formats={formats}
           style={{
-            height: '80vh'
+            height: '90%',
           }}
         />
       </div>
