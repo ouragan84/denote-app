@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Quill } from "react-quill";
+import ReactDOM from 'react-dom';
 import ImageResize from 'quill-image-resize-module-react';
 import { ImageDrop } from 'quill-image-drop-module';
+import MathTextBox from './MathBox';
+import crypto from 'crypto';
 
 Quill.register('modules/imageDrop', ImageDrop);
 Quill.register('modules/imageResize', ImageResize);
@@ -9,49 +12,6 @@ const Embed = Quill.import('blots/embed');
 const Inline = Quill.import('blots/inline');
 const Block = Quill.import('blots/block');
 const BlockEmbed = Quill.import('blots/block/embed');
-
-class VideoBlot extends BlockEmbed {
-    static create(url) {
-      let node = super.create();
-      node.setAttribute('src', url);
-      // Set non-format related attributes with static values
-      node.setAttribute('frameborder', '0');
-      node.setAttribute('allowfullscreen', true);
-  
-      return node;
-    }
-  
-    static formats(node) {
-      // We still need to report unregistered embed formats
-      let format = {};
-      if (node.hasAttribute('height')) {
-        format.height = node.getAttribute('height');
-      }
-      if (node.hasAttribute('width')) {
-        format.width = node.getAttribute('width');
-      }
-      return format;
-    }
-  
-    static value(node) {
-      return '';
-    }
-  
-    format(name, value) {
-      // Handle unregistered embed formats
-      if (name === 'height' || name === 'width') {
-        if (value) {
-          this.domNode.setAttribute(name, value);
-        } else {
-          this.domNode.removeAttribute(name, value);
-        }
-      } else {
-        super.format(name, value);
-      }
-    }
-}
-VideoBlot.blotName = 'videoo';
-VideoBlot.tagName = 'iframe';
 
 class MyButtonBlot extends BlockEmbed {
     static create(value) {
@@ -112,8 +72,74 @@ class MyButtonBlot extends BlockEmbed {
 MyButtonBlot.blotName = 'mybutton';
 MyButtonBlot.tagName = 'div';
 
-Quill.register(VideoBlot);
 Quill.register(MyButtonBlot);
+
+let stateRegistry = new Map();
+
+const createState = (value) => {
+    let id = crypto.randomBytes(16).toString("hex");
+    stateRegistry.set(id, {
+        value: value,
+        setValue: (newValue) => {
+            console.log(`New value for state ${id}: `, newValue);
+            stateRegistry.set(id, {
+                ...stateRegistry.get(id),
+                value: newValue,
+            });
+        }
+    });
+    return [id, stateRegistry.get(id).setValue];
+}
+
+class MyMathBoxBlot extends BlockEmbed {
+    static create(value) {
+        let node = super.create();
+
+        let [latexStateId, handleUpdate] = createState(value);
+
+        node.setAttribute('isCustomReact', true);
+        node.setAttribute('id', latexStateId);
+
+        const container = document.createElement('div');
+        ReactDOM.render(<MathTextBox initialValue={value} handleUpdate={handleUpdate} />, container);
+        node.appendChild(container);
+
+        return node;
+    }
+  
+    static formats(node) {
+      // We still need to report unregistered embed formats
+      let format = {};
+      if (node.hasAttribute('height')) {
+        format.height = node.getAttribute('height');
+      }
+      if (node.hasAttribute('width')) {
+        format.width = node.getAttribute('width');
+      }
+      return format;
+    }
+  
+    static value(node) {
+      return '';
+    }
+  
+    format(name, value) {
+      // Handle unregistered embed formats
+      if (name === 'height' || name === 'width') {
+        if (value) {
+          this.domNode.setAttribute(name, value);
+        } else {
+          this.domNode.removeAttribute(name, value);
+        }
+      } else {
+        super.format(name, value);
+      }
+    }
+}
+MyMathBoxBlot.blotName = 'mathbox';
+MyMathBoxBlot.tagName = 'div';
+
+Quill.register(MyMathBoxBlot);
 
   
 
@@ -175,7 +201,7 @@ function addCustomButton(){
 
     let range = this.quill.getSelection(true);
     this.quill.insertText(range.index, '\n', Quill.sources.USER);
-    this.quill.insertEmbed(range.index + 1, 'mybutton', 'https://www.youtube.com/embed/QHH3iSeDBLo?showinfo=0', Quill.sources.USER);
+    this.quill.insertEmbed(range.index + 1, 'mathbox', '\\frac{x^2}{2}', Quill.sources.USER);
     this.quill.setSelection(range.index + 2, Quill.sources.SILENT);
 }
 
@@ -219,7 +245,7 @@ export const formats = [
     "link",
     "image",
     "video",
-    "mybutton",
+    "mathbox",
     "color",
     "code-block"
 ];
