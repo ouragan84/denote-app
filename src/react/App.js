@@ -4,6 +4,7 @@ import {SketchField, Tools} from 'react-sketch';
 import Editor from "./Editor";
 import FileManager from "./FileManager"
 import './styles.css';
+import MathTextBox from "./Math/mathTextBox";
 
 const explorer = {
     id:"1",
@@ -141,6 +142,9 @@ export default () => {
                 </div>
                 <div style={{width:'80vw', height:'100vh', backgroundColor:'white', position:'absolute', top:0, left:'20vw'}}>
                 <h1 style={{ textAlign: "center" }}>Text Edit area</h1>
+                <div style={{width: '80vw'}}>
+                    <MathTextBox/>
+                </div>
                 {/* 
                 <div style={{height:'85vh'}}>
                     <h2>Tool: {tools[tool]}, Color: {colors[color]}</h2>
