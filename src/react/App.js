@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from "react";
-import TextEditor from './Editor';
-import FileManager from "./FileManager"
+import TextEditor from './quill/Editor';
+import FileManager from "./FileManager";
 import './styles.css';
 
 const explorer = {
@@ -75,7 +75,7 @@ const explorer = {
   };
 
 export default () => {
-  const [content, setContent] = useState('Poop');
+  const [content, setContent] = useState('');
 
   const handleEditorChange = (newContent) => {
     setContent(newContent);
@@ -86,15 +86,20 @@ export default () => {
             <div style={{display: 'flex', flexDirection: 'row'}}>
                 <div style={{width:'20vw', height:'100vh', backgroundColor:'#dfe4f2', position:'absolute',top:0, left:0}}>
                     <FileManager explorer={explorer}/>
+                    <p>Herllo: {content}</p>
                 </div>
-                <div style={{width:'80vw', height:'1', backgroundColor:'white', position:'absolute', left:'20vw', height: '100vh'}}>
-                    <TextEditor 
-                      content={content} 
-                      setContent={handleEditorChange} 
-                      style={{
-                        height: '100%'
-                      }}
-                    />
+                <div style={{
+                  position:'absolute',
+                  top:0, 
+                  left:'20vw',
+                  width:'80vw', 
+                  height:'100vh',
+                  backgroundColor:'#f0f0f0',
+                  scrollBehavior: 'none',
+                }} >
+                   
+                    <TextEditor content={content} setContent={handleEditorChange} style={{height: '100%', width: "100%"}}/>
+                   
                 </div>
             </div>
         </>

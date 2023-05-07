@@ -5,7 +5,117 @@ import { ImageDrop } from 'quill-image-drop-module';
 
 Quill.register('modules/imageDrop', ImageDrop);
 Quill.register('modules/imageResize', ImageResize);
+const Embed = Quill.import('blots/embed');
+const Inline = Quill.import('blots/inline');
+const Block = Quill.import('blots/block');
+const BlockEmbed = Quill.import('blots/block/embed');
 
+class VideoBlot extends BlockEmbed {
+    static create(url) {
+      let node = super.create();
+      node.setAttribute('src', url);
+      // Set non-format related attributes with static values
+      node.setAttribute('frameborder', '0');
+      node.setAttribute('allowfullscreen', true);
+  
+      return node;
+    }
+  
+    static formats(node) {
+      // We still need to report unregistered embed formats
+      let format = {};
+      if (node.hasAttribute('height')) {
+        format.height = node.getAttribute('height');
+      }
+      if (node.hasAttribute('width')) {
+        format.width = node.getAttribute('width');
+      }
+      return format;
+    }
+  
+    static value(node) {
+      return '';
+    }
+  
+    format(name, value) {
+      // Handle unregistered embed formats
+      if (name === 'height' || name === 'width') {
+        if (value) {
+          this.domNode.setAttribute(name, value);
+        } else {
+          this.domNode.removeAttribute(name, value);
+        }
+      } else {
+        super.format(name, value);
+      }
+    }
+}
+VideoBlot.blotName = 'videoo';
+VideoBlot.tagName = 'iframe';
+
+class MyButtonBlot extends BlockEmbed {
+    static create(value) {
+        let node = super.create();
+        node.style.backgroundColor = 'red';
+        node.style.width = '100px';
+        node.style.height = '100px';
+
+        let button = document.createElement('button');
+        button.innerHTML = 'Click me';
+        button.style.width = '80px';
+        button.style.height = '40px';
+        button.style.backgroundColor = 'white';
+        button.style.border = 'none';
+        button.style.borderRadius = '5px';
+        button.style.cursor = 'pointer';
+        button.style.marginTop = '30px';
+        button.style.marginLeft = '10px';
+        button.style.boxShadow = '0 0 5px 0px rgba(0,0,0,0.75)';
+        button.addEventListener('click', () => {
+            console.log('Clicked');
+        });
+
+        node.appendChild(button);
+
+        return node;
+    }
+  
+    static formats(node) {
+      // We still need to report unregistered embed formats
+      let format = {};
+      if (node.hasAttribute('height')) {
+        format.height = node.getAttribute('height');
+      }
+      if (node.hasAttribute('width')) {
+        format.width = node.getAttribute('width');
+      }
+      return format;
+    }
+  
+    static value(node) {
+      return '';
+    }
+  
+    format(name, value) {
+      // Handle unregistered embed formats
+      if (name === 'height' || name === 'width') {
+        if (value) {
+          this.domNode.setAttribute(name, value);
+        } else {
+          this.domNode.removeAttribute(name, value);
+        }
+      } else {
+        super.format(name, value);
+      }
+    }
+}
+MyButtonBlot.blotName = 'mybutton';
+MyButtonBlot.tagName = 'div';
+
+Quill.register(VideoBlot);
+Quill.register(MyButtonBlot);
+
+  
 
 // Custom Undo button icon component for Quill editor. You can import it directly
 // from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
@@ -42,9 +152,11 @@ const CustomCirle = () => (
 function undoChange() {
   this.quill.history.undo();
 }
+
 function redoChange() {
   this.quill.history.redo();
 }
+
 function customCirle() {
     // prints the current selection, and replaces it with "Hello World"
     const range = this.quill.getSelection();
@@ -54,6 +166,20 @@ function customCirle() {
     this.quill.setSelection(range.index + 1, 0);
 }
 
+function addCustomButton(){
+    // let range = this.quill.getSelection(true);
+    // this.quill.insertText(range.index, '\n', Quill.sources.USER);
+    // let url = 'https://www.youtube.com/embed/QHH3iSeDBLo?showinfo=0';
+    // this.quill.insertEmbed(range.index + 1, 'video', url, Quill.sources.USER);
+    // this.quill.setSelection(range.index + 2, Quill.sources.SILENT);
+
+    let range = this.quill.getSelection(true);
+    this.quill.insertText(range.index, '\n', Quill.sources.USER);
+    this.quill.insertEmbed(range.index + 1, 'mybutton', 'https://www.youtube.com/embed/QHH3iSeDBLo?showinfo=0', Quill.sources.USER);
+    this.quill.setSelection(range.index + 2, Quill.sources.SILENT);
+}
+
+
 // Modules object for setting up the Quill editor
 export const modules = {
     toolbar: {
@@ -61,7 +187,8 @@ export const modules = {
         handlers: {
             undo: undoChange,
             redo: redoChange,
-            custom_circle: customCirle
+            custom_circle: customCirle,
+            custom_button: addCustomButton,
         }
     },
     history: {
@@ -92,17 +219,29 @@ export const formats = [
     "link",
     "image",
     "video",
+    "mybutton",
     "color",
     "code-block"
 ];
 
 // Quill Toolbar component
 export const QuillToolbar = () => (
-    <div id="toolbar">
+    <div id="toolbar" style={{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#dfe4f2',
+        padding: '8px',
+        width: '100%',
+        height: '40px',
+        border: 'none',
+        top: 0,
+        left: 0,
+        zIndex: 100,
+    }}>
         <span className="ql-formats">
-            {/* <button className="ql-header" value="1"/>
-            <button className="ql-header" value="2"/>
-            <button className="ql-normal" value="3">Normal</button> */}
             <select className="ql-header" defaultValue="3">
                 <option value="1">Heading</option>
                 <option value="2">Subheading</option>
@@ -123,7 +262,6 @@ export const QuillToolbar = () => (
         </span>
         <span className="ql-formats">
             <button className="ql-blockquote" />
-            <button className="ql-direction" />
         </span>
         <span className="ql-formats">
             <select className="ql-align" />
@@ -150,6 +288,11 @@ export const QuillToolbar = () => (
         </span>
         <span className="ql-formats">
             <button className="ql-custom_circle">
+                <CustomCirle />
+            </button>
+        </span>
+        <span className="ql-formats">
+            <button className="ql-custom_button">
                 <CustomCirle />
             </button>
         </span>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import EditorToolbar, { modules, formats } from "./EditorToolbar";
+
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
 import 'react-quill/dist/quill.core.css';
@@ -21,7 +22,8 @@ export default ({content, setContent}) => {
           modules={modules}
           formats={formats}
           style={{
-            height: '90%',
+            height: '100%',
+            border: 'none',
           }}
         />
       </div>
