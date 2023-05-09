@@ -3,6 +3,8 @@ const fs = require("fs");
 const path = require('path');
 const homedir = require('os').homedir();
 const { autoUpdater, AppUpdater} = require('electron-updater');
+const Store = require('electron-store');
+const store = new Store();
 
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
@@ -19,27 +21,35 @@ const createWindow = async () => {
             nodeIntegration: true,
             contextIsolation: false,
             worldSafeExecuteJavaScript: true,
-            enableRemoteModule: true,
-            preload: path.join(__dirname, 'src', 'preload.js'),
+            enableRemoteModule: true
         }
     });
 
     window.loadURL(path.join('file://', __dirname, 'index.html'));
 
-    window.setTitle('Slant');
+    window.setTitle('Denote');
 
     window.setMinimumSize(400, 300);
 
     window.webContents.openDevTools({mode: 'detach'});
 
+    //set icon
+    if (process.platform === 'darwin') {
+        app.dock.show();
+        app.dock.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
+    } else {
+        window.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
+    }
+
+
     // adding menu with File and Edit options to the window
     const menu = Menu.buildFromTemplate([
         {
-            label: 'Slant',
+            label: 'Denote',
             submenu: [
-                {role: 'quit', label: 'Quit Slant', accelerator: 'CmdOrCtrl+Q', click: () => {console.log('quit clicked')}},
+                {role: 'quit', label: 'Quit Denote', accelerator: 'CmdOrCtrl+Q', click: () => {console.log('quit clicked')}},
                 {role: 'close', label: 'Close Window', accelerator: 'CmdOrCtrl+W', click: () => {console.log('close clicked')}},
-                {role: 'about', label: 'About Slant', accelerator: 'CmdOrCtrl+I', click: () => {console.log('about clicked')}},
+                {role: 'about', label: 'About Denote', accelerator: 'CmdOrCtrl+I', click: () => {console.log('about clicked')}},
             ]
         },
         {
@@ -99,17 +109,61 @@ const createWindow = async () => {
     ]);
 
     Menu.setApplicationMenu(menu);
-    
-}
 
+    store.delete('isUpToDate');
+    autoUpdater.checkForUpdates();
+    showUpdateDialog();
+}
 
 require('electron-reload')(__dirname, {
     electron: require(`${__dirname}/node_modules/electron`)
 });
 
+const showUpdateDialog = () => {
+    if(store.has('isUpToDate') && store.get('isUpToDate'))
+        return;
+
+    window = new BrowserWindow({
+        width: 400,
+        height: 400,
+        backgroundColor: '#ffffff',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            worldSafeExecuteJavaScript: true,
+            enableRemoteModule: true,
+            preload: path.join(__dirname, 'src', 'preload.js'),
+        }
+    });
+
+    window.loadURL(path.join('file://', __dirname, 'update_logs.html'));
+
+    window.setTitle('Denote Update');
+
+    window.setMinimumSize(300, 300);
+
+    store.set('isUpToDate', true);
+}
+
 app.whenReady().then(() => {
     createWindow();
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdates();
+});
+
+autoUpdater.on('update-available', (info) => {
+    console.log('update available');
+    autoUpdater.downloadUpdate();
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+    console.log('update downloaded');
+    store.set('isUpToDate', false);
+    autoUpdater.quitAndInstall();
+});
+
+autoUpdater.on('error', (err) => {
+    console.log('error in auto updater');
+    console.log(err);
 });
 
 // Quit when all windows are closed.

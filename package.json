@@ -1,6 +1,6 @@
 {
   "name": "denote-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Note taking app for the STEM students.",
   "main": "main.js",
   "scripts": {
@@ -67,6 +67,7 @@
     "@ckeditor/ckeditor5-essentials": "^37.1.0",
     "@ckeditor/ckeditor5-paragraph": "^37.1.0",
     "@ckeditor/ckeditor5-react": "^6.0.0",
+    "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "jsdom": "^21.1.1",
     "os": "^0.1.2",
