@@ -6,6 +6,10 @@ const { autoUpdater, AppUpdater} = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store();
 
+const isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : false;
+
+
+
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
 
@@ -115,9 +119,12 @@ const createWindow = async () => {
     showUpdateDialog();
 }
 
-require('electron-reload')(__dirname, {
-    electron: require(`${__dirname}/node_modules/electron`)
-});
+if (isDev) {
+    require('electron-reload')(__dirname, {
+        electron: require(path.join(__dirname, 'node_modules', 'electron'))
+    });    
+}
+
 
 const showUpdateDialog = () => {
     if(store.has('isUpToDate') && store.get('isUpToDate'))
@@ -132,7 +139,7 @@ const showUpdateDialog = () => {
             contextIsolation: false,
             worldSafeExecuteJavaScript: true,
             enableRemoteModule: true,
-            preload: path.join(__dirname, 'src', 'preload.js'),
+            // preload: path.join(__dirname, 'src', 'preload.js'),
         }
     });
 

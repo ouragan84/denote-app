@@ -5,9 +5,9 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron .",
+    "start": "APP_DEV=true electron .",
     "watch": "webpack --config webpack.common.js --watch",
-    "dist": "electron-builder"
+    "dist": "electron-builder -mlw"
   },
   "build": {
     "appId": "com.denote.app",
@@ -37,6 +37,15 @@
     "win": {
       "target": "nsis",
       "icon": "assets/Denote-Icon-Rounded-256.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/Denote-Icon-Rounded-256.png"
     }
   },
   "repository": "https://github.com/ouragan84/denote-app",
