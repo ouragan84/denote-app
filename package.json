@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "APP_DEV=true electron .",
     "watch": "webpack --config webpack.common.js --watch",
-    "dist": "electron-builder -mlw"
+    "dist": "rm -rf dist && electron-builder -mlw"
   },
   "build": {
     "appId": "com.denote.app",
