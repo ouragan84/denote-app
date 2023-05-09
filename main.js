@@ -8,8 +8,6 @@ const store = new Store();
 
 const isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : false;
 
-
-
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
 
@@ -34,8 +32,8 @@ const createWindow = async () => {
     window.setTitle('Denote');
 
     window.setMinimumSize(400, 300);
-
-    window.webContents.openDevTools({mode: 'detach'});
+    
+    // window.webContents.openDevTools();/
 
     //set icon
     if (process.platform === 'darwin') {
