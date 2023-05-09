@@ -128,7 +128,7 @@ const showUpdateDialog = () => {
     if(store.has('isUpToDate') && store.get('isUpToDate'))
         return;
 
-    window = new BrowserWindow({
+    let updateLogs = new BrowserWindow({
         width: 400,
         height: 400,
         backgroundColor: '#ffffff',
@@ -141,11 +141,11 @@ const showUpdateDialog = () => {
         }
     });
 
-    window.loadURL(path.join('file://', __dirname, 'update_logs.html'));
+    updateLogs.loadURL(path.join('file://', __dirname, 'update_logs.html'));
 
-    window.setTitle('Denote Update');
+    updateLogs.setTitle('Denote Update');
 
-    window.setMinimumSize(300, 300);
+    updateLogs.setMinimumSize(300, 300);
 
     store.set('isUpToDate', true);
 }

@@ -22,10 +22,20 @@ CMD+R to reload, changes should apply imediatly.
 
  - Change Version in `package.json`
 
+ - Commit and Push your changes
+
  - Build the app with `npm run watch`
 
  - Build the binary files with `npm run dist` (they end up in ./dist folder)
 
  - Try installing the app and make sure it works (hopefully in windows and mac-os)
 
- - Create a release in github, make sure to match version, and upload binaries (files only, no folders).
+ - Create a release in github: 
+
+    - Add SAME version for title, like `0.1.4`
+
+    - Add SAME verstion for title
+
+    - Upload binaries (files only, no folders).
+
+ - Publish!
