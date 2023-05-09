@@ -18,7 +18,7 @@
     "mac": {
       "category": "public.app-category.education",
       "target": "dmg",
-      "icon": "assets/Slant_Icon_1024x1024.icns"
+      "icon": "assets/Denote-Icon-Rounded-1024.icns"
     },
     "dmg": {
       "contents": [
@@ -36,7 +36,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "assets/Slant_Icon_1024x1024.ico"
+      "icon": "assets/Denote-Icon-Rounded-256.ico"
     }
   },
   "repository": "https://github.com/ouragan84/denote-app",
@@ -57,7 +57,7 @@
     "svg-drawing",
     "excalidraw"
   ],
-  "author": "",
+  "author": "Mangoose",
   "license": "ISC",
   "dependencies": {
     "@ckeditor/ckeditor5-basic-styles": "^37.1.0",
