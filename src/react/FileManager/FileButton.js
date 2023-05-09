@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { ipcRenderer } from "electron";
+import path from "path";
+import fs from "fs";
 
-function FileManager(props) {
+function FileButton({explorer, clickCallback, path, isRoot=false}) {
     
-    const [explorerData, setExplorerData] = useState(props.explorer)
-    const [expand, setExpand] = useState(false)
+    const [explorerData, etExplorerData] = useState(explorer)
+    const [expand, setExpand] = useState(isRoot)
+    
     if (explorerData.isFolder){
         return (
             <>
@@ -22,7 +26,7 @@ function FileManager(props) {
                     </div> 
                     <div style={{display: expand ? 'block': 'none', paddingLeft: 25}}>
                         {explorerData.items.map((exp) => {
-                            return <FileManager explorer={exp} key={exp.id}/>
+                            return <FileButton explorer={exp} key={exp.id}/>
                         })}
                     </div>
                 </div>
@@ -30,13 +34,15 @@ function FileManager(props) {
         );
     }else{
         return <span style={{    
-            marginTop: '5px',
-            paddingLeft: '5px',
-            display: 'flex',
-            flexDirection: 'column',
-            cursor: 'pointer',
-        }}>📄 {explorerData.name}</span>
+                marginTop: '5px',
+                paddingLeft: '5px',
+                display: 'flex',
+                flexDirection: 'column',
+                cursor: 'pointer',
+            }}
+            onClick={() => {explorerData.onClick()}}
+        >📄 {explorerData.name}</span>
     }
   }
   
-  export default FileManager;
+  export default FileButton;

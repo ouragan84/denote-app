@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "watch": "webpack --mode production --config webpack.common.js --watch",
+    "watch": "webpack --config webpack.common.js --watch",
     "dist": "electron-builder"
   },
   "build": {
@@ -39,7 +39,7 @@
       "icon": "assets/Slant_Icon_1024x1024.ico"
     }
   },
-  "repository": "https://github.com/ouragan84/slant-app",
+  "repository": "https://github.com/ouragan84/denote-app",
   "publish": {
     "provider": "github",
     "owner": "ouragan84",
@@ -68,16 +68,17 @@
     "@ckeditor/ckeditor5-paragraph": "^37.1.0",
     "@ckeditor/ckeditor5-react": "^6.0.0",
     "css-loader": "^6.7.3",
+    "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "jsdom": "^21.1.1",
     "os": "^0.1.2",
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-mathquill": "^1.0.3",
     "react-sketch": "^0.5.1",
     "sass": "^1.62.1",
-    "style-loader": "^3.3.2"
+    "style-loader": "^3.3.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",

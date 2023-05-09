@@ -2,7 +2,10 @@ const { BrowserWindow, app, ipcMain, Menu, dialog} = require('electron');
 const fs = require("fs");
 const path = require('path');
 const homedir = require('os').homedir();
+const Store = require('electron-store');
 const { autoUpdater, AppUpdater} = require('electron-updater');
+
+const store = new Store();
 
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
@@ -45,10 +48,9 @@ const createWindow = async () => {
         {
             label: 'File',
             submenu: [
-                {role: 'new', label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {console.log('new clicked')}},
-                {role: 'open', label: 'Open File', accelerator: 'CmdOrCtrl+O', click: () => {console.log('open clicked')}},
-                {role: 'save', label: 'Save File', accelerator: 'CmdOrCtrl+S', click: () => {console.log('save clicked')}},
-                {role: 'saveAs', label: 'Save File As', accelerator: 'CmdOrCtrl+Shift+S', click: () => {console.log('save as clicked')}},
+                {role: 'new', label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {window.webContents.send('new-file-shortcut')}},
+                {role: 'open', label: 'Open Folder', accelerator: 'CmdOrCtrl+O', click: () => {window.webContents.send('open-folder')}},
+                {role: 'save', label: 'Save File', accelerator: 'CmdOrCtrl+S', click: () => {window.webContents.send('file-saved-shortcut')}},
                 {type: 'separator'},
                 {role: 'export', label: 'Export File', accelerator: 'CmdOrCtrl+E', click: () => {console.log('export clicked')}},
                 {type: 'separator'},
@@ -61,13 +63,13 @@ const createWindow = async () => {
                 {role: 'undo', label: 'Undo', accelerator: 'CmdOrCtrl+Z', click: () => {console.log('undo clicked')}},
                 {role: 'redo', label: 'Redo', accelerator: 'CmdOrCtrl+Y', click: () => {console.log('redo clicked')}},
                 {type: 'separator'},
-                {role: 'cut', label: 'Cut', accelerator: 'CmdOrCtrl+X', click: () => {console.log('cut clicked')}},
-                {role: 'copy', label: 'Copy', accelerator: 'CmdOrCtrl+C', click: () => {console.log('copy clicked')}},
-                {role: 'paste', label: 'Paste', accelerator: 'CmdOrCtrl+V', click: () => {console.log('paste clicked')}},
-                {role: 'delete', label: 'Delete', accelerator: 'CmdOrCtrl+Backspace', click: () => {console.log('delete clicked')}},
+                {role: 'cut', label: 'Cut', accelerator: 'CmdOrCtrl+X'},
+                {role: 'copy', label: 'Copy', accelerator: 'CmdOrCtrl+C'},
+                {role: 'paste', label: 'Paste', accelerator: 'CmdOrCtrl+V'},
+                {role: 'delete', label: 'Delete', accelerator: 'CmdOrCtrl+Backspace'},
                 {type: 'separator'},
-                {role: 'selectAll', label: 'Select All', accelerator: 'CmdOrCtrl+A', click: () => {console.log('select all clicked')}},
-                {role: 'deselectAll', label: 'Deselect All', accelerator: 'CmdOrCtrl+D', click: () => {console.log('deselect all clicked')}},
+                {role: 'selectAll', label: 'Select All', accelerator: 'CmdOrCtrl+A'},
+                {role: 'deselectAll', label: 'Deselect All', accelerator: 'CmdOrCtrl+D'},
                 {type: 'separator'},
                 {role: 'find', label: 'Find', accelerator: 'CmdOrCtrl+F', click: () => {console.log('find clicked')}},
                 {role: 'replace', label: 'Replace', accelerator: 'CmdOrCtrl+H', click: () => {console.log('replace clicked')}},
@@ -98,9 +100,118 @@ const createWindow = async () => {
         }
     ]);
 
-    Menu.setApplicationMenu(menu);
-    
+    Menu.setApplicationMenu(menu);   
 }
+
+// ipcMain.on('create-file', (event, text) => {  
+
+//     // If the platform is 'win32' or 'Linux'
+//     // Resolves to a Promise<Object>
+//     dialog.showSaveDialog ({
+//         title: 'Select where to save the file',
+//         defaultPath: path.join(homedir, 'Desktop'),
+//         buttonLabel: 'Save',
+//         // Restricting the user to only Text Files.
+//         filters: [ 
+//         { 
+//             name: 'Slant Files', 
+//             extensions: ['sla'] 
+//         }, ],
+//         // Specifying the File Selector Property
+//          properties: process.platform === 'darwin' ? ['createDirectory'] : []
+//     }).then(file => {
+//         // Stating whether dialog operation was
+//         // cancelled or not.
+//         // console.log(file.canceled);
+//         if (!file.canceled) {
+//             const filepath = file.filePath.toString();
+//             console.log(filepath);
+//             fs.writeFile(filepath, text, (err) => {
+//                 if (err) {
+//                     console.log("An error ocurred creating the file " + err.message)
+//                 }
+//             });
+//             event.reply('file-saved', filepath);
+//         }
+//     }).catch(err => {
+//       console.log(err)
+//     });
+// });
+
+
+const openFolder = async (event) => {
+    dialog.showOpenDialog({
+        title: 'Select the Directory to be opened',
+        defaultPath: path.join(homedir, 'Desktop'),
+        buttonLabel: 'Open',
+        properties: process.platform === 'darwin' ? ['openDirectory'] : []
+    }).then(dir => {
+        // Stating whether dialog operation was
+        // cancelled or not.
+        if (!dir.canceled) {
+            const dirPath = dir.filePaths[0].toString();
+            store.set('lastOpenedFolder', dirPath);
+            console.log(dirPath);
+            event.reply('open-folder-reply', dirPath);
+        }  
+    }).catch(err => {
+      console.log(err)
+    });
+}
+
+
+ipcMain.on('open-folder', (event) => {  
+    // If the platform is 'win32' or 'Linux'
+    // Resolves to a Promise<Object>
+    openFolder(event);
+});
+
+
+ipcMain.on('open-saved-folder', (event) => {
+    const dirPath = store.get('lastOpenedFolder');
+
+    if (dirPath)
+        return event.reply('open-folder-reply', dirPath);
+
+    openFolder(event);
+});
+
+
+ipcMain.on('file-saved', (event) => {
+    // dialog to save file
+    // If the platform is 'win32' or 'Linux'
+    dialog.showSaveDialog ({
+        title: 'Select where to save the file',
+        defaultPath: path.join(homedir, 'Desktop'),
+        buttonLabel: 'Save',
+        // Restricting the user to only Text Files.
+        filters: [
+        {
+            name: 'Denote Files',
+            extensions: ['dnt']
+        }, ],
+        // Specifying the File Selector Property
+        properties: process.platform === 'darwin' ? ['createDirectory'] : []
+
+    }).then(file => {
+
+        if (!file.canceled) {
+            const filepath = file.filePath.toString();
+
+            fs.writeFile(filepath, "", (err) => {
+                if (err) {
+                    console.log("An error ocurred creating the file " + err.message)
+                }
+            });
+
+            return event.reply('file-saved-reply', filepath);
+        }
+
+    }).catch(err => {
+        console.log(err)
+        }
+    );
+});
 
 
 require('electron-reload')(__dirname, {
