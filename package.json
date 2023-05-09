@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "watch": "webpack --mode production --config webpack.common.js --watch",
+    "watch": "webpack --config webpack.common.js --watch",
     "dist": "electron-builder"
   },
   "build": {
@@ -18,7 +18,7 @@
     "mac": {
       "category": "public.app-category.education",
       "target": "dmg",
-      "icon": "assets/Slant_Icon_1024x1024.icns"
+      "icon": "assets/Denote-Icon-Rounded-1024.icns"
     },
     "dmg": {
       "contents": [
@@ -36,10 +36,10 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "assets/Slant_Icon_1024x1024.ico"
+      "icon": "assets/Denote-Icon-Rounded-256.ico"
     }
   },
-  "repository": "https://github.com/ouragan84/slant-app",
+  "repository": "https://github.com/ouragan84/denote-app",
   "publish": {
     "provider": "github",
     "owner": "ouragan84",
@@ -57,7 +57,7 @@
     "svg-drawing",
     "excalidraw"
   ],
-  "author": "",
+  "author": "Mangoose",
   "license": "ISC",
   "dependencies": {
     "@ckeditor/ckeditor5-basic-styles": "^37.1.0",
