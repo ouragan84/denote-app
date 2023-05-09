@@ -29,7 +29,7 @@ const createWindow = async () => {
 
     window.loadURL(path.join('file://', __dirname, 'index.html'));
 
-    window.setTitle('Denote');
+    window.setTitle('Denote ' + app.getVersion() + ' - ' + store.get('isUpToDate'));
 
     window.setMinimumSize(400, 300);
     
@@ -112,8 +112,8 @@ const createWindow = async () => {
 
     Menu.setApplicationMenu(menu);
 
-    store.delete('isUpToDate');
     autoUpdater.checkForUpdates();
+
     showUpdateDialog();
 }
 
