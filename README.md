@@ -49,19 +49,12 @@ This one may help resolve some libraries like `excalidraw` for example:
 
  - Add read/write commit options for `denote-releases` repository
 
- - Create a file called `electron-builder.yml`, and add this:
-
-```
-appId: com.denote.app
-publish:
-  provider: github
-  token: PASTE_TOKEN_HERE
-```
+ - Create a file called `gh_token`, and paste in your token there
 
 <br>
 <br>
 
-## **Everytime you deploy a release:**
+### **Everytime you deploy a release:**
 
  - Merge in master
 
@@ -69,19 +62,21 @@ publish:
 
  - Change Version in `package.json`
 
- - Commit and Push your changes
+ - Commit and Push your changes, please include version name inside commit message.
 
  - Build the binary files with `npm run build` (they end up in ./dist folder)
 
  - Try installing the app and make sure it works (hopefully in windows AND mac-os)
 
- - Create a release in github. You have two options:
+ - Create a release in github (can only be done with Apple Developper ID, so only Edgar can deploy for now). You have two options:
 
-    1. Deploy Automatically:
+   1. Deploy Automatically:
 
       - run `npm run deploy`
 
       - Make sure that the release was published in the `denote-releases` github repo. If not, do #2
+
+      - Edit the release and publish it!
 
    2. Delpoy Manually:
 
@@ -89,7 +84,7 @@ publish:
 
       - Make the **title** be the SAME version as in `package.json`, i.e. `0.1.4`
 
-      - Make the **tag** be the SAME version as in `package.json`, i.e. `0.1.4`
+      - Make the **tag** be the SAME version as in `package.json`, i.e. `v0.1.4`
 
       - Upload binaries from `./dist` (just the files, not the folders).
 

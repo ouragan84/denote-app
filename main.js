@@ -168,13 +168,29 @@ app.whenReady().then(() => {
 autoUpdater.on('update-available', (info) => {
     // console.log('update available');
     mainWindow.webContents.send('update_available');
-    autoUpdater.downloadUpdate();
+    // autoUpdater.downloadUpdate();
+    autoUpdater.downloadUpdate().then((res) => {
+            console.log('download update success');
+            console.log(res);
+            mainWindow.webContents.send('update_success');
+
+            store.set('isUpToDate', false);
+            mainWindow.webContents.send('app_version', {version: app.getVersion(), isDev: isDev, isUpToDate: store.get('isUpToDate')});
+            mainWindow.webContents.send('update_downloaded', {info: res, from: "update-available"});
+        }
+        ).catch((err) => {
+            console.log('download update error');
+            console.log(err);
+            mainWindow.webContents.send('update_error');
+        }
+    );
 });
 
 autoUpdater.on('update-downloaded', (info) => {
     // console.log('update downloaded');
     store.set('isUpToDate', false);
-    mainWindow.webContents.send('update_downloaded');
+    mainWindow.webContents.send('app_version', {version: app.getVersion(), isDev: isDev, isUpToDate: store.get('isUpToDate')});
+    mainWindow.webContents.send('update_downloaded', {version: info.version, releaseDate: info.releaseDate, from: "update-downloaded"});
 
     // can be used to install update automatically
     // autoUpdater.quitAndInstall();

@@ -95,3 +95,4 @@ typings/
 out/
 
 electron-builder.yml
+gh_token
