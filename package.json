@@ -74,9 +74,13 @@
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons-kit": "^2.0.0",
+    "react-latex-next": "^2.2.0",
     "react-mathquill": "^1.0.3",
     "react-sketch": "^0.5.1",
     "sass": "^1.62.1",
+    "slate": "^0.34.5",
+    "slate-react": "^0.13.2",
     "style-loader": "^3.3.2"
   },
   "devDependencies": {
