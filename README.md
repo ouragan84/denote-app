@@ -24,8 +24,6 @@ CMD+R to reload, changes should apply imediatly.
 
  - Commit and Push your changes
 
- - Build the app with `npm run watch`
-
  - Build the binary files with `npm run dist` (they end up in ./dist folder)
 
  - Try installing the app and make sure it works (hopefully in windows and mac-os)

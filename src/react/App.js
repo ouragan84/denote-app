@@ -62,7 +62,7 @@ export default () => {
 
     return (
         <>
-            <h1 style={{ textAlign: "center" }}>Hello world, but I changed it</h1>
+            <h1 style={{ textAlign: "center" }}>Hello world! Version 2</h1>
             <div style={{height:'85vh'}}>
                 <h2>Tool: {tools[tool]}, Color: {colors[color]}</h2>
                 < SketchField width='1024px' 

@@ -1,13 +1,14 @@
 {
   "name": "denote-app",
-  "version": "0.1.4",
+  "version": "0.1.1",
   "description": "Note taking app for the STEM students.",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "APP_DEV=true electron .",
+    "build": "webpack --mode production --config webpack.common.js",
     "watch": "webpack --config webpack.common.js --watch",
-    "dist": "rm -rf dist && electron-builder -mlw "
+    "dist": "npm i && npm run build && rm -rf dist && electron-builder -mlw "
   },
   "build": {
     "appId": "com.denote.app",
@@ -48,20 +49,23 @@
       "icon": "assets/Denote-Icon-Rounded-256.ico"
     },
     "nsis": {
-      "oneClick": false,
-      "perMachine": true,
-      "allowToChangeInstallationDirectory": true
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": true
     },
     "linux": {
       "target": "AppImage",
       "icon": "assets/Denote-Icon-Rounded-256.png"
     }
   },
-  "repository": "https://github.com/ouragan84/denote-app",
+  "repository": "https://github.com/ouragan84/denote-releases.git",
   "publish": {
     "provider": "github",
     "owner": "ouragan84",
-    "repo": "denote-app",
+    "repo": "denote-releases",
     "releaseType": "release"
   },
   "keywords": [
@@ -100,7 +104,7 @@
     "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.18.6",
     "babel-loader": "^9.1.2",
-    "electron": "^24.1.3",
+    "electron": "^24.2.0",
     "electron-builder": "^23.6.0",
     "electron-reload": "^2.0.0-alpha.1",
     "webpack": "^5.80.0",
