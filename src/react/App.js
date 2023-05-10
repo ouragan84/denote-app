@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from "react";
-import TextEditor from './Editor';
 import FileManager from "./FileManager"
 import './styles.css';
 import useTraverseTree from "./hooks/use-traverse-tree";
+import InlinesExample from "./RichTextEditor";
 
 const explorer = {
     id:"1",
@@ -115,20 +115,15 @@ export default () => {
 
     return (
         <>
-            <div style={{display: 'flex', flexDirection: 'row'}}>
+          <InlinesExample/>
+            {/* <div style={{display: 'flex', flexDirection: 'row'}}>
                 <div style={{width:'20vw', height:'100vh', backgroundColor:'#dfe4f2', position:'absolute',top:0, left:0}}>
                     <FileManager explorer={explorerData} handleInsertNode={handleInsertNode} cwd={testFolder}/>
                 </div>
                 <div style={{width:'80vw', height:'1', backgroundColor:'white', position:'absolute', left:'20vw', height: '100vh'}}>
-                    <TextEditor 
-                      content={content} 
-                      setContent={handleEditorChange} 
-                      style={{
-                        height: '100%'
-                      }}
-                    />
+
                 </div>
-            </div>
+            </div> */}
         </>
     )
 };
