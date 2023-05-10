@@ -44,6 +44,10 @@ const createWindow = async () => {
     }
 
 
+    if(isDev)
+        window.webContents.openDevTools();
+
+
     // adding menu with File and Edit options to the window
     const menu = Menu.buildFromTemplate([
         {
@@ -169,6 +173,11 @@ autoUpdater.on('update-downloaded', (info) => {
 autoUpdater.on('error', (err) => {
     console.log('error in auto updater');
     console.log(err);
+});
+
+ipcMain.on('app_version', (event) => {
+    version = app.getVersion();
+    event.send('app_version', {version: version});
 });
 
 // Quit when all windows are closed.

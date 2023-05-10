@@ -8,7 +8,7 @@
     "start": "APP_DEV=true electron .",
     "build": "webpack --mode production --config webpack.common.js",
     "watch": "webpack --config webpack.common.js --watch",
-    "dist": "npm i && npm run build && rm -rf dist && electron-builder -mlw "
+    "dist": "npm i && npm run build && rm -rf dist && electron-builder -mw"
   },
   "build": {
     "appId": "com.denote.app",
@@ -22,6 +22,11 @@
       "index.html",
       "update_logs.html"
     ],
+    "publish": [{
+      "provider": "github",
+      "owner": "ouragan84",
+      "repo": "denote-releases"
+    }],
     "directories": {
       "output": "dist"
     },
