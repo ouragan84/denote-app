@@ -31,7 +31,6 @@ function Editor({ onChange, editorLoaded, name, value }) {
               // console.log({ event, editor, data })
               onChange(data);
             }}
-            style={{ height: "100%" }}
           />
         ) : (
           <div>Editor loading</div>

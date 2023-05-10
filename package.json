@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "APP_DEV=true electron .",
     "build": "webpack --mode production --config webpack.common.js",
+    "deploy": "npm i && npm run build && rm -rf dist && electron-builder build --mac --win --publish always",
     "watch": "webpack --config webpack.common.js --watch",
-    "dist": "npm i && npm run build && rm -rf dist && electron-builder -mw"
+    "dist": "npm i && npm run build && rm -rf dist && electron-builder build --mac --win --publish never"
   },
   "build": {
     "appId": "com.denote.app",
@@ -66,7 +67,10 @@
       "icon": "assets/Denote-Icon-Rounded-256.png"
     }
   },
-  "repository": "https://github.com/ouragan84/denote-releases.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ouragan84/denote-releases.git"
+  },
   "publish": {
     "provider": "github",
     "owner": "ouragan84",

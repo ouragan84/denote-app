@@ -11,6 +11,8 @@ const isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : fal
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
 
+let mainWindow;
+
 const createWindow = async () => {
 
     console.log('home directory:', homedir);
@@ -43,10 +45,8 @@ const createWindow = async () => {
         window.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
     }
 
-
     if(isDev)
         window.webContents.openDevTools();
-
 
     // adding menu with File and Edit options to the window
     const menu = Menu.buildFromTemplate([
@@ -116,8 +116,14 @@ const createWindow = async () => {
 
     Menu.setApplicationMenu(menu);
 
-    autoUpdater.checkForUpdates();
+    window.once('ready-to-show', () => {
+        autoUpdater.checkForUpdatesAndNotify();
+    });
 
+    if(!mainWindow){
+        mainWindow = window;
+    }
+        
     showUpdateDialog();
 }
 
@@ -160,14 +166,18 @@ app.whenReady().then(() => {
 });
 
 autoUpdater.on('update-available', (info) => {
-    console.log('update available');
+    // console.log('update available');
+    mainWindow.webContents.send('update_available');
     autoUpdater.downloadUpdate();
 });
 
 autoUpdater.on('update-downloaded', (info) => {
-    console.log('update downloaded');
+    // console.log('update downloaded');
     store.set('isUpToDate', false);
-    autoUpdater.quitAndInstall();
+    mainWindow.webContents.send('update_downloaded');
+
+    // can be used to install update automatically
+    // autoUpdater.quitAndInstall();
 });
 
 autoUpdater.on('error', (err) => {
@@ -177,7 +187,11 @@ autoUpdater.on('error', (err) => {
 
 ipcMain.on('app_version', (event) => {
     version = app.getVersion();
-    event.send('app_version', {version: version});
+    event.sender.send('app_version', {version: version, isDev: isDev, isUpToDate: store.get('isUpToDate')});
+});
+
+ipcMain.on('install_update', (event) => {
+    autoUpdater.quitAndInstall();
 });
 
 // Quit when all windows are closed.
