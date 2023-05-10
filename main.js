@@ -31,7 +31,7 @@ const createWindow = async () => {
 
     window.loadURL(path.join('file://', __dirname, 'index.html'));
 
-    window.setTitle('Denote ' + app.getVersion() + ' - ' + store.get('isUpToDate'));
+    window.setTitle('Denote ' + app.getVersion());
 
     window.setMinimumSize(400, 300);
     
