@@ -52,7 +52,7 @@ export default () => {
 
     return (
         <>
-            <h1 style={{ textAlign: "center" }}>Hello world Message: This is part of version 0.1.4</h1>
+            <h1 style={{ textAlign: "center" }}>Hello world Message: This is part of version 0.1.5</h1>
 
             <div>
                 <Editor
