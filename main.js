@@ -1,21 +1,23 @@
 const { BrowserWindow, app, ipcMain, Menu, dialog} = require('electron');
 const fs = require("fs");
 const path = require('path');
-const homedir = require('os').homedir();
+// const homedir = require('os').homedir();
 const { autoUpdater, AppUpdater} = require('electron-updater');
+const isDev = require('electron-is-dev');
+
 const Store = require('electron-store');
 const store = new Store();
 
-const isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : false;
-
-autoUpdater.autoDownload = false;
+autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
+autoUpdater.logger = require('electron-log');
+autoUpdater.logger.transports.file.level = 'info';
 
-let mainWindow;
+const windows = [];
 
 const createWindow = async () => {
 
-    console.log('home directory:', homedir);
+    // console.log('home directory:', homedir);
 
     let window = new BrowserWindow({
         width: 1200, 
@@ -116,15 +118,15 @@ const createWindow = async () => {
 
     Menu.setApplicationMenu(menu);
 
-    window.once('ready-to-show', () => {
-        autoUpdater.checkForUpdatesAndNotify();
-    });
+    // window.once('ready-to-show', () => {
+    //     autoUpdater.checkForUpdatesAndNotify();
+    // });
 
-    if(!mainWindow){
-        mainWindow = window;
-    }
-        
-    showUpdateDialog();
+    windows.push(window);
+
+    window.on('closed', () => {
+        windows.splice(windows.indexOf(window), 1);
+    });
 }
 
 if (isDev) {
@@ -162,11 +164,24 @@ const showUpdateDialog = () => {
 
 app.whenReady().then(() => {
     createWindow();
-    autoUpdater.checkForUpdates();
+
+    console.log('app ready');
+
+    if(!isDev){
+        autoUpdater.checkForUpdates();
+    }
+
+    showUpdateDialog();
+});
+
+autoUpdater.on('checking-for-update', () => {
+    console.log('checking for update');
 });
 
 autoUpdater.on('update-available', (info) => {
-    // console.log('update available');
+    /*
+
+     // console.log('update available');
     mainWindow.webContents.send('update_available');
     // autoUpdater.downloadUpdate();
     autoUpdater.downloadUpdate().then((res) => {
@@ -184,30 +199,37 @@ autoUpdater.on('update-available', (info) => {
             mainWindow.webContents.send('update_error');
         }
     );
+
+    */
+    console.log('update available');
+    console.log(info)
+});
+
+autoUpdater.on('update-not-available', (info) => {
+    console.log('update not available');
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+    console.log('download progress ' + progressObj.percent);
 });
 
 autoUpdater.on('update-downloaded', (info) => {
-    // console.log('update downloaded');
-    store.set('isUpToDate', false);
-    mainWindow.webContents.send('app_version', {version: app.getVersion(), isDev: isDev, isUpToDate: store.get('isUpToDate')});
-    mainWindow.webContents.send('update_downloaded', {version: info.version, releaseDate: info.releaseDate, from: "update-downloaded"});
+    console.log('update downloaded');
+    // store.set('isUpToDate', false);
+    // mainWindow.webContents.send('app_version', {version: app.getVersion(), isDev: isDev, isUpToDate: store.get('isUpToDate')});
+    // mainWindow.webContents.send('update_downloaded', {version: info.version, releaseDate: info.releaseDate, from: "update-downloaded"});
 
     // can be used to install update automatically
-    // autoUpdater.quitAndInstall();
+    autoUpdater.quitAndInstall();
 });
 
 autoUpdater.on('error', (err) => {
-    console.log('error in auto updater');
-    console.log(err);
+    console.error(err);
 });
 
 ipcMain.on('app_version', (event) => {
     version = app.getVersion();
     event.sender.send('app_version', {version: version, isDev: isDev, isUpToDate: store.get('isUpToDate')});
-});
-
-ipcMain.on('install_update', (event) => {
-    autoUpdater.quitAndInstall();
 });
 
 // Quit when all windows are closed.
@@ -220,11 +242,10 @@ app.on('window-all-closed', () => {
 });
     
 app.on('activate', () => {
-      // On macOS it's common to re-create a window in the 
-      // app when the dock icon is clicked and there are no 
-      // other windows open.
+    // On macOS it's common to re-create a window in the 
+    // app when the dock icon is clicked and there are no 
+    // other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
     }
 });
-    

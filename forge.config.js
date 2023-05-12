@@ -1,5 +1,4 @@
 module.exports = {
-  packagerConfig: {},
   rebuildConfig: {},
   makers: [
     {
@@ -19,4 +18,7 @@ module.exports = {
       config: {},
     },
   ],
+  packagerConfig: {
+    osxSign: {} // object must exist even if empty
+  }
 };

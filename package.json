@@ -1,6 +1,6 @@
 {
   "name": "denote-app",
-  "version": "0.1.5",
+  "version": "0.1.0",
   "description": "Note taking app for the STEM students.",
   "main": "main.js",
   "scripts": {
@@ -9,32 +9,42 @@
     "build": "webpack --mode production --config webpack.common.js",
     "deploy": "export GH_TOKEN=$(cat ./gh_token) && npm i && npm run build && rm -rf dist && electron-builder build --mac --win --publish always",
     "watch": "webpack --config webpack.common.js --watch",
-    "dist": "npm i && npm run build && rm -rf dist && electron-builder build --mac --win --publish never"
+    "dist": "npm i && npm run build && rm -rf dist && electron-builder build --publish never"
   },
   "build": {
     "appId": "com.denote.app",
     "productName": "Denote",
+    "copyright": "Copyright © 2023 Denote",
     "files": [
       "build/**/*",
       "node_modules/**/*",
-      "assets/**/*",
       "main.js",
       "package.json",
+      "assets/*",
+      "src/public/*",
       "index.html",
-      "update_logs.html"
+      "update_logs.html",
+      "forge.config.js",
+      "webpack.common.js",
+      "package-lock.json",
+      "package.json",
+      "scripts/*"
     ],
-    "publish": [{
-      "provider": "github",
-      "owner": "ouragan84",
-      "repo": "denote-releases"
-    }],
-    "directories": {
-      "output": "dist"
-    },
     "mac": {
-      "category": "public.app-category.education",
-      "target": "dmg",
-      "icon": "assets/Denote-Icon-Rounded-1024.icns"
+      "target": {
+        "target": "default",
+        "arch": [
+          "universal",
+          "zip"
+        ]
+      },
+      "category": "public.app-category.productivity",
+      "icon": "assets/Denote-Icon-Rounded-1024.icns",
+      "identity": "Edgar Baudry (T3Q5PMNQ47)",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist"
     },
     "dmg": {
       "contents": [
@@ -51,7 +61,13 @@
       ]
     },
     "win": {
-      "target": "nsis",
+      "target": {
+        "target": "nsis",
+        "arch": [
+          "x64",
+          "ia32"
+        ]
+      },
       "icon": "assets/Denote-Icon-Rounded-256.ico"
     },
     "nsis": {
@@ -61,11 +77,20 @@
       "allowToChangeInstallationDirectory": false,
       "runAfterFinish": true,
       "deleteAppDataOnUninstall": true
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ouragan84",
+        "repo": "denote-releases",
+        "releaseType": "release"
+      }
+    ],
+    "afterSign": "scripts/notarize.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ouragan84/denote-releases.git"
+    "url": "git+https://github.com/ouragan84/denote-releases.git"
   },
   "publish": {
     "provider": "github",
@@ -84,33 +109,31 @@
     "svg-drawing",
     "excalidraw"
   ],
-  "author": "Mangoose",
+  "author": "Denote",
   "license": "ISC",
   "dependencies": {
-    "@ckeditor/ckeditor5-basic-styles": "^37.1.0",
-    "@ckeditor/ckeditor5-build-classic": "^37.1.0",
-    "@ckeditor/ckeditor5-core": "^37.1.0",
-    "@ckeditor/ckeditor5-editor-classic": "^37.1.0",
-    "@ckeditor/ckeditor5-essentials": "^37.1.0",
-    "@ckeditor/ckeditor5-paragraph": "^37.1.0",
-    "@ckeditor/ckeditor5-react": "^6.0.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^4.4.8",
     "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "jsdom": "^21.1.1",
-    "os": "^0.1.2",
     "path": "^0.12.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-mathquill": "^1.0.3",
-    "react-sketch": "^0.5.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.18.6",
+    "@electron/osx-sign": "^1.0.4",
+    "app-builder-lib": "^24.4.0",
     "babel-loader": "^9.1.2",
+    "dotenv": "^16.0.3",
     "electron": "^24.2.0",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^24.4.0",
+    "electron-builder-notarize": "^1.5.1",
+    "electron-notarize": "^1.2.2",
+    "electron-packager": "^17.1.1",
     "electron-reload": "^2.0.0-alpha.1",
     "webpack": "^5.80.0",
     "webpack-cli": "^5.0.2"
