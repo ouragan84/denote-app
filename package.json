@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "watch": "webpack --config webpack.common.js --watch",
+    "watch": "webpack --mode production --config webpack.common.js --watch",
     "dist": "electron-builder"
   },
   "build": {
@@ -76,6 +76,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
+    "react-latex-next": "^2.2.0",
     "react-mathquill": "^1.0.3",
     "react-quill": "^2.0.0",
     "react-sketch": "^0.5.1",

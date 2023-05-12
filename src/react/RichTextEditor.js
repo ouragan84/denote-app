@@ -12,9 +12,10 @@ import {
   Element as SlateElement
 } from "slate"
 import { withHistory } from "slate-history"
+import Latex from 'react-latex-next';
 
 import { Button, Icon, Toolbar } from "./components"
-import { addStyles, EditableMathField } from 'react-mathquill'
+import { addStyles, EditableMathField, StaticMathField } from 'react-mathquill'
 
 const initialValue = [
   {
@@ -41,7 +42,7 @@ const initialValue = [
       },
       {
         type: "badge",
-        children: [{ text: '\\frac{1}{\\sqrt{2}}\\cdot 2' }]
+        children: [{ text: 'x/2' }]
       },
       {
         text: "."
@@ -304,6 +305,13 @@ const EditableButtonComponent = ({ attributes, children }) => {
 const BadgeComponent = ({ attributes, children, element }) => {
   const selected = useSelected()
 
+  const outStr = children['0']['props']['text'].text
+  const outS = <Latex>{outStr}</Latex>
+  // const out = <Latex></Latex>
+  console.log(outS)
+
+
+
   return (
     <span
       {...attributes}
@@ -311,7 +319,8 @@ const BadgeComponent = ({ attributes, children, element }) => {
       data-playwright-selected={selected}
     >
       <InlineChromiumBugfix />
-      {children}
+      {/* {out} */}
+      {/* <Latex>We give illustrations for the three processes $x^2$, gluon-gluon and $\gamma\gamma \to W t\bar b$</Latex> */}
       <InlineChromiumBugfix />
     </span>
   )

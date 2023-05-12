@@ -4,6 +4,8 @@ import './styles.css';
 import useTraverseTree from "./hooks/use-traverse-tree";
 import InlinesExample from "./RichTextEditor";
 
+
+
 const explorer = {
     id:"1",
     name: "root",
@@ -112,6 +114,28 @@ export default () => {
     const finalTree = insertNode(explorerData, _id, item, isFolder)
     setExplorerData(finalTree)
   }
+
+  const [open, setOpen] = useState(false);
+
+  /**
+   * Just alerts what the current state of 'open' is.
+   */
+  const enterHandler = () => {
+    if (open) {
+      alert("open is TRUE");
+    } else {
+      alert("open is FALSE");
+    }
+  };
+
+  /**
+   * Mathquill configuration.
+   */
+  const config = {
+    handlers: {
+      enter: enterHandler
+    }
+  };
 
     return (
         <>
