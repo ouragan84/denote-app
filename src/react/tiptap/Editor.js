@@ -246,6 +246,13 @@ export default () => {
         <>
             <MenuBar editor={editor} />
             <EditorContent editor={editor} />
+            <button onClick={() => {
+                console.log("JSON", editor.getJSON());
+                console.log("HTML", editor.getHTML());
+                console.log("TEXT", editor.getText());
+            }}>
+                Print Content
+            </button>
         </>
     )
 }
