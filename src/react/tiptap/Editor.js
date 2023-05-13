@@ -5,10 +5,26 @@ import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import React from 'react'
+import React, {useState} from 'react'
 
 import ReactComponent from './Extension'
 import InlineMathComponent from './MathExtension'
+// import { EditableMathField , addStyles} from 'react-mathquill'
+
+// addStyles()
+
+// const MyMathField = () => {
+//     const [latex, setLatex] = useState('x^2');
+
+//     return (
+//         <EditableMathField
+//             latex={latex}
+//             onChange={(mathField) => {
+//                 setLatex(mathField.latex())
+//               }}
+//         />
+//     )
+// }
 
 const MenuBar = ({ editor }) => {
     if (!editor) {
@@ -178,14 +194,14 @@ const MenuBar = ({ editor }) => {
           purple
         </button>
         <button
-            // Some Quirkiness here, probably a better way to do this, maybe with setNote() function instead of insertContent()
+            // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
            onClick={() => editor.chain().focus().insertContent('<react-component count="0"></react-component>').run()}
            className={editor.isActive('react-component') ? 'is-active' : ''}
         >
           react component
         </button>
         <button
-            // Some Quirkiness here, probably a better way to do this, maybe with setNote() function instead of insertContent()
+            // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
            onClick={() => editor.chain().focus().insertContent('<inline-math-field latex="x^2"></inline-math-field>').run()}
            className={editor.isActive('inline-math-field') ? 'is-active' : ''}
         >
@@ -221,9 +237,10 @@ export default () => {
             <p>
                 Did you see that? That’s a React component. We are really living in the future.
             </p>
-            <inline-math-field latex="x=\\frac{b \\pm \\sqrt{b^2-4ac}}{2a}"></inline-math-field>
         `,
     })
+
+    const [latex, setLatex] = useState('\\frac{1}{\\sqrt{2}}\\cdot 2')
 
     return (
         <>

@@ -1,6 +1,8 @@
-import { EditableMathField, StaticMathField } from 'react-mathquill'
+import { EditableMathField, StaticMathField, addStyles } from 'react-mathquill'
 import { NodeViewWrapper } from '@tiptap/react'
 import React, {useState} from 'react'
+
+addStyles()
 
 export default props => {
 //   const increase = () => {
