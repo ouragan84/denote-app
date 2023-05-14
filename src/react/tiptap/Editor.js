@@ -8,7 +8,7 @@ import StarterKit from '@tiptap/starter-kit'
 import React, {useState} from 'react'
 
 import ComponentNode from './ExampleExtension'
-import MyMathBoxNode from './MathExtension'
+import MyMathBoxNode from './InlineMathExtension'
 
 const MenuBar = ({ editor }) => {
     if (!editor) {
@@ -186,7 +186,7 @@ const MenuBar = ({ editor }) => {
         </button>
         <button
             // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
-           onClick={() => editor.commands.insertLatexInline()}
+           onClick={() => editor.commands.insertInlineMathBox()}
            className={editor.isActive('inline-math-field') ? 'is-active' : ''}
         >
           maf
@@ -225,9 +225,9 @@ export default () => {
                 Did you see that? That’s a React component. We are really living in the future.
             </p>
             <h2>
-                Here is the quadratic formula:
+                Here is the quadratic formula: <span data-type="inline-math-box" latex="x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"></span> 
+                isn't it beautiful?
             </h2>
-            <my-math-box latex="x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"></my-math-box>
             <p>
                 You can edit the formula above by clicking on it.
             </p>
