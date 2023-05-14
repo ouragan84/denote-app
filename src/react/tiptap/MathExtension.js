@@ -1,47 +1,106 @@
-
+import React, {useState} from 'react'
 import { mergeAttributes, Node } from '@tiptap/core'
-import { ReactNodeViewRenderer } from '@tiptap/react'
-import InlineMathField from './MathField'
+import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
+import { EditableMathField, StaticMathField, addStyles } from 'react-mathquill'
 
-// q: how do I make this node inline instead of block?
-// a: add "inline: true" to the object returned by addAttributes()
-// q: how do I make this node editable?
-// a: add "atom: true" to the object returned by addAttributes()
+addStyles()
 
-export default Node.create({
-  name: 'inlineMathField',
+export const MyMathBox = props => {
 
-  group: 'block',
+    return (
+        // <NodeViewWrapper className="inline-math-field">
+        //     <EditableMathField
+        //         latex={props.node.attrs.latex}
+        //         onChange={(mathField) => {
+        //             props.updateAttributes({
+        //                 latex: mathField.latex(),
+        //             })
+        //         }}
+        //     />
+        // </NodeViewWrapper>
 
-  atom: true,
+        <NodeViewWrapper className="inline-math-field" contentEditable={false}>
+            <span
+                // style={{
+                //     height: '0px',
+                //     width: '0px',
+                //     margin: '0px',
+                //     padding: '0px',
+                // }}
+                contentEditable={true}
+                onFocus={(e) => {
+                    console.log('onFocus');
+                    e.target.blur();
+                }}
+            >
+                Poop
+            </span>
+            <EditableMathField
+                contentEditable={false}
+                latex={props.node.attrs.latex}
+                onChange={(mathField) => {
+                    props.updateAttributes({
+                        latex: mathField.latex(),
+                    });
+                }}
+            />
+                
+        </NodeViewWrapper>
+    )
+}
 
-  addAttributes() {
-    return {
-    //   count: {
-    //     default: 0,
-    //   },
-        latex: {
-            default: "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}",
-        },
-        atom: true,
-        inline: true,
 
-    }
-  },
+const MyMathBoxNode = Node.create({
+    name: 'myMathBox',
+    group: 'inline',
+    inline: true,
+    // atom: true,
+    content: 'text*', 
 
-  parseHTML() {
-    return [
-      {
-        tag: 'inline-math-field',
-      },
-    ]
-  },
+    addAttributes() {
+        return {
+            latex: {
+                default: "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}",
+            },
+            atom: true,
+            inline: true,
 
-  renderHTML({ HTMLAttributes }) {
-    return ['inline-math-field', mergeAttributes(HTMLAttributes)]
-  },
+        }
+    },
 
-  addNodeView() {
-    return ReactNodeViewRenderer(InlineMathField)
-  },
+    parseHTML() {
+        return [
+            {
+                tag: 'my-math-box',
+                atom: true,
+                inline: true,
+            },
+        ]
+    },
+
+    renderHTML({ HTMLAttributes }) {
+        return ['span', mergeAttributes(HTMLAttributes), 0];
+    },
+
+    addNodeView() {
+        return ReactNodeViewRenderer(MyMathBox)
+    },
+
+    addCommands() {
+        return {
+            insertLatexInline: attributes => ({ commands, editor }) => {
+                const parameter = `${attributes?.latex ?? ""}}`;
+                return commands.insertContent(`<my-math-box latex=${parameter}></my-math-box>`);
+            },
+        }
+    },
+
+    addKeyboardShortcuts() {
+        return {
+            'Mod-m': () => this.editor.commands.insertLatexInline(),
+        }
+    },
+
 })
+
+export default MyMathBoxNode;

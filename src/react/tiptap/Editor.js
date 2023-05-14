@@ -7,24 +7,8 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import React, {useState} from 'react'
 
-import ReactComponent from './Extension'
-import InlineMathComponent from './MathExtension'
-// import { EditableMathField , addStyles} from 'react-mathquill'
-
-// addStyles()
-
-// const MyMathField = () => {
-//     const [latex, setLatex] = useState('x^2');
-
-//     return (
-//         <EditableMathField
-//             latex={latex}
-//             onChange={(mathField) => {
-//                 setLatex(mathField.latex())
-//               }}
-//         />
-//     )
-// }
+import ComponentNode from './ExampleExtension'
+import MyMathBoxNode from './MathExtension'
 
 const MenuBar = ({ editor }) => {
     if (!editor) {
@@ -195,14 +179,14 @@ const MenuBar = ({ editor }) => {
         </button>
         <button
             // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
-           onClick={() => editor.chain().focus().insertContent('<react-component count="0"></react-component>').run()}
+           onClick={() => editor.commands.setReactComponent()}
            className={editor.isActive('react-component') ? 'is-active' : ''}
         >
           react component
         </button>
         <button
             // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
-           onClick={() => editor.chain().focus().insertContent('<inline-math-field latex="x^2"></inline-math-field>').run()}
+           onClick={() => editor.commands.insertLatexInline()}
            className={editor.isActive('inline-math-field') ? 'is-active' : ''}
         >
           maf
@@ -214,8 +198,8 @@ const MenuBar = ({ editor }) => {
 export default () => {
     const editor = useEditor({
         extensions: [
-            ReactComponent,
-            InlineMathComponent,
+            ComponentNode,
+            MyMathBoxNode,
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             StarterKit.configure({
@@ -230,6 +214,9 @@ export default () => {
             }),
         ],
         content: `
+            <h2>
+                Welcome to the example editor!
+            </h2>
             <p>
                 This is still the text editor you’re used to, but enriched with node views.
             </p>
@@ -237,10 +224,15 @@ export default () => {
             <p>
                 Did you see that? That’s a React component. We are really living in the future.
             </p>
+            <h2>
+                Here is the quadratic formula:
+            </h2>
+            <my-math-box latex="x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"></my-math-box>
+            <p>
+                You can edit the formula above by clicking on it.
+            </p>
         `,
     })
-
-    const [latex, setLatex] = useState('\\frac{1}{\\sqrt{2}}\\cdot 2')
 
     return (
         <>
