@@ -1,16 +1,29 @@
-import React, {useState} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
-import { EditableMathField, StaticMathField, addStyles } from 'react-mathquill'
-import katex from 'katex'
+import { EditableMathField, addStyles } from 'react-mathquill'
 
 addStyles()
 
 export const InlineMathBox = props => {
 
+    const mathFieldRef = useRef(null);
+
+    useEffect(() => {
+        const mathField = mathFieldRef.current;
+        if (mathField) {
+            mathField.latex(props.node.attrs.latex);
+        }
+    }, [props.node.attrs.latex]);
+
     return (
-        <NodeViewWrapper className="inline-math-box" contentEditable={false}>
+        <NodeViewWrapper
+            className="inline-math-box"
+            contentEditable={false}
+        >
+            
             <EditableMathField
+                ref={mathFieldRef}
                 contentEditable={false}
                 latex={props.node.attrs.latex}
                 onChange={(mathField) => {
@@ -21,7 +34,8 @@ export const InlineMathBox = props => {
                 style={{
                   border: 'none',
                 }}  
-            />
+            >
+            </EditableMathField>
         </NodeViewWrapper>
     )
 }
@@ -71,7 +85,7 @@ const InlineMathBoxNode = Node.create({
       },
 
     addNodeView() {
-        return ReactNodeViewRenderer(InlineMathBox)
+        return ReactNodeViewRenderer(InlineMathBox, {});
     },
 
     addCommands() {
