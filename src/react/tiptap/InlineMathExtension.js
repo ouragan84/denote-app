@@ -1,5 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react'
-import { mergeAttributes, Node } from '@tiptap/core'
+import React, {useState, useRef, useEffect, forwardRef} from 'react'
+import { mergeAttributes, Node, nodeInputRule } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { EditableMathField, addStyles } from 'react-mathquill'
 
@@ -7,29 +7,46 @@ addStyles()
 
 export const InlineMathBox = props => {
 
-    const mathFieldRef = useRef(null);
-
-    useEffect(() => {
-        const mathField = mathFieldRef.current;
-        if (mathField) {
-            mathField.latex(props.node.attrs.latex);
-        }
-    }, [props.node.attrs.latex]);
-
     return (
         <NodeViewWrapper
             className="inline-math-box"
             contentEditable={false}
         >
-            
             <EditableMathField
-                ref={mathFieldRef}
                 contentEditable={false}
                 latex={props.node.attrs.latex}
                 onChange={(mathField) => {
                     props.updateAttributes({
                         latex: mathField.latex(),
                     });
+                }}
+                onKeyDown={(e) => {
+                  const { key } = e;
+                  const pos = props.getPos();
+
+                  if (key === 'Tab' || key === 'Enter'){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    props.editor.chain().focus(pos+1).run();
+                  }
+                  if (key === 'ArrowLeft'){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // if cursror inside mathfield is all the way to the left
+                    // if (e.target.selectionStart === 0){
+                    //   props.editor.chain().focus(pos-1).run();
+                    // }
+                  }
+                  if (key === 'ArrowRight'){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // if cursror inside mathfield is all the way to the right
+                    // console.log(e.target.selectionEnd);
+                    // if (e.target.selectionEnd === e.target.value.length){
+                    //   props.editor.chain().focus(pos+1).run();
+                    // }
+                  }
+
                 }}
                 style={{
                   border: 'none',
@@ -39,6 +56,8 @@ export const InlineMathBox = props => {
         </NodeViewWrapper>
     )
 }
+
+
 
 
 const InlineMathBoxNode = Node.create({
@@ -90,10 +109,6 @@ const InlineMathBoxNode = Node.create({
 
     addCommands() {
         return {
-            // insertInlineMathBox: attributes => ({ commands, editor }) => {
-            //     const parameter = `${attributes?.latex ?? ""}}`;
-            //     // return commands.insertContent(`<my-math-box latex=${parameter}></my-math-box>`);
-            // },
             insertInlineMathBox: (attrs) => ({ tr, commands }) => {
                 return commands.insertContent({
                     type: this.name,
@@ -105,11 +120,9 @@ const InlineMathBoxNode = Node.create({
 
     addKeyboardShortcuts() {
         return {
-            // cmd + m on mac and ctrl + m on windows
             "Mod-m": () => this.editor.commands.insertInlineMathBox(),
         }
     },
-
 })
 
 export default InlineMathBoxNode;
