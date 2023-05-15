@@ -131,25 +131,15 @@ export const SmilieReplacer = Extension.create({
       textInputRule({ find: /\/lenny $/, replace: '( ͡° ͜ʖ ͡°)' }),
       textInputRule({ find: /\/tableflip $/, replace: '(╯°□°）╯︵ ┻━┻' }),
       textInputRule({ find: /\/unflip $/, replace: '┬─┬ ノ( ゜-゜ノ)' }),
-      // replace "->" in text by an arrow symbol
       textInputRule({ find: /->$/, replace: '→' }), 
-      // replace "<-" in text by an arrow symbol
       textInputRule({ find: /<-$/, replace: '←' }),
-      // replace "<->" in text by an arrow symbol
       textInputRule({ find: /<->$/, replace: '↔' }),
-      // replace "=>" in text by an arrow symbol
       textInputRule({ find: /=>$/, replace: '⇒' }),
-      // replace "<=>" in text by an arrow symbol
       textInputRule({ find: /<=>$/, replace: '⇔' }),
-      // replace "!=" in text by an arrow symbol
       textInputRule({ find: /!=$/, replace: '≠' }),
-      // replace "===" in text by an arrow symbol
       textInputRule({ find: /===$/, replace: '≡' }),
-      // replace "<=" in text by an arrow symbol
       textInputRule({ find: /<= $/, replace: '≤' }),
-      // replace ">=" in text by an arrow symbol
       textInputRule({ find: />=$/, replace: '≥' }),
-      // replace "..." in text by an arrow symbol
       textInputRule({ find: /\.\.\.$/, replace: '…' }),
     ]
   },

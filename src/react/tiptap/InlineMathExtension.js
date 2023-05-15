@@ -18,37 +18,12 @@ export const InlineMathBox = props => {
                         latex: mathField.latex(),
                     });
                 }}
+                style={{
+                  border: 'none',
+                }}  
             />
         </NodeViewWrapper>
     )
-
-    // const latex = props.node.attrs.latex;
-    // const handleChange = (e) => {
-    //     props.updateAttributes({
-    //     latex: e.target.value
-    //     });
-    // };
-    // const options = {
-    //     throwOnError: false,
-    //     strict: false,
-    //     displayMode: true
-    // };
-    // const preview = katex.renderToString(latex, options);
-
-    // return (
-    //     <NodeViewWrapper className="inline-math-box">
-    //       <textarea value={latex} onChange={handleChange} />
-    //       <div dangerouslySetInnerHTML={{ __html: preview }} />
-    //       {/* <EditableMathField
-    //         latex={content}
-    //         onChange={(mathField) => {
-    //           props.updateAttributes({
-    //             content: mathField.latex()
-    //           });
-    //         }}
-    //       /> */}
-    //     </NodeViewWrapper>
-    // );
 }
 
 
@@ -56,26 +31,8 @@ const InlineMathBoxNode = Node.create({
     name: "inline-math-box",
     group: "inline",
     inline: true,
-    selectable: false,
-    atom: true,
-
-    // addAttributes() {
-    //     return {
-    //         latex: {
-    //             default: "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}",
-    //         },
-    //     }
-    // },
-
-    // parseHTML() {
-    //     return [
-    //         {
-    //             tag: 'inline-math-box',
-    //             atom: true,
-    //             inline: true,
-    //         },
-    //     ]
-    // },
+    selectable: true,
+    atom: false,
 
     addAttributes() {
         return {
