@@ -156,7 +156,7 @@ export const SmilieReplacer = Extension.create({
       textInputRule({ find: /\/pray $/, replace: '🙏 ' }),
       
       textInputRule({ find: /<--- $/, replace: '⟵ ' }),
-      textInputRule({ find: /---> $/, replace: '⟹ ' }),
+      textInputRule({ find: /---> $/, replace: '⟶ ' }),
       textInputRule({ find: /<---> $/, replace: '⟷ ' }),
 
       textInputRule({ find: /===> $/, replace: '⟹ ' }),
