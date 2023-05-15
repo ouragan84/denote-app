@@ -7,6 +7,43 @@ addStyles()
 
 export const InlineMathBox = props => {
 
+    const handleChange = (mathField) => {
+      props.updateAttributes({
+        latex: mathField.latex(),
+      })
+    }
+
+    const handleKeyDown = (event) => {
+      (e) => {
+        const { key } = e;
+        const pos = props.getPos();
+
+        if (key === 'Tab' || key === 'Enter'){
+          e.preventDefault();
+          e.stopPropagation();
+          props.editor.chain().focus(pos+1).run();
+        }
+        if (key === 'ArrowLeft'){
+          e.preventDefault();
+          e.stopPropagation();
+          // if cursror inside mathfield is all the way to the left
+          // if (e.target.selectionStart === 0){
+          //   props.editor.chain().focus(pos-1).run();
+          // }
+        }
+        if (key === 'ArrowRight'){
+          e.preventDefault();
+          e.stopPropagation();
+          // if cursror inside mathfield is all the way to the right
+          // console.log(e.target.selectionEnd);
+          // if (e.target.selectionEnd === e.target.value.length){
+          //   props.editor.chain().focus(pos+1).run();
+          // }
+        }
+
+      }
+    }
+
     return (
         <NodeViewWrapper
             className="inline-math-box"
@@ -15,39 +52,8 @@ export const InlineMathBox = props => {
             <EditableMathField
                 contentEditable={false}
                 latex={props.node.attrs.latex}
-                onChange={(mathField) => {
-                    props.updateAttributes({
-                        latex: mathField.latex(),
-                    });
-                }}
-                onKeyDown={(e) => {
-                  const { key } = e;
-                  const pos = props.getPos();
-
-                  if (key === 'Tab' || key === 'Enter'){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    props.editor.chain().focus(pos+1).run();
-                  }
-                  if (key === 'ArrowLeft'){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // if cursror inside mathfield is all the way to the left
-                    // if (e.target.selectionStart === 0){
-                    //   props.editor.chain().focus(pos-1).run();
-                    // }
-                  }
-                  if (key === 'ArrowRight'){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // if cursror inside mathfield is all the way to the right
-                    // console.log(e.target.selectionEnd);
-                    // if (e.target.selectionEnd === e.target.value.length){
-                    //   props.editor.chain().focus(pos+1).run();
-                    // }
-                  }
-
-                }}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 style={{
                   border: 'none',
                 }}  
