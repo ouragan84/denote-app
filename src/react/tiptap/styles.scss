@@ -1,12 +1,14 @@
 /* Basic editor styles */
 .ProseMirror {
+    
     > * + * {
         margin-top: 0.75em;
+        padding: 0rem 1rem;
     }
   
     ul,
     ol {
-        padding: 0 1rem;
+        padding: 0 3rem;
     }
   
     h1,
@@ -16,11 +18,13 @@
     h5,
     h6 {
         line-height: 1.1;
+        padding: 0rem 1rem;
     }
   
     code {
         background-color: rgba(#616161, 0.1);
         color: #616161;
+        padding: 0rem 1rem;
     }
   
     pre {
@@ -29,6 +33,7 @@
         font-family: 'JetBrainsMono', monospace;
         padding: 0.75rem 1rem;
         border-radius: 0.5rem;
+        padding: 0rem 1rem;
     
         code {
             color: inherit;
@@ -41,18 +46,24 @@
     img {
         max-width: 100%;
         height: auto;
+        padding: 0rem 1rem;
     }
   
     blockquote {
-        padding-left: 1rem;
+        padding: 0rem 2rem;
         border-left: 2px solid rgba(#0D0D0D, 0.1);
     }
   
     hr {
         border: none;
+        padding: 0rem 1rem;
         border-top: 2px solid rgba(#0D0D0D, 0.1);
         margin: 2rem 0;
     }
+}
+
+.ProseMirror:focus {
+    outline: none;
 }
   
 .react-component {
@@ -85,7 +96,8 @@
 .inline-math-box {
     // border: dashed blue;
     border: none;
+    outline: none;
     display: inline-block;
     /* white-space: pre;   */
-  }
+}
   

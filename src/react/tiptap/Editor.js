@@ -9,6 +9,7 @@ import React, {useState} from 'react'
 
 import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
+import {SmilieReplacer} from './EmojiReplacerExtension'
 
 const MenuBar = ({ editor }) => {
     if (!editor) {
@@ -200,6 +201,7 @@ export default () => {
         extensions: [
             ComponentNode,
             MyMathBoxNode,
+            SmilieReplacer,
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             StarterKit.configure({
@@ -237,7 +239,16 @@ export default () => {
     return (
         <>
             <MenuBar editor={editor} />
-            <EditorContent editor={editor} />
+            <EditorContent editor={editor} 
+              style={{
+                border: '1px solid black',
+                margin: '1rem',
+                border: 'black 2px solid',
+                borderRadius: '5px',
+                minHeight: '10rem',
+                fontFamily: 'sans-serif',
+              }}  
+            />
             <button onClick={() => {
                 console.log("JSON", editor.getJSON());
                 console.log("HTML", editor.getHTML());
