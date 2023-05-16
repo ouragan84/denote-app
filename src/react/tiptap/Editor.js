@@ -11,6 +11,7 @@ import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
 import {SmilieReplacer} from './EmojiReplacerExtension'
 import DrawBoxNode from './DrawBoxExtentsion'
+import IndentCommand from './IndentCommandExtension'
 
 const MenuBar = ({ editor }) => {
     if (!editor) {
@@ -210,6 +211,7 @@ export default () => {
             MyMathBoxNode,
             SmilieReplacer,
             DrawBoxNode,
+            IndentCommand(),
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             StarterKit.configure({
@@ -248,10 +250,23 @@ export default () => {
         `,
     })
 
+    const handleKeyDown = (event) => {
+      if (event.key === 'Tab') {
+        console.log("TAB");
+        event.preventDefault() // Prevent focus from shifting to other UI elements
+  
+        // Indent the selected text
+        
+        editor.chain().focus().command(IndentCommand()).run()
+
+      }
+    }
+
     return (
         <>
             <MenuBar editor={editor} />
-            <EditorContent editor={editor} 
+            <EditorContent 
+              editor={editor} 
               style={{
                 border: '1px solid black',
                 margin: '1rem',
@@ -260,6 +275,8 @@ export default () => {
                 minHeight: '10rem',
                 fontFamily: 'sans-serif',
               }}  
+
+              onKeyDown={handleKeyDown}
             />
             <button onClick={() => {
                 console.log("JSON", editor.getJSON());

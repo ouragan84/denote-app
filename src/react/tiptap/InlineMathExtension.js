@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, forwardRef} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import { mergeAttributes, Node, nodeInputRule } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { EditableMathField, addStyles } from 'react-mathquill'
@@ -7,14 +7,16 @@ addStyles()
 
 export const InlineMathBox = props => {
 
+    const [currentMathField, setCurrentMathField] = useState(null);
+
     const handleChange = (mathField) => {
+      setCurrentMathField(mathField);
       props.updateAttributes({
         latex: mathField.latex(),
       })
     }
 
-    const handleKeyDown = (event) => {
-      (e) => {
+    const handleKeyDown = (e) => {
         const { key } = e;
         const pos = props.getPos();
 
@@ -26,22 +28,12 @@ export const InlineMathBox = props => {
         if (key === 'ArrowLeft'){
           e.preventDefault();
           e.stopPropagation();
-          // if cursror inside mathfield is all the way to the left
-          // if (e.target.selectionStart === 0){
-          //   props.editor.chain().focus(pos-1).run();
-          // }
+          
         }
         if (key === 'ArrowRight'){
           e.preventDefault();
           e.stopPropagation();
-          // if cursror inside mathfield is all the way to the right
-          // console.log(e.target.selectionEnd);
-          // if (e.target.selectionEnd === e.target.value.length){
-          //   props.editor.chain().focus(pos+1).run();
-          // }
         }
-
-      }
     }
 
     return (
