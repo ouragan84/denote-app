@@ -204,7 +204,7 @@ const MenuBar = ({ editor }) => {
     )
 }
 
-export default () => {
+export default ({data, setData}) => {
     const editor = useEditor({
         extensions: [
             ComponentNode,
@@ -225,29 +225,7 @@ export default () => {
                 },
             }),
         ],
-        content: `
-            <h2>
-                Welcome to the example editor!
-            </h2>
-            <p>
-                This is still the text editor you’re used to, but enriched with node views.
-            </p>
-            <react-component count="0"></react-component>
-            <p>
-                Did you see that? That’s a React component. We are really living in the future.
-            </p>
-            <h2>
-                Here is the quadratic formula: <span data-type="inline-math-box" latex="x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"></span> 
-                isn't it beautiful?
-            </h2>
-            <p>
-                You can edit the formula above by clicking on it.
-            </p>
-            <draw-box data="This text is set in HTML"></draw-box>
-            <p>
-                Poop 💩
-            </p>
-        `,
+        content: data,
     })
 
     const handleKeyDown = (event) => {
@@ -258,7 +236,6 @@ export default () => {
         // Indent the selected text
         
         editor.chain().focus().command(IndentCommand()).run()
-
       }
     }
 
@@ -277,14 +254,10 @@ export default () => {
               }}  
 
               onKeyDown={handleKeyDown}
+              onChange={(e) => {
+                setData(e.getHTML());
+              }}
             />
-            <button onClick={() => {
-                console.log("JSON", editor.getJSON());
-                console.log("HTML", editor.getHTML());
-                console.log("TEXT", editor.getText());
-            }}>
-                Print Content
-            </button>
         </>
     )
 }

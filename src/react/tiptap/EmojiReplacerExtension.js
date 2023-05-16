@@ -184,6 +184,8 @@ export const SmilieReplacer = Extension.create({
       textInputRule({ find: /~= $/, replace: '≈ ' }),
       textInputRule({ find: /~== $/, replace: '≋ ' }),
       textInputRule({ find: /~=== $/, replace: '≊ ' }),
+      textInputRule({ find: /~!= $/, replace: '≉ ' }),
+      textInputRule({ find: /~!== $/, replace: '≇ ' }),
 
       textInputRule({ find: /<= $/, replace: '≤ ' }),
       textInputRule({ find: />= $/, replace: '≥ ' }),
