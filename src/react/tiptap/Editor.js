@@ -10,6 +10,7 @@ import React, {useState} from 'react'
 import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
 import {SmilieReplacer} from './EmojiReplacerExtension'
+import DrawBoxNode from './DrawBoxExtentsion'
 
 const MenuBar = ({ editor }) => {
     if (!editor) {
@@ -190,7 +191,13 @@ const MenuBar = ({ editor }) => {
            onClick={() => editor.commands.insertInlineMathBox()}
            className={editor.isActive('inline-math-field') ? 'is-active' : ''}
         >
-          maf
+          math
+        </button>
+        <button
+          onClick={() => editor.commands.insertDrawBox()}
+          className={editor.isActive('draw-box') ? 'is-active' : ''}
+        >
+          Draw
         </button>
       </>
     )
@@ -202,6 +209,7 @@ export default () => {
             ComponentNode,
             MyMathBoxNode,
             SmilieReplacer,
+            DrawBoxNode,
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             StarterKit.configure({
@@ -232,6 +240,10 @@ export default () => {
             </h2>
             <p>
                 You can edit the formula above by clicking on it.
+            </p>
+            <draw-box data="This text is set in HTML"></draw-box>
+            <p>
+                Poop 💩
             </p>
         `,
     })
