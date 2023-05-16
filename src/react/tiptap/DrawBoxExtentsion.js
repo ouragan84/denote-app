@@ -2,25 +2,48 @@ import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
 import React, {useState} from 'react'
+import { Excalidraw } from "@excalidraw/excalidraw";
+import DrawBoxCustomComp from './DrawBoxCustomComp';
 
 export const DrawBox = props => {
 
-  const updateData = (data) => {
+  const updateElements = (newElements) => {
     props.updateAttributes({
-      data: data,
+      elements: JSON.stringify(newElements),
     })
   }
 
-  const onInputFieldUpdate = (event) => {
-    updateData(event.target.value);
+  const updateState = (newState) => {
+    props.updateAttributes({
+      state: JSON.stringify(newState),
+    })
   }
+
+  const onDrawBoxChange = (elements, state) => {
+    updateElements(elements);
+    updateState(state);
+  }
+
+  //console.log(JSON.parse(props.node.attrs.state)) // , 'parse: ', JSON.parse(props.node.attrs.elements)s
+  console.log('raw: ', props.node.attrs)
+
 
   return (
     <NodeViewWrapper className="draw-box">
       <span className="label">Draw Box</span>
 
       <div className="content">
-        <input type="text" value={props.node.attrs.data} onChange={onInputFieldUpdate} />
+        <div>
+          <h1 style={{ textAlign: "center" }}>Excalidraw Example</h1>
+          <div style={{ width: '500px' }}>
+            <DrawBoxCustomComp
+              state={JSON.parse(props.node.attrs.state)}
+              elements={JSON.parse(props.node.attrs.elements)}
+              onDrawBoxChange={onDrawBoxChange}
+            />
+          </div>
+
+        </div>
       </div>
     </NodeViewWrapper>
   )
@@ -33,11 +56,33 @@ const DrawBoxNode = Node.create({
   atom: true,
 
   addAttributes() {
+    // return {
+    //   elements: {
+    //     default: "{}",
+    //   },
+    //   state: {
+    //     default: "{}",
+    //   }
+
+    // }
     return {
-      data: {
-        default: "default data",
+      elements: {
+        default: "{}",
+        renderHTML: (attributes) => {
+          return {
+            elements: attributes.elements
+          };
+        }
+      },
+      state: {
+        default: "{}",
+        renderHTML: (attributes) => {
+          return {
+            state: attributes.state
+          };
+        }
       }
-    }
+    };
   },
 
   parseHTML() {
@@ -60,10 +105,13 @@ const DrawBoxNode = Node.create({
     return {
       insertDrawBox : attributes => ({ commands, editor }) => {
         const parameters = ""
-        if(attributes && attributes.data)
-          parameters = `data = "${attributes.data}"`;
+        if(attributes)
+          if(attributes.elements)
+            parameters += ` elements = "${attributes.elements}"`;
+          if(attributes.state)
+            parameters += ` state = "${attributes.state}"`;
           
-        return commands.insertContent(`<draw-box ${parameters} ></draw-box>`)
+        return commands.insertContent(`<draw-box${parameters} ></draw-box>`)
       }
     }
   },
