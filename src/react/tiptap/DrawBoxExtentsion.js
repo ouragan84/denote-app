@@ -5,10 +5,14 @@ import React, {useState} from 'react'
 
 export const DrawBox = props => {
 
-  const onDataUpdate = (event) => {
+  const updateData = (data) => {
     props.updateAttributes({
-      data: event.target.value,
+      data: data,
     })
+  }
+
+  const onInputFieldUpdate = (event) => {
+    updateData(event.target.value);
   }
 
   return (
@@ -16,7 +20,7 @@ export const DrawBox = props => {
       <span className="label">Draw Box</span>
 
       <div className="content">
-        <input type="text" value={props.node.attrs.data} onChange={onDataUpdate} />
+        <input type="text" value={props.node.attrs.data} onChange={onInputFieldUpdate} />
       </div>
     </NodeViewWrapper>
   )
