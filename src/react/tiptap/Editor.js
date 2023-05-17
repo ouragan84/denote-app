@@ -330,6 +330,29 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
             updateContent(editor.getHTML());
         },
         content: content,
+        // content: `
+        //     <h2>
+        //         Welcome to the example editor!
+        //     </h2>
+        //     <p>
+        //         This is still the text editor you’re used to, but enriched with node views.
+        //     </p>
+        //     <react-component count="0"></react-component>
+        //     <p>
+        //         Did you see that? That’s a React component. We are really living in the future.
+        //     </p>
+        //     <h2>
+        //         Here is the quadratic formula: <span data-type="inline-math-box" latex="x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"></span> 
+        //         isn't it beautiful?
+        //     </h2>
+        //     <p>
+        //         You can edit the formula above by clicking on it.
+        //     </p>
+        //     <draw-box elements={"elements":[{"type":"rectangle","version":141,"versionNonce":361174001,"isDeleted":false,"id":"oDVXy8D6rom3H1-LLH2-f","fillStyle":"hachure","strokeWidth":1,"strokeStyle":"solid","roughness":1,"opacity":100,"angle":0,"x":100.50390625,"y":93.67578125,"strokeColor":"#000000","backgroundColor":"transparent","width":186.47265625,"height":141.9765625,"seed":1968410350,"groupIds":[]},{"id":"-xMIs_0jIFqvpx-R9UnaG","type":"ellipse","x":300.5703125,"y":190.69140625,"width":198.21875,"height":129.51171875,"angle":0,"strokeColor":"#000000","backgroundColor":"transparent","fillStyle":"hachure","strokeWidth":1,"strokeStyle":"solid","roughness":1,"opacity":100,"groupIds":[],"seed":957947807,"version":47,"versionNonce":1128618623,"isDeleted":false},{"fileId":"rocket","type":"image","x":606.1042326312408,"y":153.57729779411773,"width":231.30325348751828,"height":231.64340533088227,"angle":0,"strokeColor":"transparent","backgroundColor":"transparent","fillStyle":"hachure","strokeWidth":1,"strokeStyle":"solid","roughness":1,"opacity":100,"groupIds":[],"strokeSharpness":"round","seed":707269846,"version":143,"versionNonce":2028982666,"isDeleted":false,"boundElements":null,"updated":1644914782403,"link":null,"status":"pending","scale":[1,1]}]}></draw-box>
+        //     <p>
+        //         Poop 💩
+        //     </p>
+        // `,
     })
 
     useEffect(() => {

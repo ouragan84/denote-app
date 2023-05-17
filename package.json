@@ -132,6 +132,7 @@
   "author": "Denote",
   "license": "ISC",
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.15.2",
     "@tiptap/core": "^2.0.3",
     "@tiptap/extension-code-block-lowlight": "^2.0.3",
     "@tiptap/extension-color": "^2.0.3",
