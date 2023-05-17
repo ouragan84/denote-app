@@ -256,6 +256,7 @@ const MenuBar = ({ editor, fileName }) => {
                 <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
                 <button
+                  style={{border:0, backgroundColor:'#8803fc', borderRadius:5, color:'white'}}
                   onClick={() => {
                     callAIPrompt(editor, 'Prompt');
                   }}
@@ -263,6 +264,7 @@ const MenuBar = ({ editor, fileName }) => {
                   P
                 </button>
                 <button
+                style={{border:0, backgroundColor:'#03b1fc', borderRadius:5, color:'white'}}
                   onClick={() => {
                     callAIPrompt(editor, 'Prompt');
                   }}
@@ -270,6 +272,7 @@ const MenuBar = ({ editor, fileName }) => {
                   B
                 </button>
                 <button
+                style={{border:0, backgroundColor:'#e83168', borderRadius:5, color:'white'}}
                   onClick={() => {
                     callAIPrompt(editor, 'Prompt');
                   }}
