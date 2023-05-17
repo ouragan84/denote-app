@@ -1,9 +1,48 @@
 import xmlFormat from 'xml-formatter';
 const url = 'http://localhost:8080/ai';
 
-export const callAIPrompt = async (editor, promptTitle) => {
+const getContext = (editor, errorIfEmpty=false) => {
+    const document = editor.getHTML();
 
-    let context, question;
+    // if the editor is not in focus, throw an error
+    if (!editor.isFocused) {
+        throw new Error('Place your cursor in the editor.');
+    }
+
+    let selection = editor.getHTML(editor.state.selection.from, editor.state.selection.to);
+
+    if( errorIfEmpty && selection.length === 0 ){
+        throw new Error('The selection is empty.');
+    }
+
+    // add <cursor> and </cursor> around the selection, with the selcted content in between
+    let context = document.replace(selection, '<cursor>' + selection + '</cursor>');
+
+    // make sure context is under 12000 characters
+    if (context.length > 12000) {
+        // if it is, limit the text to 12000 characters, and make sure the cursor is inside the context
+        const cursorIndex = context.indexOf('<cursor>');
+        const cursorEndIndex = context.indexOf('</cursor>');
+        const contextStart = context.substring(0, cursorIndex);
+        const contextEnd = context.substring(cursorEndIndex + 9);
+        const contextLength = contextStart.length + contextEnd.length;
+        const contextOverflow = contextLength - 12000;
+        const contextStartOverflow = contextStart.length - contextOverflow;
+        context = contextStart.substring(contextStartOverflow) + contextEnd;
+    }
+
+    return [context, selection]
+}
+
+
+const replaceSelection = (editor, replacement) => {
+    // insert the replacement html where the user selected
+    editor.commands.insertContent(replacement);
+}
+
+
+export const callAIPrompt = async (editor, promptTitle, getModalPrompt, errorCallback, loadingCallback) => {
+    let question, selection;
 
     console.log("Calling AI Prompt: " + promptTitle);
 
@@ -14,17 +53,53 @@ export const callAIPrompt = async (editor, promptTitle) => {
 
     // temporarily disable the editor
     editor.isReadOnly = true;
+    loadingCallback(true);
 
+    if( promptTitle === 'Prompt' ){
+        // get the context
+        let context;
+        try {
+            [context, selection] = getContext(editor);
+        } catch (error) {
+            loadingCallback(false);
+            return errorCallback(error.message);
+        }
 
-    // TODO: Depending on question type, get the context and question
+        const userPrompt = await getModalPrompt(context);
 
-    context = editor.getHTML();
-    question = "What is the meaning of life?";
+        // get the question
+        question = xmlFormat(context) + '\n\n----------\n\n' + userPrompt;
+    } else if ( promptTitle === 'FillBlanks' ) {
+        // get the context
+        let context;
+        try {
+            [context, selection] = getContext(editor, true);
+        } catch (error) {
+            loadingCallback(false);
+            return errorCallback(error.message);
+        }
 
+        // get the question
+        question = xmlFormat(context);
+    } else if ( promptTitle === 'Beautify' ) {
+        // get the context
+        let context;
+        try {
+            [context, selection] = getContext(editor, true);
+        } catch (error) {
+            loadingCallback(false);
+            return errorCallback(error.message);
+        }
+
+        // get the question
+        question = xmlFormat(context);
+    } else {
+        loadingCallback(false);
+        return errorCallback('Invalid prompt title.');
+    }
 
     const data = {
         "question": question,
-        "context": xmlFormat(context)
     };
 
     console.log('data', data);
@@ -45,11 +120,10 @@ export const callAIPrompt = async (editor, promptTitle) => {
 
     console.log('answer', xmlFormat(answer));
 
-
-    // depending on the question type, insert the answer into the editor
-    editor.commands.insertContent(answer);
-
+    // replace the selection with the answer
+    replaceSelection(editor, answer);
 
     // re-enable the editor
     editor.isReadOnly = false;
+    loadingCallback(false);
 }

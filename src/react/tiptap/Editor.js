@@ -11,6 +11,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import React, {useEffect, useState} from 'react'
+import Modal from 'react-modal'
 
 import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
@@ -19,7 +20,6 @@ import DrawBoxNode from './DrawBoxExtentsion'
 import IndentCommand from './IndentCommandExtension'
 import CodeBlockExtension from './CodeBlockExtension'
 import { callAIPrompt } from './AIPromptsExtension'
-
 
 import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit } from "react-icons/fa";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
@@ -283,6 +283,19 @@ const MenuBar = ({ editor, fileName }) => {
 }
 
 export default ({content, updateContent, setEditorCallback, fileName}) => {
+
+    const [promptModalOpen, setPromptModalOpen] = useState(false);
+    const [errorModalOpen, setErrorModalOpen] = useState(false);
+    const [loadingModalOpen, setLoadingModalOpen] = useState(false);
+    const [prompt, setPrompt] = useState('');
+    const [error, setError] = useState('');
+    const [promptReturnCallback, setPromptReturnCallback] = useState(null);
+
+    const setErrorMessage = (message) => {
+      setError(message);
+      setErrorModalOpen(true);
+    }
+
     const editor = useEditor({
         extensions: [
             Document,
@@ -331,10 +344,11 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
       }
     }
 
-
     return (
         <>
             <MenuBar editor={editor} fileName={fileName}
+              setErrorMessage={setErrorMessage}
+              setPromptModalOpen={setPromptModalOpen}
               style={{
                 height: '10%',
               }}
