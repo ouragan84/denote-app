@@ -14,15 +14,32 @@ import {SmilieReplacer} from './EmojiReplacerExtension'
 import DrawBoxNode from './DrawBoxExtentsion'
 import IndentCommand from './IndentCommandExtension'
 
+
+import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo } from "react-icons/fa";
+import { RiBarChartHorizontalLine } from 'react-icons/ri'
+import { BiMath } from 'react-icons/bi'
+
 const MenuBar = ({ editor }) => {
     if (!editor) {
       return null
     }
+
+    let initCols = []
+    for (let i = 0; i < 17; i++)
+      initCols.push('black')
+    const [cols, setCols] = useState(initCols)
   
     return (
-      <>
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
+      <div style={{display:'flex', justifyContent:'center'}}>
+        <div style={{width:'70vw',display:'flex', flexDirection:'row', justifyContent:'space-between', paddingLeft:'1rem', borderRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
+        <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'28rem',}}>
+        <FaBold
+          onClick={() => {
+            editor.chain().focus().toggleBold().run()
+          }}
+          onMouseDown={()=>cols[0] = 'gray'}
+          onMouseUp={()=>cols[0] = 'black'}
+          style={{color:cols[0]}}
           disabled={
             !editor.can()
               .chain()
@@ -33,8 +50,11 @@ const MenuBar = ({ editor }) => {
           className={editor.isActive('bold') ? 'is-active' : ''}
         >
           bold
-        </button>
-        <button
+        </FaBold>
+        <FaItalic
+          onMouseDown={()=>cols[1] = 'gray'}
+          onMouseUp={()=>cols[1] = 'black'}
+          style={{color:cols[1]}}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={
             !editor.can()
@@ -46,8 +66,28 @@ const MenuBar = ({ editor }) => {
           className={editor.isActive('italic') ? 'is-active' : ''}
         >
           italic
-        </button>
-        <button
+        </FaItalic>
+        
+        <FaUnderline
+          onMouseDown={()=>cols[2] = 'gray'}
+          onMouseUp={()=>cols[2] = 'black'}
+          style={{color:cols[2]}}
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          disabled={
+            !editor.can()
+              .chain()
+              .focus()
+              .toggleItalic()
+              .run()
+          }
+          className={editor.isActive('italic') ? 'is-active' : ''}
+        >
+          Underline
+        </FaUnderline>
+        <FaStrikethrough
+          onMouseDown={()=>cols[3] = 'gray'}
+          onMouseUp={()=>cols[3] = 'black'}
+          style={{color:cols[3]}}
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={
             !editor.can()
@@ -59,8 +99,11 @@ const MenuBar = ({ editor }) => {
           className={editor.isActive('strike') ? 'is-active' : ''}
         >
           strike
-        </button>
-        <button
+        </FaStrikethrough>
+        <FaCode
+          onMouseDown={()=>cols[4] = 'gray'}
+          onMouseUp={()=>cols[4] = 'black'}
+          style={{color:cols[4]}}
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={
             !editor.can()
@@ -72,38 +115,50 @@ const MenuBar = ({ editor }) => {
           className={editor.isActive('code') ? 'is-active' : ''}
         >
           code
-        </button>
-        <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
+        </FaCode>
+        {/* <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
           clear marks
-        </button>
-        <button onClick={() => editor.chain().focus().clearNodes().run()}>
+        </button> */}
+        <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().run()} 
+        onMouseDown={()=>cols[5] = 'gray'}
+        onMouseUp={()=>cols[5] = 'black'}
+        style={{color:cols[5]}}>
           clear nodes
-        </button>
-        <button
+        </FaRemoveFormat>
+        {/* <button
           onClick={() => editor.chain().focus().setParagraph().run()}
           className={editor.isActive('paragraph') ? 'is-active' : ''}
         >
           paragraph
-        </button>
-        <button
+        </button> */}
+        <FaHeading
+        onMouseDown={()=>cols[6] = 'gray'}
+        onMouseUp={()=>cols[6] = 'black'}
+        style={{color:cols[6]}}
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
         >
           h1
-        </button>
-        <button
+        </FaHeading>
+        <FaHeading
+        onMouseDown={()=>cols[7] = 'gray'}
+        onMouseUp={()=>cols[7] = 'black'}
+        style={{color:cols[7], fontSize: 14}}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
         >
           h2
-        </button>
-        <button
+        </FaHeading>
+        <FaHeading
+        onMouseDown={()=>cols[8] = 'gray'}
+        onMouseUp={()=>cols[8] = 'black'}
+        style={{color:cols[8], fontSize: 12}}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
         >
           h3
-        </button>
-        <button
+        </FaHeading>
+        {/* <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
           className={editor.isActive('heading', { level: 4 }) ? 'is-active' : ''}
         >
@@ -120,38 +175,69 @@ const MenuBar = ({ editor }) => {
           className={editor.isActive('heading', { level: 6 }) ? 'is-active' : ''}
         >
           h6
-        </button>
-        <button
+        </button> */}
+        <FaList
+        onMouseDown={()=>cols[9] = 'gray'}
+        onMouseUp={()=>cols[9] = 'black'}
+        style={{color:cols[9]}}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive('bulletList') ? 'is-active' : ''}
         >
           bullet list
-        </button>
-        <button
+        </FaList>
+        <FaListOl
+        onMouseDown={()=>cols[10] = 'gray'}
+        onMouseUp={()=>cols[10] = 'black'}
+        style={{color:cols[10]}}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={editor.isActive('orderedList') ? 'is-active' : ''}
         >
           ordered list
-        </button>
-        <button
+        </FaListOl>
+        <FaLaptopCode
+        onMouseDown={()=>cols[11] = 'gray'}
+        onMouseUp={()=>cols[11] = 'black'}
+        style={{color:cols[11]}}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive('codeBlock') ? 'is-active' : ''}
         >
           code block
-        </button>
-        <button
+        </FaLaptopCode>
+        <FaQuoteLeft
+        onMouseDown={()=>cols[12] = 'gray'}
+        onMouseUp={()=>cols[12] = 'black'}
+        style={{color:cols[12]}}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={editor.isActive('blockquote') ? 'is-active' : ''}
         >
           blockquote
-        </button>
-        <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+        </FaQuoteLeft>
+        <RiBarChartHorizontalLine onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        onMouseDown={()=>cols[13] = 'gray'}
+        onMouseUp={()=>cols[13] = 'black'}
+        style={{color:cols[13]}}
+        >
           horizontal rule
-        </button>
-        <button onClick={() => editor.chain().focus().setHardBreak().run()}>
+        </RiBarChartHorizontalLine>
+        <BiMath
+        onMouseDown={()=>cols[14] = 'gray'}
+        onMouseUp={()=>cols[14] = 'black'}
+        style={{color:cols[14]}}
+            // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
+           onClick={() => editor.commands.insertInlineMathBox()}
+           className={editor.isActive('inline-math-field') ? 'is-active' : ''}
+        >
+          maf
+        </BiMath>
+        </div>
+        {/* <button onClick={() => editor.chain().focus().setHardBreak().run()}>
           hard break
-        </button>
-        <button
+        </button> */}
+        <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem'}}>
+        <FaUndo
+        onMouseDown={()=>cols[15] = 'gray'}
+        onMouseUp={()=>cols[15] = 'black'}
+        style={{color:cols[15]}}
           onClick={() => editor.chain().focus().undo().run()}
           disabled={
             !editor.can()
@@ -162,8 +248,11 @@ const MenuBar = ({ editor }) => {
           }
         >
           undo
-        </button>
-        <button
+        </FaUndo>
+        <FaRedo
+        onMouseDown={()=>cols[15] = 'gray'}
+        onMouseUp={()=>cols[15] = 'black'}
+        style={{color:cols[15]}}
           onClick={() => editor.chain().focus().redo().run()}
           disabled={
             !editor.can()
@@ -174,34 +263,24 @@ const MenuBar = ({ editor }) => {
           }
         >
           redo
-        </button>
-        <button
+        </FaRedo>
+        </div>
+        {/* <button
           onClick={() => editor.chain().focus().setColor('#958DF1').run()}
           className={editor.isActive('textStyle', { color: '#958DF1' }) ? 'is-active' : ''}
         >
           purple
-        </button>
-        <button
+        </button> */}
+        {/* <button
             // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
            onClick={() => editor.commands.setReactComponent()}
            className={editor.isActive('react-component') ? 'is-active' : ''}
         >
           react component
-        </button>
-        <button
-            // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
-           onClick={() => editor.commands.insertInlineMathBox()}
-           className={editor.isActive('inline-math-field') ? 'is-active' : ''}
-        >
-          math
-        </button>
-        <button
-          onClick={() => editor.commands.insertDrawBox()}
-          className={editor.isActive('draw-box') ? 'is-active' : ''}
-        >
-          Draw
-        </button>
-      </>
+        </button> */}
+
+      </div>
+      </div>
     )
 }
 
@@ -266,8 +345,11 @@ export default ({content, updateContent, setEditorCallback}) => {
               editor={editor} 
               onKeyDown={handleKeyDown}
               style={{
+                border: '1px solid black',
+                margin: '1rem',
                 border: 'black 2px solid',
                 borderRadius: '5px',
+                minHeight: '10rem',
                 fontFamily: 'sans-serif',
                 height: '90%',
                 overflowY: 'auto',

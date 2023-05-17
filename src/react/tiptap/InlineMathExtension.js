@@ -68,7 +68,7 @@ const InlineMathBoxNode = Node.create({
     addAttributes() {
         return {
           latex: {
-            default: "",
+            default: "x^2+y^2",
             renderHTML: (attributes) => {
               return {
                 latex: attributes.latex
