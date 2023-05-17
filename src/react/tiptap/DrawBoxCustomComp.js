@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react"
+import ReactDOM from 'react-dom';
 import {
   exportToCanvas,
   exportToSvg,
@@ -16,6 +17,8 @@ import Sidebar from "./Sidebar.js"
 import "./styles.scss"
 import initialData from "./InitialData"
 import { nanoid } from "nanoid"
+import { EditableMathField } from 'react-mathquill';
+
 
 const COMMENT_SVG = (
   <svg
@@ -49,17 +52,7 @@ const resolvablePromise = () => {
   return promise
 }
 
-const renderTopRightUI = () => {
-  return (
-    <button
-      onClick={() => alert("This is dummy top right UI")}
-      style={{ height: "2.5rem" }}
-    >
-      {" "}
-      Click me{" "}
-    </button>
-  )
-}
+
 
 export default function DrawBoxCustomComp(props) {
   const appRef = useRef(null)
@@ -74,6 +67,7 @@ export default function DrawBoxCustomComp(props) {
   const [isCollaborating, setIsCollaborating] = useState(false)
   const [commentIcons, setCommentIcons] = useState({})
   const [comment, setComment] = useState(null)
+  
 
   const initialStatePromiseRef = useRef({ promise: null })
   if (!initialStatePromiseRef.current.promise) {
@@ -81,6 +75,138 @@ export default function DrawBoxCustomComp(props) {
   }
 
   const [excalidrawAPI, setExcalidrawAPI] = useState(null)
+  const mathQuillRef = useRef(null);
+  const [mathButtonClicked, setMathButtonClicked] = useState(null)
+  const [mathFieldPosition, setMathFieldPosition] = useState({ x: 0, y: 0 });
+
+
+  // useEffect(() => {
+  //   if (mathQuillRef.current) {
+  //     const MQ = MathQuill.getInterface(2); // MathQuill version 2
+
+  //     const mathQuillElement = document.createElement('span');
+  //     mathQuillElement.setAttribute('contenteditable', 'true');
+  //     mathQuillElement.style.border = '1px solid #ccc'; // Customize the box style as needed
+
+  //     const mathField = MQ.MathField(mathQuillElement, {
+  //       spaceBehavesLikeTab: true,
+  //       handlers: {
+  //         edit: (mathField) => {
+  //           // Handle mathField changes here
+  //           // Example: console.log(mathField.latex());
+  //           console.log(mathField.latex());
+  //         },
+  //       },
+  //     });
+
+  //     mathQuillRef.current.appendChild(mathQuillElement);
+  //   }
+  // }, []);
+  
+
+  const handleMathButtonClick = () => {
+
+    setMathButtonClicked(!mathButtonClicked)
+
+    if (excalidrawAPI) {
+      console.log('in the api')
+      const excalidrawCanvas = excalidrawAPI.getSceneElements();
+
+      if (excalidrawCanvas.length > 0) {
+        const mathQuillBox = mathQuillRef.current;
+
+        console.log('in the canvas')
+
+        const sceneData = {
+          elements: [
+            {
+              type: "rectangle",
+              version: 141,
+              versionNonce: 361174001,
+              isDeleted: false,
+              id: "oDVXy8D6rom3H1-LLH2-f",
+              fillStyle: "hachure",
+              strokeWidth: 1,
+              strokeStyle: "solid",
+              roughness: 1,
+              opacity: 100,
+              angle: 0,
+              x: 100.50390625,
+              y: 93.67578125,
+              strokeColor: "#c92a2a",
+              backgroundColor: "transparent",
+              width: 186.47265625,
+              height: 141.9765625,
+              seed: 1968410350,
+              groupIds: [],
+              boundElements: null,
+              locked: false,
+              link: null,
+              updated: 1,
+              roundness: {
+                type: 3,
+                value: 32,
+              },
+            },
+            {
+
+              "type": "text",
+              "x": 162.896484375,
+              "y": 55.4453125,
+              "width": 420,
+              "height": 25,
+              "angle": 0,
+              "strokeColor": "#000000",
+              "backgroundColor": "transparent",
+              "fillStyle": "hachure",
+              "strokeWidth": 1,
+              "strokeStyle": "solid",
+              "roughness": 1,
+              "opacity": 100,
+              "groupIds": [],
+              "strokeSharpness": "sharp",
+              "seed": 774263519,
+              "version": 3,
+              "versionNonce": 1958125311,
+              "isDeleted": false,
+              "boundElements": null,
+              "updated": 1684289809841,
+              "link": null,
+              "locked": false,
+              "text": "x = ",
+              "fontSize": 20,
+              "fontFamily": 1,
+              "textAlign": "left",
+              "verticalAlign": "top",
+              "baseline": 18,
+              "containerId": null,
+              "originalText": "x = "
+            }
+          ],
+          appState: {
+            viewBackgroundColor: "#edf2ff",
+          },
+        };
+        excalidrawAPI.updateScene(sceneData);
+
+        //excalidrawAPI.addCallback(onClick, 'canvas.click');
+      }
+    }
+  };
+
+  const renderTopRightUI = () => {
+    return (
+      <>
+        <button
+          onClick={handleMathButtonClick}
+          style={{ height: "2.5rem" }}
+        >
+          {" "}
+          Math{" "}
+        </button>
+      </>
+    )
+  }
 
   useHandleLibrary({ excalidrawAPI })
 
@@ -111,6 +237,10 @@ export default function DrawBoxCustomComp(props) {
     }
     fetchData()
   }, [excalidrawAPI])
+
+  const handleMathChange = (mathField) => {
+    console.log('math change: ', mathField)
+  }
 
   const renderFooter = () => {
     return (
@@ -146,6 +276,7 @@ export default function DrawBoxCustomComp(props) {
           {" "}
           custom footer{" "}
         </button>
+        {mathButtonClicked && <div ref={mathQuillRef} />}
       </>
     )
   }
@@ -441,7 +572,7 @@ export default function DrawBoxCustomComp(props) {
   }
 
 
-  console.log('in draw: ', props.elements)
+  //console.log('in draw: ', props.elements)
   return (
     <div className="App" ref={appRef}>
       <h1> Excalidraw Example</h1>
@@ -598,7 +729,7 @@ export default function DrawBoxCustomComp(props) {
             onLinkOpen={onLinkOpen}
             onPointerDown={onPointerDown}
             onScrollChange={rerenderCommentIcons}
-            handleKeyboardGlobally
+            // handleKeyboardGlobally
           />
           {Object.keys(commentIcons || []).length > 0 && renderCommentIcons()}
           {comment && renderComment()}

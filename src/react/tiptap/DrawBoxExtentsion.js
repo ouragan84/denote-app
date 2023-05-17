@@ -35,7 +35,7 @@ export const DrawBox = props => {
       <div className="content">
         <div>
           <h1 style={{ textAlign: "center" }}>Excalidraw Example</h1>
-          <div style={{ width: '500px' }}>
+          <div style={{ width: '1000px' }}>
             <DrawBoxCustomComp
               state={JSON.parse(props.node.attrs.state)}
               elements={JSON.parse(props.node.attrs.elements)}
