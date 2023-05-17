@@ -15,23 +15,27 @@ import DrawBoxNode from './DrawBoxExtentsion'
 import IndentCommand from './IndentCommandExtension'
 
 
-import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo } from "react-icons/fa";
+import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit } from "react-icons/fa";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { BiMath } from 'react-icons/bi'
 
-const MenuBar = ({ editor }) => {
+const MenuBar = ({ editor, fileName }) => {
     if (!editor) {
       return null
     }
 
     let initCols = []
-    for (let i = 0; i < 17; i++)
+    for (let i = 0; i < 18; i++)
       initCols.push('black')
     const [cols, setCols] = useState(initCols)
   
     return (
-      <div style={{display:'flex', justifyContent:'center'}}>
-        <div style={{width:'70vw',display:'flex', flexDirection:'row', justifyContent:'space-between', paddingLeft:'1rem', borderRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
+      <div style={{display:'flex',flexDirection:'row', justifyContent:'center', marginLeft:15, marginRight:15}}>
+        <div style={{paddingLeft:'1rem', borderBottomLeftRadius:18, borderBottomRightRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
+        <div style={{marginBottom:'10px'}}>
+        <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>{fileName}</span>
+        </div>
+        <div style={{width:'70vw',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
         <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'28rem',}}>
         <FaBold
           onClick={() => {
@@ -229,6 +233,15 @@ const MenuBar = ({ editor }) => {
         >
           maf
         </BiMath>
+        <FaRegEdit
+          onMouseDown={()=>cols[17] = 'gray'}
+          onMouseUp={()=>cols[17] = 'black'}
+          style={{color:cols[17]}}
+          onClick={() => editor.commands.insertDrawBox()}
+          className={editor.isActive('draw-box') ? 'is-active' : ''}
+        >
+            Draw
+        </FaRegEdit>
         </div>
         {/* <button onClick={() => editor.chain().focus().setHardBreak().run()}>
           hard break
@@ -265,26 +278,14 @@ const MenuBar = ({ editor }) => {
           redo
         </FaRedo>
         </div>
-        {/* <button
-          onClick={() => editor.chain().focus().setColor('#958DF1').run()}
-          className={editor.isActive('textStyle', { color: '#958DF1' }) ? 'is-active' : ''}
-        >
-          purple
-        </button> */}
-        {/* <button
-            // Some Quirkiness here, probably a better way to do this, maybe with setNode() function instead of insertContent()
-           onClick={() => editor.commands.setReactComponent()}
-           className={editor.isActive('react-component') ? 'is-active' : ''}
-        >
-          react component
-        </button> */}
+        </div>
 
-      </div>
+        </div>
       </div>
     )
 }
 
-export default ({content, updateContent, setEditorCallback}) => {
+export default ({content, updateContent, setEditorCallback, fileName}) => {
     const editor = useEditor({
         extensions: [
             ComponentNode,
@@ -336,7 +337,7 @@ export default ({content, updateContent, setEditorCallback}) => {
 
     return (
         <>
-            <MenuBar editor={editor} 
+            <MenuBar editor={editor} fileName={fileName}
               style={{
                 height: '10%',
               }}
@@ -345,11 +346,6 @@ export default ({content, updateContent, setEditorCallback}) => {
               editor={editor} 
               onKeyDown={handleKeyDown}
               style={{
-                border: '1px solid black',
-                margin: '1rem',
-                border: 'black 2px solid',
-                borderRadius: '5px',
-                minHeight: '10rem',
                 fontFamily: 'sans-serif',
                 height: '90%',
                 overflowY: 'auto',

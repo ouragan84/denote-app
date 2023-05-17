@@ -14,7 +14,7 @@ export default () => {
     const [editor, setEditor] = useState(null);
     const [isEditorLoaded, setIsEditorLoaded] = useState(false);
     const [filePath, setFilePath] = useState(null);
-    const [fileName, setFileName] = useState("ᐧ Unsaved Notes");
+    const [fileName, setFileName] = useState("Unsaved Notes ᐧ");
 
 
     // ref to last editor
@@ -32,14 +32,12 @@ export default () => {
         if (filePath){
             fs.writeFileSync(filePath, newData);
         }
-
-
     };
 
     const handleFileChange = (filepath, newData) => {
         setData(newData);
         setFilePath(filepath);
-        setFileName(path ? path.basename(filepath).split('.')[0] : 'ᐧ Unsaved Notes');
+        setFileName(path ? path.basename(filepath).split('.')[0] : 'Unsaved Notes ᐧ');
 
         // console.log(editorRef.current);
 
@@ -97,20 +95,26 @@ export default () => {
                     overflow: 'hidden',
                 }}
             >
-                <h2 style={{
+                {/* <h2 style={{
                     width: '100%',
                     height: '5%',
-                }}>{fileName}</h2>
+                    fontFamily: 'sans-serif',
+                    fontSize: '20px',
+                    marginLeft: '10px',
+                    marginTop: '10px',
+                    marginBottom: '5px',
+                }}>{fileName}</h2> */}
                 {isEditorLoaded?
                     <Editor
                         style={{
-                            height: '95%',
+                            height: '100%',
                             width: '100%',
                             overflow: 'hidden',
                         }}
                         content={data}
                         setEditorCallback={setEditor}
                         updateContent={handleDataUpdate}
+                        fileName={fileName}
                     />
                     :
                     <></>
