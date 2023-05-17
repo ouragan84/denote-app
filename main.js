@@ -167,9 +167,9 @@ app.whenReady().then(() => {
     console.log(userID);
 
     const visitor = ua('UA-268494877-1', userID);
+    visitor.set('uid', userID);
     // Track the app open event
     visitor.event('App', 'Open').send();
-    
 
     if(!isDev){
         autoUpdater.checkForUpdates();
