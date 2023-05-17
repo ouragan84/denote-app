@@ -41,7 +41,7 @@ const MenuBar = ({ editor, fileName }) => {
             <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>{fileName}</span>
             </div>
             <div style={{width:'70vw',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'28rem',}}>
+              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:500, alignItems:'center'}}>
                 <FaBold
                   onClick={() => {
                     editor.chain().focus().toggleBold().run()

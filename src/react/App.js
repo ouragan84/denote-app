@@ -58,17 +58,19 @@ export default () => {
                 width: '100vw',
                 height: '100vh',
                 overflow: 'hidden',
+                fontFamily: 'Open Sans'
             }}
         >
             <div 
                 style={{
                     width: '20vw',
                     height: '100vh',
-                    backgroundColor: 'lightgray',
+                    backgroundColor: 'white',
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     overflow: 'hidden',
+                    boxShadow: "0px 0px 7px #9E9E9E"
                 }}
             >
                 <FileManager

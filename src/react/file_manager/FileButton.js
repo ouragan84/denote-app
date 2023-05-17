@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ipcRenderer } from "electron";
 import path from "path";
 import fs from "fs";
+import { FaFolder } from "react-icons/fa"
+
 
 function FileButton({explorer, clickCallback, path, isRoot=false}) {
     
@@ -14,7 +16,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false}) {
                 <div style={{marginTop:5}}>
                     <div style={{
                         marginTop: '6px',
-                        backgroundColor: 'lightgray',
+                        backgroundColor: 'white',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -22,7 +24,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false}) {
                         width: '300px',
                         cursor: 'pointer',
                     }} onClick={()=>setExpand(!expand)}>
-                        <span>🗂️ {explorerData.name}</span>
+                        <div style={{alignItems:'center'}}><FaFolder/> {explorerData.name}</div>
                     </div> 
                     <div style={{display: expand ? 'block': 'none', paddingLeft: 25}}>
                         {explorerData.items.map((exp) => {
