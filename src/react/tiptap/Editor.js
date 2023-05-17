@@ -219,7 +219,7 @@ const MenuBar = ({ editor, fileName }) => {
                 >
                     Draw
                 </FaRegEdit>
-                <button
+                {/* <button
                   onClick={() => {
                     callAIPrompt(editor, 'Prompt');
                   }}
@@ -239,7 +239,7 @@ const MenuBar = ({ editor, fileName }) => {
                   }}
                 >
                   FB
-                </button>
+                </button> */}
               </div>
               <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem'}}>
                 <FaUndo

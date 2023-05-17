@@ -20,6 +20,7 @@
       const [workingFile, setWorkingFile] = useState(null)
 
       const contentRef = useRef(content);
+      const workingFolderRef = useRef(workingFolder);
 
       const openNewFile = () => {
         updateContent(null, "");
@@ -28,6 +29,9 @@
       const getFolderData = (folderPath) => {
 
           // console.log(typeof folderPath, folderPath)
+
+          if(!folderPath || folderPath === '')
+                return;
 
           if(!fs.existsSync(folderPath))
               return;
@@ -74,6 +78,10 @@
       }, [content]);
 
       useEffect(() => {
+        workingFolderRef.current = workingFolder;
+      }, [workingFolder]);
+
+      useEffect(() => {
           // directory was selected
           ipcRenderer.on('open-folder-reply', (event, folderPath) => {
               if (!folderPath)
@@ -112,15 +120,16 @@
             console.log('contentRef.current', contentRef.current);
 
 
-            updateContent(filePath, content);
+            updateContent(filePath, contentRef.current);
 
             if (!filePath)
                 return;
             setWorkingFile(filePath);
 
-
+            console.log('workingFolder', workingFolderRef.current);
+            
             // update explorer
-            let folderData = getFolderData(workingFolder);
+            let folderData = getFolderData(workingFolderRef.current);
             setExplorerData(folderData);
           });
 
