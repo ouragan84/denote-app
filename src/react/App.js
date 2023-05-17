@@ -37,11 +37,7 @@ export default () => {
     const handleFileChange = (filepath, newData) => {
         setData(newData);
         setFilePath(filepath);
-        setFileName(path ? path.basename(filepath).split('.')[0] : 'Unsaved Notes ᐧ');
-
-        // console.log(editorRef.current);
-
-        console.log(newData)
+        setFileName(filepath ? filepath.basename(filepath).split('.dnt')[0] : 'Unsaved Notes ᐧ');
 
         editorRef.current.commands.setContent(newData);
     };

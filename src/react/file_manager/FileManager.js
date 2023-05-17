@@ -6,28 +6,24 @@
   import File from "./FileButton";
   const { v4: uuid } = require('uuid');
 
-  const explorer = {
-      name: "Select Working Directory",
-      isFolder: true,
-      onClick: () => {ipcRenderer.send('open-saved-folder');},
-      id: uuid(),
-      path: "",
-      items: [
-      ]
-  };
-
   const ignoreList = [
     '.git',
     '.DS_Store',
   ];
 
+  const extension = '.dnt';
+
   function FileManager({content, updateContent, setEditorLoaded }) {
 
-      const [explorerData, setExplorerData] = useState(explorer)
+      const [explorerData, setExplorerData] = useState(null)
       const [workingFolder, setWorkingFolder] = useState(null)
       const [workingFile, setWorkingFile] = useState(null)
 
       const contentRef = useRef(content);
+
+      const openNewFile = () => {
+        updateContent(null, "");
+      }
 
       const getFolderData = (folderPath) => {
 
@@ -56,8 +52,11 @@
                   if(newFolderData)
                     folderData.items.push(newFolderData);
               }else{
+                    if (path.extname(file) !== extension)
+                        return;
+
                   folderData.items.push({
-                      name: file,
+                      name: file.split(extension)[0],
                       path: path.join(folderPath, file),
                       onClick: () => { updateContent(path.join(folderPath, file), fs.readFileSync(path.join(folderPath, file), 'utf8')); },
                       isFolder: false,
@@ -103,7 +102,7 @@
 
           // new file shortcut was pressed
           ipcRenderer.on('new-file-shortcut', (event) => {
-              updateContent(null, ""); // new file
+            openNewFile();
           })
 
           // file was saved
@@ -135,7 +134,22 @@
               
       return (
           <>
+            {explorerData ?
               <File explorer={explorerData} isRoot={true} key={explorerData.id}/>
+              : <></>
+            }
+            <div 
+                style={{
+                    display: 'flex', 
+                    justifyContent: 'space-evenly',
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                }}
+            >
+                <button onClick={() => {ipcRenderer.send('open-folder')}}>Open Folder</button>
+                <button onClick={() => {openNewFile();}}>New File</button>
+            </div>
           </>
       );
 

@@ -198,9 +198,11 @@ ipcMain.on('app_version', (event) => {
 
 
 const openFolder = async (event) => {
+    const folderpath = homedir;
+
     dialog.showOpenDialog({
         title: 'Select the Directory to be opened',
-        defaultPath: path.join(homedir, 'Desktop'),
+        defaultPath: folderpath,
         buttonLabel: 'Open',
         properties: process.platform === 'darwin' ? ['openDirectory'] : []
     }).then(dir => {
@@ -238,9 +240,13 @@ ipcMain.on('open-saved-folder', (event) => {
 ipcMain.on('file-saved', (event) => {
     // dialog to save file
     // If the platform is 'win32' or 'Linux'
+
+    const folderpath = store.get('lastOpenedFolder');
+    if(!folderpath) folderpath = homedir;
+
     dialog.showSaveDialog ({
         title: 'Select where to save the file',
-        defaultPath: path.join(homedir, 'Desktop'),
+        defaultPath: folderpath,
         buttonLabel: 'Save',
         // Restricting the user to only Text Files.
         filters: [
