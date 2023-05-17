@@ -1,7 +1,7 @@
 const { BrowserWindow, app, ipcMain, Menu, dialog} = require('electron');
 const fs = require("fs");
 const path = require('path');
-// const homedir = require('os').homedir();
+const homedir = require('os').homedir();
 const { autoUpdater, AppUpdater} = require('electron-updater');
 const isDev = require('electron-is-dev');
 
@@ -12,9 +12,6 @@ autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 autoUpdater.logger = require('electron-log');
 autoUpdater.logger.transports.file.level = 'info';
-
-const windows = [];
-
 const createWindow = async () => {
 
     // console.log('home directory:', homedir);
@@ -63,10 +60,9 @@ const createWindow = async () => {
         {
             label: 'File',
             submenu: [
-                {role: 'new', label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {console.log('new clicked')}},
-                {role: 'open', label: 'Open File', accelerator: 'CmdOrCtrl+O', click: () => {console.log('open clicked')}},
-                {role: 'save', label: 'Save File', accelerator: 'CmdOrCtrl+S', click: () => {console.log('save clicked')}},
-                {role: 'saveAs', label: 'Save File As', accelerator: 'CmdOrCtrl+Shift+S', click: () => {console.log('save as clicked')}},
+                {role: 'new', label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {window.webContents.send('new-file-shortcut')}},
+                {role: 'open', label: 'Open Folder', accelerator: 'CmdOrCtrl+O', click: () => {window.webContents.send('open-folder')}},
+                {role: 'save', label: 'Save File', accelerator: 'CmdOrCtrl+S', click: () => {window.webContents.send('file-saved-shortcut')}},
                 {type: 'separator'},
                 {role: 'export', label: 'Export File', accelerator: 'CmdOrCtrl+E', click: () => {console.log('export clicked')}},
                 {type: 'separator'},
@@ -79,13 +75,13 @@ const createWindow = async () => {
                 {role: 'undo', label: 'Undo', accelerator: 'CmdOrCtrl+Z', click: () => {console.log('undo clicked')}},
                 {role: 'redo', label: 'Redo', accelerator: 'CmdOrCtrl+Y', click: () => {console.log('redo clicked')}},
                 {type: 'separator'},
-                {role: 'cut', label: 'Cut', accelerator: 'CmdOrCtrl+X', click: () => {console.log('cut clicked')}},
-                {role: 'copy', label: 'Copy', accelerator: 'CmdOrCtrl+C', click: () => {console.log('copy clicked')}},
-                {role: 'paste', label: 'Paste', accelerator: 'CmdOrCtrl+V', click: () => {console.log('paste clicked')}},
-                {role: 'delete', label: 'Delete', accelerator: 'CmdOrCtrl+Backspace', click: () => {console.log('delete clicked')}},
+                {role: 'cut', label: 'Cut', accelerator: 'CmdOrCtrl+X'},
+                {role: 'copy', label: 'Copy', accelerator: 'CmdOrCtrl+C'},
+                {role: 'paste', label: 'Paste', accelerator: 'CmdOrCtrl+V'},
+                {role: 'delete', label: 'Delete', accelerator: 'CmdOrCtrl+Backspace'},
                 {type: 'separator'},
-                {role: 'selectAll', label: 'Select All', accelerator: 'CmdOrCtrl+A', click: () => {console.log('select all clicked')}},
-                {role: 'deselectAll', label: 'Deselect All', accelerator: 'CmdOrCtrl+D', click: () => {console.log('deselect all clicked')}},
+                {role: 'selectAll', label: 'Select All', accelerator: 'CmdOrCtrl+A'},
+                {role: 'deselectAll', label: 'Deselect All', accelerator: 'CmdOrCtrl+D'},
                 {type: 'separator'},
                 {role: 'find', label: 'Find', accelerator: 'CmdOrCtrl+F', click: () => {console.log('find clicked')}},
                 {role: 'replace', label: 'Replace', accelerator: 'CmdOrCtrl+H', click: () => {console.log('replace clicked')}},
@@ -121,12 +117,6 @@ const createWindow = async () => {
     // window.once('ready-to-show', () => {
     //     autoUpdater.checkForUpdatesAndNotify();
     // });
-
-    windows.push(window);
-
-    window.on('closed', () => {
-        windows.splice(windows.indexOf(window), 1);
-    });
 }
 
 if (isDev) {
@@ -179,28 +169,6 @@ autoUpdater.on('checking-for-update', () => {
 });
 
 autoUpdater.on('update-available', (info) => {
-    /*
-
-     // console.log('update available');
-    mainWindow.webContents.send('update_available');
-    // autoUpdater.downloadUpdate();
-    autoUpdater.downloadUpdate().then((res) => {
-            console.log('download update success');
-            console.log(res);
-            mainWindow.webContents.send('update_success');
-
-            store.set('isUpToDate', false);
-            mainWindow.webContents.send('app_version', {version: app.getVersion(), isDev: isDev, isUpToDate: store.get('isUpToDate')});
-            mainWindow.webContents.send('update_downloaded', {info: res, from: "update-available"});
-        }
-        ).catch((err) => {
-            console.log('download update error');
-            console.log(err);
-            mainWindow.webContents.send('update_error');
-        }
-    );
-
-    */
     console.log('update available');
     console.log(info)
 });
@@ -215,11 +183,7 @@ autoUpdater.on('download-progress', (progressObj) => {
 
 autoUpdater.on('update-downloaded', (info) => {
     console.log('update downloaded');
-    // store.set('isUpToDate', false);
-    // mainWindow.webContents.send('app_version', {version: app.getVersion(), isDev: isDev, isUpToDate: store.get('isUpToDate')});
-    // mainWindow.webContents.send('update_downloaded', {version: info.version, releaseDate: info.releaseDate, from: "update-downloaded"});
-
-    // can be used to install update automatically
+    store.set('isUpToDate', false);
     autoUpdater.quitAndInstall();
 });
 
@@ -230,6 +194,81 @@ autoUpdater.on('error', (err) => {
 ipcMain.on('app_version', (event) => {
     version = app.getVersion();
     event.sender.send('app_version', {version: version, isDev: isDev, isUpToDate: store.get('isUpToDate')});
+});
+
+
+const openFolder = async (event) => {
+    dialog.showOpenDialog({
+        title: 'Select the Directory to be opened',
+        defaultPath: path.join(homedir, 'Desktop'),
+        buttonLabel: 'Open',
+        properties: process.platform === 'darwin' ? ['openDirectory'] : []
+    }).then(dir => {
+        // Stating whether dialog operation was
+        // cancelled or not.
+        if (!dir.canceled) {
+            const dirPath = dir.filePaths[0].toString();
+            store.set('lastOpenedFolder', dirPath);
+            console.log(dirPath);
+            event.reply('open-folder-reply', dirPath);
+        }  
+    }).catch(err => {
+      console.log(err)
+    });
+}
+
+
+ipcMain.on('open-folder', (event) => {  
+    // If the platform is 'win32' or 'Linux'
+    // Resolves to a Promise<Object>
+    openFolder(event);
+});
+
+
+ipcMain.on('open-saved-folder', (event) => {
+    const dirPath = store.get('lastOpenedFolder');
+
+    if (dirPath)
+        return event.reply('open-folder-reply', dirPath);
+
+    openFolder(event);
+});
+
+
+ipcMain.on('file-saved', (event) => {
+    // dialog to save file
+    // If the platform is 'win32' or 'Linux'
+    dialog.showSaveDialog ({
+        title: 'Select where to save the file',
+        defaultPath: path.join(homedir, 'Desktop'),
+        buttonLabel: 'Save',
+        // Restricting the user to only Text Files.
+        filters: [
+        {
+            name: 'Denote Files',
+            extensions: ['dnt']
+        }, ],
+        // Specifying the File Selector Property
+        properties: process.platform === 'darwin' ? ['createDirectory'] : []
+
+    }).then(file => {
+
+        if (!file.canceled) {
+            const filepath = file.filePath.toString();
+
+            fs.writeFile(filepath, "", (err) => {
+                if (err) {
+                    console.log("An error ocurred creating the file " + err.message)
+                }
+            });
+
+            return event.reply('file-saved-reply', filepath);
+        }
+
+    }).catch(err => {
+        console.log(err)
+        }
+    );
 });
 
 // Quit when all windows are closed.

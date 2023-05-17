@@ -1,13 +1,17 @@
 /* Basic editor styles */
 .ProseMirror {
+
     > * + * {
-        margin-top: 0.75em;
         padding: 0rem 1rem;
     }
   
     ul,
     ol {
         padding: 0 3rem;
+    }
+
+    p {
+        padding: 0rem 1rem;
     }
   
     h1,
@@ -99,7 +103,7 @@
     position: relative;
         
     .label {
-        margin-left: 1rem;
+        margin-left: 1rem; 
         background-color: #0D0D0D;
         font-size: 0.6rem;
         letter-spacing: 1px;
@@ -122,3 +126,12 @@
     display: inline-block;
 }
 
+
+
+.ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #adb5bd;
+    pointer-events: none;
+    height: 0;
+  }

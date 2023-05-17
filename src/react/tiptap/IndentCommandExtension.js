@@ -6,7 +6,7 @@ import { Plugin } from 'prosemirror-state'
 const IndentCommand = () => {
   return ({tr, state, dispatch}) => {
     // add two spaces at the start of the current line
-    const indentation = '  '
+    const indentation = '<p>Poop</p>'
 
   }
 }

@@ -4,8 +4,9 @@ import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor } from '@tiptap/react'
+import Placeholder from '@tiptap/extension-placeholder'
 import StarterKit from '@tiptap/starter-kit'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
@@ -204,16 +205,21 @@ const MenuBar = ({ editor }) => {
     )
 }
 
-export default ({data, setData}) => {
+export default ({content, updateContent, setEditorCallback}) => {
     const editor = useEditor({
         extensions: [
             ComponentNode,
             MyMathBoxNode,
             SmilieReplacer,
             DrawBoxNode,
-            IndentCommand(),
+            IndentCommand,
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
+            // add placeholder
+            Placeholder.configure({
+                placeholder: 'Your journey starts here...',
+                showOnlyCurrent: true,
+            }),
             StarterKit.configure({
                 bulletList: {
                     keepMarks: true,
@@ -222,11 +228,19 @@ export default ({data, setData}) => {
                 orderedList: {
                     keepMarks: true,
                     keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-                },
+                }
             }),
+
         ],
-        content: data,
+        onUpdate({ editor }) {
+            updateContent(editor.getHTML());
+        },
+        content: content,
     })
+
+    useEffect(() => {
+      setEditorCallback(editor);
+    }, [editor])
 
     const handleKeyDown = (event) => {
       if (event.key === 'Tab') {
@@ -235,27 +249,28 @@ export default ({data, setData}) => {
   
         // Indent the selected text
         
-        editor.chain().focus().command(IndentCommand()).run()
+        editor.chain().focus().command(IndentCommand()).run();
+
       }
     }
 
+
     return (
         <>
-            <MenuBar editor={editor} />
+            <MenuBar editor={editor} 
+              style={{
+                height: '10%',
+              }}
+            />
             <EditorContent 
               editor={editor} 
+              onKeyDown={handleKeyDown}
               style={{
-                border: '1px solid black',
-                margin: '1rem',
                 border: 'black 2px solid',
                 borderRadius: '5px',
-                minHeight: '10rem',
                 fontFamily: 'sans-serif',
-              }}  
-
-              onKeyDown={handleKeyDown}
-              onChange={(e) => {
-                setData(e.getHTML());
+                height: '90%',
+                overflowY: 'auto',
               }}
             />
         </>
