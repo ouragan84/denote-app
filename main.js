@@ -5,6 +5,10 @@ const homedir = require('os').homedir();
 const { v4: uuid } = require('uuid');
 const { autoUpdater, AppUpdater} = require('electron-updater');
 const isDev = require('electron-is-dev');
+var ua = require('universal-analytics');
+
+
+
 
 const Store = require('electron-store');
 const store = new Store();
@@ -162,6 +166,11 @@ app.whenReady().then(() => {
     userID = setUserID();
     console.log(userID);
 
+    const visitor = ua('UA-268494877-1', userID);
+    visitor.set('uid', userID);
+    // Track the app open event
+    visitor.event('App', 'Open').send();
+
     if(!isDev){
         autoUpdater.checkForUpdates();
     }
@@ -298,6 +307,8 @@ const setUserID = () => {
     store.set('userID', id);
     return id;
 }
+
+
 
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the 
