@@ -23,9 +23,11 @@ import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 
 import {Tooltip} from 'react-tooltip'
 
-import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit } from "react-icons/fa";
+import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion } from "react-icons/fa";
+import { HiSparkles } from "react-icons/hi2";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { BiMath } from 'react-icons/bi'
+import { TbBracketsContain } from 'react-icons/tb'
 
 const MenuBar = ({ editor, fileName, callprompt }) => {
     if (!editor) {
@@ -33,7 +35,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
     }
 
     let initCols = []
-    for (let i = 0; i < 18; i++)
+    for (let i = 0; i < 21; i++)
       initCols.push('black')
     const [cols, setCols] = useState(initCols)
   
@@ -257,27 +259,39 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
 
                 <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
-                <button
+                <FaQuestion
+                  onMouseDown={()=>cols[18] = 'gray'}
+                  onMouseUp={()=>cols[18] = 'black'}
+                  style={{color:cols[18]}}
+                  data-tooltip-id="tool" data-tooltip-content="Prompt AI"
                   onClick={() => {
                     callprompt(editor, 'Prompt');
                   }}
                 >
-                  P
-                </button>
-                <button
+                  Prompt
+                </FaQuestion>
+                <HiSparkles
+                  onMouseDown={()=>cols[19] = 'gray'}
+                  onMouseUp={()=>cols[19] = 'black'}
+                  style={{color:cols[19]}}
+                  data-tooltip-id="tool" data-tooltip-content="Beautify Selection"
                   onClick={() => {
                     callprompt(editor, 'Beautify');
                   }}
                 >
-                  B
-                </button>
-                <button
+                  Beautify
+                </HiSparkles>
+                <TbBracketsContain
+                  onMouseDown={()=>cols[20] = 'gray'}
+                  onMouseUp={()=>cols[20] = 'black'}
+                  style={{color:cols[20]}}
+                  data-tooltip-id="tool" data-tooltip-content="Fills [...] in Selection"
                   onClick={() => {
                     callprompt(editor, 'FillBlanks');
                   }}
                 >
-                  FB
-                </button>
+                  FillBlanks
+                </TbBracketsContain>
               </div>
               <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem'}}>
                 <FaUndo

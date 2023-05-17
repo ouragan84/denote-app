@@ -197,4 +197,6 @@ export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, 
 
 export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback) => {
     console.log("Calling AI Prompt: " + promptTitle);
+
+    
 }
