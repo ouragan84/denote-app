@@ -21,6 +21,8 @@ import IndentCommand from './IndentCommandExtension'
 import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 
+import {Tooltip} from 'react-tooltip'
+
 import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit } from "react-icons/fa";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { BiMath } from 'react-icons/bi'
@@ -36,13 +38,13 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
     const [cols, setCols] = useState(initCols)
   
     return (
-      <div style={{display:'flex',flexDirection:'row', justifyContent:'center', marginLeft:15, marginRight:15}}>
-        <div style={{paddingLeft:'1rem', borderBottomLeftRadius:18, borderBottomRightRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
+      <div style={{display:'flex',flexDirection:'row', justifyContent:'center', marginLeft:15, marginRight:15,}}>
+        <div style={{paddingLeft:'1rem',backgroundColor:'#eef2f2', borderBottomLeftRadius:18, borderBottomRightRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
           <div style={{marginBottom:'10px'}}>
             <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>{fileName}</span>
             </div>
             <div style={{width:'70vw',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'28rem',}}>
+              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:500, alignItems:'center'}}>
                 <FaBold
                   onClick={() => {
                     editor.chain().focus().toggleBold().run()
@@ -58,9 +60,11 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('bold') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Bold (Cmd+b)"
                 >
                   bold
                 </FaBold>
+                <Tooltip place='bottom' id='tool'/>
                 <FaItalic
                   onMouseDown={()=>cols[1] = 'gray'}
                   onMouseUp={()=>cols[1] = 'black'}
@@ -74,6 +78,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('italic') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Italic (Cmd+i)"
                 >
                   italic
                 </FaItalic>
@@ -91,6 +96,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('underline') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Underline (Cmd+u)"
                 >
                   Underline
                 </FaUnderline>
@@ -107,9 +113,45 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('strike') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Strike (Cmd+Shft+x)"
+
                 >
                   strike
                 </FaStrikethrough>
+
+                <FaHeading
+                onMouseDown={()=>cols[6] = 'gray'}
+                onMouseUp={()=>cols[6] = 'black'}
+                style={{color:cols[6]}}
+                  onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                  className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Heading 1"
+                >
+                  h1
+                </FaHeading>
+                <FaHeading
+                onMouseDown={()=>cols[7] = 'gray'}
+                onMouseUp={()=>cols[7] = 'black'}
+                style={{color:cols[7], fontSize: 14}}
+                  onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                  className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Heading 2"
+
+                >
+                  h2
+                </FaHeading>
+                <FaHeading
+                onMouseDown={()=>cols[8] = 'gray'}
+                onMouseUp={()=>cols[8] = 'black'}
+                style={{color:cols[8], fontSize: 12}}
+                  onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                  className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Heading 3"
+
+                >
+                  h3
+                </FaHeading>
+
                 <FaCode
                   onMouseDown={()=>cols[4] = 'gray'}
                   onMouseUp={()=>cols[4] = 'black'}
@@ -123,48 +165,28 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('code') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Code Inline"
                 >
                   code
                 </FaCode>
+
                 <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().run()} 
                 onMouseDown={()=>cols[5] = 'gray'}
                 onMouseUp={()=>cols[5] = 'black'}
-                style={{color:cols[5]}}>
+                style={{color:cols[5]}}
+                data-tooltip-id="tool" data-tooltip-content="Clear Format">
                   clear nodes
                 </FaRemoveFormat>
-                <FaHeading
-                onMouseDown={()=>cols[6] = 'gray'}
-                onMouseUp={()=>cols[6] = 'black'}
-                style={{color:cols[6]}}
-                  onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                  className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
-                >
-                  h1
-                </FaHeading>
-                <FaHeading
-                onMouseDown={()=>cols[7] = 'gray'}
-                onMouseUp={()=>cols[7] = 'black'}
-                style={{color:cols[7], fontSize: 14}}
-                  onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                  className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
-                >
-                  h2
-                </FaHeading>
-                <FaHeading
-                onMouseDown={()=>cols[8] = 'gray'}
-                onMouseUp={()=>cols[8] = 'black'}
-                style={{color:cols[8], fontSize: 12}}
-                  onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                  className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
-                >
-                  h3
-                </FaHeading>
+
+                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+
                 <FaList
                 onMouseDown={()=>cols[9] = 'gray'}
                 onMouseUp={()=>cols[9] = 'black'}
                 style={{color:cols[9]}}
                   onClick={() => editor.chain().focus().toggleBulletList().run()}
                   className={editor.isActive('bulletList') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Unordered List"
                 >
                   bullet list
                 </FaList>
@@ -174,24 +196,23 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[10]}}
                   onClick={() => editor.chain().focus().toggleOrderedList().run()}
                   className={editor.isActive('orderedList') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Ordered List"
                 >
                   ordered list
                 </FaListOl>
-                <FaLaptopCode
-                onMouseDown={()=>cols[11] = 'gray'}
-                onMouseUp={()=>cols[11] = 'black'}
-                style={{color:cols[11]}}
-                  onClick={() => editor.chain().focus().toggleCodeBlock().run()} 
-                  className={editor.isActive('codeBlock') ? 'is-active' : ''}
-                >
-                  code block
-                </FaLaptopCode>
+
+
+
+
+                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+
                 <FaQuoteLeft
                 onMouseDown={()=>cols[12] = 'gray'}
                 onMouseUp={()=>cols[12] = 'black'}
                 style={{color:cols[12]}}
                   onClick={() => editor.chain().focus().toggleBlockquote().run()}
                   className={editor.isActive('blockquote') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Quote Block"
                 >
                   blockquote
                 </FaQuoteLeft>
@@ -199,6 +220,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 onMouseDown={()=>cols[13] = 'gray'}
                 onMouseUp={()=>cols[13] = 'black'}
                 style={{color:cols[13]}}
+                data-tooltip-id="tool" data-tooltip-content="Horizontal Line"
                 >
                   horizontal rule
                 </RiBarChartHorizontalLine>
@@ -208,18 +230,33 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[14]}}
                   onClick={() => editor.commands.insertInlineMathBox()}
                   className={editor.isActive('inline-math-field') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Insert Math"
                 >
                   maf
                 </BiMath>
+                <FaLaptopCode
+                onMouseDown={()=>cols[11] = 'gray'}
+                onMouseUp={()=>cols[11] = 'black'}
+                style={{color:cols[11]}}
+                  onClick={() => editor.chain().focus().toggleCodeBlock().run()} 
+                  className={editor.isActive('codeBlock') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Code Block"
+                >
+                  code block
+                </FaLaptopCode>
                 <FaRegEdit
                   onMouseDown={()=>cols[17] = 'gray'}
                   onMouseUp={()=>cols[17] = 'black'}
                   style={{color:cols[17]}}
                   onClick={() => editor.commands.insertDrawBox()}
                   className={editor.isActive('draw-box') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Insert Draw Box"
                 >
                     Draw
                 </FaRegEdit>
+
+                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+
                 <button
                   onClick={() => {
                     callprompt(editor, 'Prompt');
@@ -462,8 +499,10 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
               onKeyDown={handleKeyDown}
               style={{
                 fontFamily: 'sans-serif',
-                height: '90%',
+                height: '80%',
                 overflowY: 'auto',
+                margin:10,
+
               }}
             />
         </>
