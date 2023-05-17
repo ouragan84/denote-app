@@ -4,6 +4,7 @@
   import path from "path";
   import fs from "fs";
   import File from "./FileButton";
+
   const { v4: uuid } = require('uuid');
 
   const ignoreList = [
@@ -118,7 +119,6 @@
             filePath = `${filePath}`;
             console.log('file-saved-reply', filePath);
             console.log('contentRef.current', contentRef.current);
-
 
             updateContent(filePath, contentRef.current);
 

@@ -164,10 +164,12 @@
     "react-icons": "^4.8.0",
     "react-mathquill": "^1.0.3",
     "react-modal": "^3.16.1",
+    "react-tooltip": "^5.13.0",
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",
     "style-loader": "^3.3.2",
     "tiptap": "^1.32.2",
+    "universal-analytics": "^0.5.3",
     "uuid": "^9.0.0",
     "xml-formatter": "^3.4.1"
   },
