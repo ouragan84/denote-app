@@ -15,7 +15,7 @@ export default () => {
     const [editor, setEditor] = useState(null);
     const [isEditorLoaded, setIsEditorLoaded] = useState(false);
     const [filePath, setFilePath] = useState(null);
-    const [fileName, setFileName] = useState("Unsaved Notes ᐧ");
+    const [fileName, setFileName] = useState("Unsaved Notes - (Cmd+S to save)");
 
 
     // ref to last editor
@@ -38,7 +38,7 @@ export default () => {
     const handleFileChange = (filepath, newData) => {
         setData(newData);
         setFilePath(filepath);
-        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes ᐧ');
+        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
 
         editorRef.current.commands.setContent(newData);
     };

@@ -17,7 +17,6 @@ import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
 import {SmilieReplacer} from './EmojiReplacerExtension'
 import DrawBoxNode from './DrawBoxExtentsion'
-import IndentCommand from './IndentCommandExtension'
 import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 
