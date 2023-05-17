@@ -39,6 +39,7 @@ export default () => {
         setData(newData);
         setFilePath(filepath);
         setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
+        fs.writeFileSync(filepath, newData);
 
         editorRef.current.commands.setContent(newData);
     };

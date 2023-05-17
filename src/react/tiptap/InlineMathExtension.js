@@ -25,11 +25,13 @@ export const InlineMathBox = props => {
           e.stopPropagation();
           props.editor.chain().focus(pos+1).run();
         }
+
         if (key === 'ArrowLeft'){
           e.preventDefault();
           e.stopPropagation();
           
         }
+        
         if (key === 'ArrowRight'){
           e.preventDefault();
           e.stopPropagation();
