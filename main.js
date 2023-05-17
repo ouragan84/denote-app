@@ -5,9 +5,7 @@ const homedir = require('os').homedir();
 const { v4: uuid } = require('uuid');
 const { autoUpdater, AppUpdater} = require('electron-updater');
 const isDev = require('electron-is-dev');
-var ua = require('universal-analytics');
-
-
+const ua = require('universal-analytics');
 
 
 const Store = require('electron-store');
