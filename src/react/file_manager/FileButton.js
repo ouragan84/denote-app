@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ipcRenderer } from "electron";
 import path from "path";
 import fs from "fs";
-import { FaFolder } from "react-icons/fa"
+import { FaFolder, FaFile } from "react-icons/fa"
 
 
 function FileButton({explorer, clickCallback, path, isRoot=false}) {
@@ -23,10 +23,11 @@ function FileButton({explorer, clickCallback, path, isRoot=false}) {
                         padding: '2px',
                         width: '300px',
                         cursor: 'pointer',
+                        backgroundColor:'black',
                     }} onClick={()=>setExpand(!expand)}>
-                        <div style={{alignItems:'center'}}><FaFolder/> {explorerData.name}</div>
+                        <div style={{alignItems:'center', fontSize:14}}><FaFolder style={{width:30}}/>{explorerData.name}</div>
                     </div> 
-                    <div style={{display: expand ? 'block': 'none', paddingLeft: 25}}>
+                    <div style={{display: expand ? 'block': 'none', marginLeft: 25}}>
                         {explorerData.items.map((exp) => {
                             return <FileButton explorer={exp} key={exp.id}/>
                         })}
@@ -37,13 +38,14 @@ function FileButton({explorer, clickCallback, path, isRoot=false}) {
     }else{
         return <span style={{    
                 marginTop: '5px',
-                paddingLeft: '5px',
+                paddingRight: '10px',
                 display: 'flex',
                 flexDirection: 'column',
                 cursor: 'pointer',
+                backgroundColor:'black',
             }}
             onClick={() => {explorerData.onClick()}}
-        >📄 {explorerData.name}</span>
+        > <div style={{alignItems:'center', fontSize:14}}><FaFile style={{width:30}}/>{explorerData.name}</div></span>
     }
   }
   

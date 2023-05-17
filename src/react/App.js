@@ -6,6 +6,7 @@ import FileManager from "./file_manager/FileManager";
 
 import path from "path";
 import fs from "fs";
+import { Tooltip } from "react-tooltip";
 
 export default () => {
 
@@ -58,9 +59,11 @@ export default () => {
                 width: '100vw',
                 height: '100vh',
                 overflow: 'hidden',
-                fontFamily: 'Open Sans'
+                fontFamily: 'Open Sans',
+                
             }}
         >
+            
             <div 
                 style={{
                     width: '20vw',
@@ -70,9 +73,14 @@ export default () => {
                     top: 0,
                     left: 0,
                     overflow: 'hidden',
-                    boxShadow: "0px 0px 7px #9E9E9E"
+                    boxShadow: "0px 0px 7px #9E9E9E",
+                    borderTopRightRadius:18,
+                    borderBottomRightRadius:18,
+                    
                 }}
             >
+                <div style={{backgroundColor:'#407296', boxShadow: "0px 1px 2px lightgray", paddingTop:1,}}><h3 style={{paddingLeft:10, color:'white', paddingBottom:15}}>Explorer</h3></div>
+                
                 <FileManager
                     content={data}
                     updateContent={handleFileChange}
