@@ -2,11 +2,13 @@ const { BrowserWindow, app, ipcMain, Menu, dialog} = require('electron');
 const fs = require("fs");
 const path = require('path');
 const homedir = require('os').homedir();
+const { v4: uuid } = require('uuid');
 const { autoUpdater, AppUpdater} = require('electron-updater');
 const isDev = require('electron-is-dev');
 
 const Store = require('electron-store');
 const store = new Store();
+let userID;
 
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
@@ -157,6 +159,9 @@ app.whenReady().then(() => {
 
     console.log('app ready');
 
+    userID = setUserID();
+    console.log(userID);
+
     if(!isDev){
         autoUpdater.checkForUpdates();
     }
@@ -285,7 +290,15 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 });
-    
+
+const setUserID = () => {
+    if(store.has('userID'))
+        return store.get('userID');
+    const id = uuid();
+    store.set('userID', id);
+    return id;
+}
+
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the 
     // app when the dock icon is clicked and there are no 

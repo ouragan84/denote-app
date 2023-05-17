@@ -9,6 +9,7 @@ import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor, ReactNodeViewRenderer} from '@tiptap/react'
 import Placeholder from '@tiptap/extension-placeholder'
 import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
 import React, {useEffect, useState} from 'react'
 
 import ComponentNode from './ExampleExtension'
@@ -81,7 +82,7 @@ const MenuBar = ({ editor, fileName }) => {
                   onMouseDown={()=>cols[2] = 'gray'}
                   onMouseUp={()=>cols[2] = 'black'}
                   style={{color:cols[2]}}
-                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
                   disabled={
                     !editor.can()
                       .chain()
@@ -89,7 +90,7 @@ const MenuBar = ({ editor, fileName }) => {
                       .toggleItalic()
                       .run()
                   }
-                  className={editor.isActive('italic') ? 'is-active' : ''}
+                  className={editor.isActive('underline') ? 'is-active' : ''}
                 >
                   Underline
                 </FaUnderline>
@@ -291,7 +292,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
             MyMathBoxNode,
             SmilieReplacer,
             DrawBoxNode,
-            IndentCommand,
+            Underline,
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
