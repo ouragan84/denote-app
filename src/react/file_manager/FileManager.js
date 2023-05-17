@@ -146,7 +146,6 @@
                     position: 'absolute',
                     bottom: 0,
                     width: '100%',
-                    backgroundColor:'black'
                 }}
             >
                 <button onClick={() => {ipcRenderer.send('open-folder')}}>Open Folder</button>

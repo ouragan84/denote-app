@@ -37,7 +37,7 @@ const MenuBar = ({ editor, fileName }) => {
   
     return (
       <div style={{display:'flex',flexDirection:'row', justifyContent:'center', marginLeft:15, marginRight:15,}}>
-        <div style={{paddingLeft:'1rem', borderBottomLeftRadius:18, borderBottomRightRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
+        <div style={{paddingLeft:'1rem',backgroundColor:'#eef2f2', borderBottomLeftRadius:18, borderBottomRightRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
           <div style={{marginBottom:'10px'}}>
             <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>{fileName}</span>
             </div>
@@ -116,40 +116,7 @@ const MenuBar = ({ editor, fileName }) => {
                 >
                   strike
                 </FaStrikethrough>
-                <FaCode
-                  onMouseDown={()=>cols[4] = 'gray'}
-                  onMouseUp={()=>cols[4] = 'black'}
-                  style={{color:cols[4]}}
-                  onClick={() => editor.chain().focus().toggleCode().run()}
-                  disabled={
-                    !editor.can()
-                      .chain()
-                      .focus()
-                      .toggleCode()
-                      .run()
-                  }
-                  className={editor.isActive('code') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Code Inline"
-                >
-                  code
-                </FaCode>
-                <FaLaptopCode
-                onMouseDown={()=>cols[11] = 'gray'}
-                onMouseUp={()=>cols[11] = 'black'}
-                style={{color:cols[11]}}
-                  onClick={() => editor.chain().focus().toggleCodeBlock().run()} 
-                  className={editor.isActive('codeBlock') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Code Block"
-                >
-                  code block
-                </FaLaptopCode>
-                <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().run()} 
-                onMouseDown={()=>cols[5] = 'gray'}
-                onMouseUp={()=>cols[5] = 'black'}
-                style={{color:cols[5]}}
-                data-tooltip-id="tool" data-tooltip-content="Clear Format">
-                  clear nodes
-                </FaRemoveFormat>
+
                 <FaHeading
                 onMouseDown={()=>cols[6] = 'gray'}
                 onMouseUp={()=>cols[6] = 'black'}
@@ -182,6 +149,35 @@ const MenuBar = ({ editor, fileName }) => {
                 >
                   h3
                 </FaHeading>
+
+                <FaCode
+                  onMouseDown={()=>cols[4] = 'gray'}
+                  onMouseUp={()=>cols[4] = 'black'}
+                  style={{color:cols[4]}}
+                  onClick={() => editor.chain().focus().toggleCode().run()}
+                  disabled={
+                    !editor.can()
+                      .chain()
+                      .focus()
+                      .toggleCode()
+                      .run()
+                  }
+                  className={editor.isActive('code') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Code Inline"
+                >
+                  code
+                </FaCode>
+
+                <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().run()} 
+                onMouseDown={()=>cols[5] = 'gray'}
+                onMouseUp={()=>cols[5] = 'black'}
+                style={{color:cols[5]}}
+                data-tooltip-id="tool" data-tooltip-content="Clear Format">
+                  clear nodes
+                </FaRemoveFormat>
+
+                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+
                 <FaList
                 onMouseDown={()=>cols[9] = 'gray'}
                 onMouseUp={()=>cols[9] = 'black'}
@@ -202,6 +198,11 @@ const MenuBar = ({ editor, fileName }) => {
                 >
                   ordered list
                 </FaListOl>
+
+
+
+
+                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
                 <FaQuoteLeft
                 onMouseDown={()=>cols[12] = 'gray'}
@@ -231,6 +232,16 @@ const MenuBar = ({ editor, fileName }) => {
                 >
                   maf
                 </BiMath>
+                <FaLaptopCode
+                onMouseDown={()=>cols[11] = 'gray'}
+                onMouseUp={()=>cols[11] = 'black'}
+                style={{color:cols[11]}}
+                  onClick={() => editor.chain().focus().toggleCodeBlock().run()} 
+                  className={editor.isActive('codeBlock') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Code Block"
+                >
+                  code block
+                </FaLaptopCode>
                 <FaRegEdit
                   onMouseDown={()=>cols[17] = 'gray'}
                   onMouseUp={()=>cols[17] = 'black'}
@@ -241,6 +252,9 @@ const MenuBar = ({ editor, fileName }) => {
                 >
                     Draw
                 </FaRegEdit>
+
+                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+
                 <button
                   onClick={() => {
                     callAIPrompt(editor, 'Prompt');
@@ -368,6 +382,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
                 height: '80%',
                 overflowY: 'auto',
                 margin:10,
+
               }}
             />
         </>
