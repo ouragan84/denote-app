@@ -19,13 +19,13 @@ import {SmilieReplacer} from './EmojiReplacerExtension'
 import DrawBoxNode from './DrawBoxExtentsion'
 import IndentCommand from './IndentCommandExtension'
 import CodeBlockExtension from './CodeBlockExtension'
-import { callAIPrompt } from './AIPromptsExtension'
+import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 
 import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit } from "react-icons/fa";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { BiMath } from 'react-icons/bi'
 
-const MenuBar = ({ editor, fileName }) => {
+const MenuBar = ({ editor, fileName, callprompt }) => {
     if (!editor) {
       return null
     }
@@ -220,27 +220,27 @@ const MenuBar = ({ editor, fileName }) => {
                 >
                     Draw
                 </FaRegEdit>
-                {/* <button
+                <button
                   onClick={() => {
-                    callAIPrompt(editor, 'Prompt');
+                    callprompt(editor, 'Prompt');
                   }}
                 >
                   P
                 </button>
                 <button
                   onClick={() => {
-                    callAIPrompt(editor, 'Prompt');
+                    callprompt(editor, 'Beautify');
                   }}
                 >
                   B
                 </button>
                 <button
                   onClick={() => {
-                    callAIPrompt(editor, 'Prompt');
+                    callprompt(editor, 'FillBlanks');
                   }}
                 >
                   FB
-                </button> */}
+                </button>
               </div>
               <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem'}}>
                 <FaUndo
@@ -287,9 +287,8 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
     const [promptModalOpen, setPromptModalOpen] = useState(false);
     const [errorModalOpen, setErrorModalOpen] = useState(false);
     const [loadingModalOpen, setLoadingModalOpen] = useState(false);
-    const [prompt, setPrompt] = useState('');
     const [error, setError] = useState('');
-    const [promptReturnCallback, setPromptReturnCallback] = useState(null);
+    const [selection, setSelection] = useState(null);
 
     const setErrorMessage = (message) => {
       setError(message);
@@ -344,14 +343,119 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
       }
     }
 
+    const callprompt = (editor, prompt, errorCallback) => {
+      if(prompt === 'Prompt'){
+        if (!editor.state.selection.empty) {
+          return errorCallback('Place your cursor in the editor.');
+      }
+    
+        setSelection(editor.getHTML(editor.state.selection.from, editor.state.selection.to))
+        setPromptModalOpen(true);
+      }
+      else
+        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen);
+    }
+
     return (
         <>
+            <Modal
+              isOpen={promptModalOpen}
+              onRequestClose={() => setPromptModalOpen(false)}
+              contentLabel="Prompt Modal"
+              ariaHideApp={false}
+              style={{
+                overlay: {
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                },
+                content: {
+                  backgroundColor: 'white',
+                  width: '50%',
+                  height: '50%',
+                  margin: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }
+              }}
+            >
+              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'sans-serif'}}>Prompt</span>
+                <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                  <input type="text" id="prompt-input" name="prompt-input" style={{width: '80%', height: '50%'}}/>
+                  <button
+                    onClick={() => {
+                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection)
+                      setPromptModalOpen(false);
+                    }}
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+            </Modal>
+
+            <Modal
+              isOpen={loadingModalOpen}
+              // onRequestClose={() => setLoadingModalOpen(false)}
+              contentLabel="Loading Modal"
+              ariaHideApp={false}
+              style={{
+                overlay: {
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                },
+                content: {
+                  backgroundColor: 'white',
+                  width: '50%',
+                  height: '50%',
+                  margin: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }
+              }}
+            >
+              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'sans-serif'}}>Loading</span>
+                <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>Loading...</span>
+              </div>
+            </Modal>
+
+            <Modal
+              isOpen={errorModalOpen}
+              onRequestClose={() => {setErrorModalOpen(false); setError(''); setLoadingModalOpen(false);}}
+              contentLabel="Error Modal"
+              ariaHideApp={false}
+              style={{
+                overlay: {
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                },
+                content: {
+                  backgroundColor: 'white',
+                  width: '50%',
+                  height: '50%',
+                  margin: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }
+              }}
+            >
+              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'sans-serif'}}>Error</span>
+                <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>{error}</span>
+              </div>
+            </Modal>
+
             <MenuBar editor={editor} fileName={fileName}
               setErrorMessage={setErrorMessage}
               setPromptModalOpen={setPromptModalOpen}
               style={{
                 height: '10%',
               }}
+              callprompt={callprompt}
             />
             <EditorContent 
               editor={editor} 
