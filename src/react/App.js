@@ -82,7 +82,7 @@ export default () => {
             >                   
                 <div style={{backgroundColor:'#eef2f2', boxShadow: "0px 1px 2px lightgray", paddingTop:1,}}><h3 style={{paddingLeft:10, color:'#000', paddingBottom:15}}>Denote</h3></div>
                 
-                <div style={{backgroundColor:'#eef2f2', height:650, backgroundColor:'silver', overflowY:'scroll'}}>
+                <div style={{backgroundColor:'#eef2f2', height:650, overflowY:'scroll'}}>
                 <FileManager
                     content={data}
                     updateContent={handleFileChange}
