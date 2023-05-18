@@ -7,6 +7,10 @@ import DrawBoxCustomComp from './DrawBoxCustomComp';
 
 export const DrawBox = props => {
 
+  React.useEffect(()=>{
+    console.log('effect before: ', props.node.attrs)
+  }, [])
+
   const updateElements = (newElements) => {
     props.updateAttributes({
       elements: JSON.stringify(newElements),
@@ -22,11 +26,17 @@ export const DrawBox = props => {
   const onDrawBoxChange = (elements, state) => {
     updateElements(elements);
     updateState(state);
+
+    //console.log('state: ', state, ' elements: ', elements, 'string elements: ', JSON.stringify(elements))
   }
 
   //console.log(JSON.parse(props.node.attrs.state)) // , 'parse: ', JSON.parse(props.node.attrs.elements)s
-  console.log('raw: ', props.node.attrs)
-2
+  //console.log('raw: ', props.node.attrs)
+
+
+  React.useEffect(()=>{
+    console.log('effect after: ', props.node.attrs)
+  }, [])
 
   return (
     <NodeViewWrapper className="draw-box">
@@ -37,6 +47,7 @@ export const DrawBox = props => {
           <h1 style={{ textAlign: "center" }}>Excalidraw Example</h1>
           <div style={{ width: '1000px' }}>
             <DrawBoxCustomComp
+              attr={props.node.attrs}
               state={JSON.parse(props.node.attrs.state)}
               elements={JSON.parse(props.node.attrs.elements)}
               onDrawBoxChange={onDrawBoxChange}
@@ -69,7 +80,8 @@ const DrawBoxNode = Node.create({
       elements: {
         default: "{}",
         renderHTML: (attributes) => {
-          return {
+          //console.log('poop ', attributes.elements)
+          return {           
             elements: attributes.elements
           };
         }
@@ -94,12 +106,23 @@ const DrawBoxNode = Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
+    //console.log('hello: ', HTMLAttributes)
     return ['draw-box', mergeAttributes(HTMLAttributes)]
   },
 
   addNodeView() {
     return ReactNodeViewRenderer(DrawBox)
   },
+
+  // renderHTML({ node, HTMLAttributes }) {
+  //   return [
+  //     "draw-box",
+  //     mergeAttributes(
+  //       this.options.HTMLAttributes,
+  //       HTMLAttributes
+  //     )
+  //   ];
+  // },
 
   addCommands() {
     return {
@@ -110,7 +133,8 @@ const DrawBoxNode = Node.create({
             parameters += ` elements = "${attributes.elements}"`;
           if(attributes.state)
             parameters += ` state = "${attributes.state}"`;
-          
+        
+            
         return commands.insertContent(`<draw-box${parameters} ></draw-box>`)
       }
     }

@@ -41,6 +41,8 @@ export default () => {
         setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
         fs.writeFileSync(filepath, newData);
 
+        console.log('file data: ', newData);
+
         editorRef.current.commands.setContent(newData);
     };
 
