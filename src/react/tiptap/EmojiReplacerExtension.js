@@ -155,21 +155,21 @@ export const SmilieReplacer = Extension.create({
       textInputRule({ find: /\\clap $/, replace: '👏 ' }),
       textInputRule({ find: /\\pray $/, replace: '🙏 ' }),
       
-      textInputRule({ find: /<--- $/, replace: '⟵ ' }),
-      textInputRule({ find: /---> $/, replace: '⟶ ' }),
-      textInputRule({ find: /<---> $/, replace: '⟷ ' }),
+      textInputRule({ find: /<--- $/, replace: '← ' }),
+      textInputRule({ find: /---> $/, replace: '→ ' }),
+      textInputRule({ find: /<---> $/, replace: '↔ ' }),
 
-      textInputRule({ find: /===> $/, replace: '⟹ ' }),
-      textInputRule({ find: /<=== $/, replace: '⟸ ' }),
-      textInputRule({ find: /<===> $/, replace: '⟺ ' }),
+      textInputRule({ find: /===> $/, replace: '⇒ ' }),
+      textInputRule({ find: /<=== $/, replace: '⇐ ' }),
+      textInputRule({ find: /<===> $/, replace: '⇔ ' }),
 
-      textInputRule({ find: /<-- $/, replace: '⟵ ' }),
-      textInputRule({ find: /--> $/, replace: '⟶ ' }),
-      textInputRule({ find: /<--> $/, replace: '⟷ ' }),
+      textInputRule({ find: /<-- $/, replace: '← ' }),
+      textInputRule({ find: /--> $/, replace: '→ ' }),
+      textInputRule({ find: /<--> $/, replace: '↔ ' }),
 
-      textInputRule({ find: /==> $/, replace: '⟹ ' }),
-      textInputRule({ find: /<== $/, replace: '⟸ ' }),
-      textInputRule({ find: /<==> $/, replace: '⟺ ' }),
+      textInputRule({ find: /==> $/, replace: '⇒ ' }),
+      textInputRule({ find: /<== $/, replace: '⇐ ' }),
+      textInputRule({ find: /<==> $/, replace: '⇔ ' }),
 
       textInputRule({ find: /-> $/, replace: '→ ' }), 
       textInputRule({ find: /<- $/, replace: '← ' }),

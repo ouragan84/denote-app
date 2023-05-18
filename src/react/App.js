@@ -6,6 +6,7 @@ import FileManager from "./file_manager/FileManager";
 
 import path from "path";
 import fs from "fs";
+import { Tooltip } from "react-tooltip";
 
 export default () => {
 
@@ -14,7 +15,7 @@ export default () => {
     const [editor, setEditor] = useState(null);
     const [isEditorLoaded, setIsEditorLoaded] = useState(false);
     const [filePath, setFilePath] = useState(null);
-    const [fileName, setFileName] = useState("Unsaved Notes ᐧ");
+    const [fileName, setFileName] = useState("Unsaved Notes - (Cmd+S to save)");
 
 
     // ref to last editor
@@ -37,7 +38,7 @@ export default () => {
     const handleFileChange = (filepath, newData) => {
         setData(newData);
         setFilePath(filepath);
-        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes ᐧ');
+        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
 
         editorRef.current.commands.setContent(newData);
     };
@@ -58,19 +59,30 @@ export default () => {
                 width: '100vw',
                 height: '100vh',
                 overflow: 'hidden',
+                fontFamily: 'Open Sans',
+                
             }}
         >
+            
             <div 
                 style={{
                     width: '20vw',
                     height: '100vh',
-                    backgroundColor: 'lightgray',
+                    backgroundColor: 'white',
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     overflow: 'hidden',
+                    boxShadow: "0px 0px 7px #9E9E9E",
+                    borderTopRightRadius:18,
+                    borderBottomRightRadius:18,
+                    backgroundColor:'#eef2f2'
+                    
                 }}
-            >
+            >                   
+                <div style={{backgroundColor:'#eef2f2', boxShadow: "0px 1px 2px lightgray", paddingTop:1,}}><h3 style={{paddingLeft:10, color:'#000', paddingBottom:15}}>Denote</h3></div>
+                
+                <div style={{backgroundColor:'#eef2f2', height:'100%'}}>
                 <FileManager
                     content={data}
                     updateContent={handleFileChange}
@@ -80,6 +92,7 @@ export default () => {
                         height: '100%',
                     }}
                 />
+                </div>
             </div>
             <div
                 style={{
