@@ -28,7 +28,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
     const swconvert = (w) => {
         return Math.floor(map(w, 1440, 1038, 20, 100))
     }
-    console.log(swconvert(screenSize.width))
+    // console.log(swconvert(screenSize.width))
   
     const transformedStyle = {
         position:'inherit', color:'#444', marginRight:swconvert(screenSize.width),

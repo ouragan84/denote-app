@@ -4,7 +4,6 @@ import Editor from "./tiptap/Editor";
 import { ipcRenderer } from "electron";
 import FileManager from "./file_manager/FileManager";
 
-
 import path from "path";
 import fs from "fs";
 import { Tooltip } from "react-tooltip";
@@ -12,15 +11,16 @@ import { Tooltip } from "react-tooltip";
 export default () => {
 
     const [data, setData] = useState('');
-    const [version, setVersion] = useState('Loading...');
+    const [version, setVersion] = useState(null);
     const [editor, setEditor] = useState(null);
     const [isEditorLoaded, setIsEditorLoaded] = useState(false);
-    const [filePath, setFilePath] = useState(null);
+    const [filePath, setFilePath] = useState(null); // null means unsaved
     const [fileName, setFileName] = useState("Unsaved Notes - (Cmd+S to save)");
-
+    const [fileHeader, setFileHeader] = useState(null); // null means unsaved
 
     // ref to last editor
     const editorRef = useRef(editor);
+    const versionRef = useRef(version);
 
     // update ref to last editor
     useEffect(() => {
@@ -28,19 +28,70 @@ export default () => {
         console.log('editor updated', editorRef.current);
     }, [editor]);
 
+    useEffect(() => {
+        versionRef.current = version;
+        console.log('version updated', versionRef.current);
+    }, [version]);
+
+
     const handleDataUpdate = (newData) => {
         setData(newData);
         // save newData to file if filepath is not null using os
         if (filePath){
-            fs.writeFileSync(filePath, newData);
+            fs.writeFileSync(filePath, (fileHeader? fileHeader + '\n' + newData : newData));
         }
     };
 
-    const handleFileChange = (filepath, newData) => {
+    const getNewHeader = () => {
+        let attributes = {
+            version: versionRef.current,
+            lastOpened: new Date().toISOString(),
+        }
+
+        return '<head>' + JSON.stringify(attributes) + '</head>';
+    }
+
+    const handleFileChange = (filepath, fileData) => {
+
+        if(filepath){
+
+            if (!fileData.startsWith('<head>')){
+
+                let header = getNewHeader();
+                
+                console.log('header created', header);
+
+                setFileHeader(header);
+                fileData = header + '\n' + fileData;
+                fs.writeFileSync(filepath, fileData);
+    
+            } else {
+    
+                let header = JSON.parse(fileData.split('</head>\n')[0].split('<head>')[1])
+    
+                if ( header && header.version !== versionRef.current ){
+                    console.log('APP is in version ' + versionRef.current + ', but file is in version ' + header.version + '.');
+                    // TODO: handle version mismatch here
+                }
+    
+                header.lastOpened = new Date().toISOString();
+                header = '<head>' + JSON.stringify(header) + '</head>';
+
+                console.log('header updated', header)
+    
+                setFileHeader(header);
+                fileData = header + '\n' + fileData.split('</head>\n')[1];
+                fs.writeFileSync(filepath, fileData);
+            }
+
+        }
+
+        // cut off header
+        let newData = fileData.split('</head>\n')[1];
+
         setData(newData);
         setFilePath(filepath);
         setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
-        fs.writeFileSync(filepath, newData);
 
         editorRef.current.commands.setContent(newData);
     };
@@ -48,7 +99,8 @@ export default () => {
     useEffect(() => {
         ipcRenderer.on('app_version', (event, arg) => {
             ipcRenderer.removeAllListeners('app_version');
-            setVersion(`${arg.version}, ${arg.isDev?'dev':'prod'}, ${arg.isUpToDate? 'up to date': 'not up to date'}`);
+            console.log('loaded version', arg.version)
+            setVersion(arg.version);
         });
 
         ipcRenderer.send('app_version');
