@@ -373,6 +373,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
                 }
             }),
             CodeBlockExtension,
+            
 
         ],
         onUpdate({ editor }) {
@@ -403,7 +404,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
         setPromptModalOpen(true);
       }
       else
-        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen);
+        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent);
     }
 
     return (
@@ -435,7 +436,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
                   <input type="text" id="prompt-input" name="prompt-input" style={{width: '80%', height: '50%'}}/>
                   <button
                     onClick={() => {
-                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection)
+                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, updateContent)
                       setPromptModalOpen(false);
                     }}
                   >
