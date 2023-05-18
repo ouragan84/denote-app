@@ -4,6 +4,7 @@ import Editor from "./tiptap/Editor";
 import { ipcRenderer } from "electron";
 import FileManager from "./file_manager/FileManager";
 
+
 import path from "path";
 import fs from "fs";
 import { Tooltip } from "react-tooltip";
@@ -63,7 +64,6 @@ export default () => {
                 
             }}
         >
-            
             <div 
                 style={{
                     width: '20vw',
@@ -80,9 +80,8 @@ export default () => {
                     
                 }}
             >                   
-                <div style={{backgroundColor:'#eef2f2', boxShadow: "0px 1px 2px lightgray", paddingTop:1,}}><h3 style={{paddingLeft:10, color:'#000', paddingBottom:15}}>Denote</h3></div>
                 
-                <div style={{backgroundColor:'#eef2f2', height:650, backgroundColor:'silver', overflowY:'scroll'}}>
+                <div style={{backgroundColor:'#eef2f2', height:720}}>
                 <FileManager
                     content={data}
                     updateContent={handleFileChange}
@@ -90,6 +89,7 @@ export default () => {
                     style={{
                         width: '100%',
                     }}
+                    openFilePath={filePath}
                 />
                 </div>
             </div>
@@ -103,15 +103,7 @@ export default () => {
                     overflow: 'hidden',
                 }}
             >
-                {/* <h2 style={{
-                    width: '100%',
-                    height: '5%',
-                    fontFamily: 'sans-serif',
-                    fontSize: '20px',
-                    marginLeft: '10px',
-                    marginTop: '10px',
-                    marginBottom: '5px',
-                }}>{fileName}</h2> */}
+
                 {isEditorLoaded?
                     <Editor
                         style={{
@@ -129,6 +121,12 @@ export default () => {
                 }   
 
             </div>
+            
         </div>
     )
 };
+
+/*
+
+
+*/

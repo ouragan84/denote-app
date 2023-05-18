@@ -163,6 +163,7 @@
     "react-icons": "^4.8.0",
     "react-mathquill": "^1.0.3",
     "react-modal": "^3.16.1",
+    "react-sketch": "^0.5.1",
     "react-tooltip": "^5.13.0",
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",

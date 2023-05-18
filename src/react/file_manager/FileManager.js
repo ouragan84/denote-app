@@ -5,6 +5,9 @@
   import fs from "fs";
   import File from "./FileButton";
 
+  import {FaFolderOpen, FaFileMedical} from 'react-icons/fa'
+  import {MdFeedback} from 'react-icons/md'
+
   const { v4: uuid } = require('uuid');
 
   const ignoreList = [
@@ -14,7 +17,7 @@
 
   const extension = '.dnt';
 
-  function FileManager({content, updateContent, setEditorLoaded }) {
+  function FileManager({content, updateContent, setEditorLoaded, openFilePath }) {
 
       const [explorerData, setExplorerData] = useState(null)
       const [workingFolder, setWorkingFolder] = useState(null)
@@ -143,21 +146,18 @@
               
       return (
           <>
+            <div style={{backgroundColor:'#eef2f2', boxShadow: "0px 1px 1px lightgray", paddingTop:1,display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                <h3 style={{paddingLeft:10, color:'#000'}}>Denote</h3>
+                <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                <FaFolderOpen style={{marginRight:20, fontSize:18}} onClick={() => {ipcRenderer.send('open-folder')}}/>
+                <FaFileMedical style={{marginRight:20}} onClick={() => {openNewFile();}}/>
+                </div>
+            </div>
+            <div style={{height:720, overflowY:'scroll'}}>
             {explorerData ?
-              <File explorer={explorerData} isRoot={true} key={explorerData.id}/>
+              <File explorer={explorerData} isRoot={true} key={explorerData.id} openFilePath={openFilePath}/>
               : <></>
             }
-            <div 
-                style={{
-                    display: 'flex', 
-                    justifyContent: 'space-evenly',
-                    position: 'absolute',
-                    bottom: 0,
-                    width: '100%',
-                }}
-            >
-                <button onClick={() => {ipcRenderer.send('open-folder')}}>Open Folder</button>
-                <button onClick={() => {openNewFile();}}>New File</button>
             </div>
           </>
       );
