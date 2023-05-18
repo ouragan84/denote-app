@@ -42,7 +42,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
       <div style={{display:'flex',flexDirection:'row', justifyContent:'center', marginLeft:15, marginRight:15,}}>
         <div style={{paddingLeft:'1rem',backgroundColor:'#eef2f2', borderBottomLeftRadius:18, borderBottomRightRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
           <div style={{marginBottom:'10px'}}>
-            <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>{fileName}</span>
+            <span style={{fontSize: 15, fontWeight: 'default'}}>{fileName}</span>
             </div>
             <div style={{width:'70vw',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
               <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:500, alignItems:'center'}}>
@@ -309,9 +309,9 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   undo
                 </FaUndo>
                 <FaRedo
-                  onMouseDown={()=>cols[15] = 'gray'}
-                  onMouseUp={()=>cols[15] = 'black'}
-                  style={{color:cols[15]}}
+                  onMouseDown={()=>cols[16] = 'gray'}
+                  onMouseUp={()=>cols[16] = 'black'}
+                  style={{color:cols[16]}}
                   onClick={() => editor.chain().focus().redo().run()}
                   disabled={
                     !editor.can()
@@ -431,7 +431,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
               }}
             >
               <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'sans-serif'}}>Prompt</span>
+                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'Open Sans'}}>Prompt</span>
                 <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                   <input type="text" id="prompt-input" name="prompt-input" style={{width: '80%', height: '50%'}}/>
                   <button
@@ -468,8 +468,8 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
               }}
             >
               <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'sans-serif'}}>Loading</span>
-                <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>Loading...</span>
+                <span style={{fontSize: 20, fontWeight: 'bold', }}>Loading</span>
+                <span style={{fontSize: 15, fontWeight: 'default',}}>Loading...</span>
               </div>
             </Modal>
 
@@ -495,8 +495,8 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
               }}
             >
               <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'sans-serif'}}>Error</span>
-                <span style={{fontSize: 15, fontWeight: 'default', fontFamily:'sans-serif'}}>{error}</span>
+                <span style={{fontSize: 20, fontWeight: 'bold'}}>Error</span>
+                <span style={{fontSize: 15, fontWeight: 'default'}}>{error}</span>
               </div>
             </Modal>
 
@@ -512,8 +512,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
               editor={editor} 
               onKeyDown={handleKeyDown}
               style={{
-                fontFamily: 'sans-serif',
-                height: '80%',
+                height: '87%',
                 overflowY: 'auto',
                 margin:10,
 
