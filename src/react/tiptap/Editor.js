@@ -406,6 +406,8 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
         callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen);
     }
 
+    const [h, setH] = useState('87%')
+
     return (
         <>
             <Modal
@@ -511,7 +513,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
               editor={editor} 
               onKeyDown={handleKeyDown}
               style={{
-                height: '87%',
+                height: h,
                 overflowY: 'auto',
                 margin:10,
 

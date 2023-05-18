@@ -2,6 +2,10 @@ import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
 import React, {useState} from 'react'
+import ReactDOM from "react-dom";
+import CanvasDraw from "react-canvas-draw";
+
+
 
 export const DrawBox = props => {
 
@@ -14,14 +18,24 @@ export const DrawBox = props => {
   const onInputFieldUpdate = (event) => {
     updateData(event.target.value);
   }
+  
 
   return (
     <NodeViewWrapper className="draw-box">
-      <span className="label">Draw Box</span>
+    <div style={{
+      textAlign: 'center',
+    
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+      <CanvasDraw
+        style={{
 
-      <div className="content">
-        <input type="text" value={props.node.attrs.data} onChange={onInputFieldUpdate} />
-      </div>
+        }}
+      />
+    </div>
     </NodeViewWrapper>
   )
 
