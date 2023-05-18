@@ -120,7 +120,6 @@
             console.log('file-saved-reply', filePath);
             console.log('contentRef.current', contentRef.current);
 
-
             updateContent(filePath, contentRef.current);
 
             if (!filePath)
