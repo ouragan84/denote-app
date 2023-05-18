@@ -175,8 +175,13 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
     }).catch(error => {
         console.error('Error:', error);
         loadingCallback(false);
-        return errorCallback(error.message);
+        errorCallback(error.message);
+        return undefined
     });
+
+    if (!HTMLReplaceSelection) {
+        return;
+    }
 
     console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
 

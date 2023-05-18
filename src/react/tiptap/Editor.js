@@ -3,7 +3,7 @@ import './styles.scss'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
-import { Color } from '@tiptap/extension-color'
+// import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor, ReactNodeViewRenderer} from '@tiptap/react'
@@ -355,7 +355,6 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
             SmilieReplacer,
             DrawBoxNode,
             Underline,
-            Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
             Placeholder.configure({
