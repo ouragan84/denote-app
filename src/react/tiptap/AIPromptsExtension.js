@@ -24,6 +24,15 @@ const getContext = (HTMLWithCursors) => {
 }
 
 
+const formatHTML = (HTMLContent) => {
+    // add new lines between tags, except for <strong>, <em>, <u>, <s>, <code>, <cursor-start/>, and <cursor-end/>, and <span>, even if they have attributes inside
+    const regex = /(<\/?(?!strong|em|u|s|code|cursor-start|cursor-end|span)[^>]+>)/g;
+    const HTMLFormatted = HTMLContent.replace(regex, '\n$1\n');
+
+    return HTMLFormatted;
+}
+
+
 const replaceSelection = (HTMLWithCursors, HTMLReplaceSelection) => {
     // insert the replacement html where the user selected
     // remove whitespaces and new lines between tags
@@ -112,7 +121,7 @@ export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, 
 export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback) => {
     let question;
 
-    console.log("Calling AI Prompt: " + promptTitle);
+    console.log("Calling AI Prompt:" + promptTitle);
 
     // if the editor is not in focus, throw an erro
     if( !editor.isActive() ){
@@ -131,7 +140,9 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
 
     loadingCallback(true);
 
-    const HTMLWithCursors = getHTMLWithCursors(editor, selection, saveContentCallback);
+    const HTMLWithCursors = await getHTMLWithCursors(editor, selection, saveContentCallback);
+
+    console.log('HTMLWithCursors:\n', HTMLWithCursors)
 
     let context;
 
@@ -142,15 +153,15 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
         return errorCallback(error.message);
     }
 
-    question = xmlFormat('<>' + context + '</>');
+    console.log('context:\n', context);
 
-    console.log('question', question);
+    question = formatHTML(context);
+
+    console.log('question:\n', question);
 
     const data = {
         "question": question,
     };
-
-    console.log('data', data);
 
     const HTMLReplaceSelection = await fetch(url + '/' + promptTitle, {
         method: 'POST',
@@ -163,13 +174,15 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
         return answer;
     }).catch(error => {
         console.error('Error:', error);
+        loadingCallback(false);
+        return errorCallback(error.message);
     });
 
-    console.log('HTMLReplaceSelection', HTMLReplaceSelection);
+    console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
 
     const newHTML = replaceSelection(HTMLWithCursors, HTMLReplaceSelection);
 
-    console.log('newHTML', newHTML);
+    console.log('newHTML:\n', newHTML);
 
     // redundant
     await editor.commands.setContent(newHTML);
@@ -197,12 +210,12 @@ export const getHTMLWithCursors = async (editor, selection, saveContentCallback)
 
     const HTMLContent = editor.getHTML();
 
-    console.log('HTMLContent1', HTMLContent);
+    // console.log('HTMLContent1', HTMLContent);
 
     const HTMLWithCursors = HTMLContent.replace(startTag, '<cursor-start/>').replace(endTag, '<cursor-end/>');
     const HTMLNoCursors = HTMLContent.replace(startTag, '').replace(endTag, '');
 
-    console.log('HTMLContent2', HTMLWithCursors);
+    // console.log('HTMLContent2', HTMLWithCursors);
 
     await editor.commands.setContent(HTMLNoCursors);
 
@@ -212,7 +225,7 @@ export const getHTMLWithCursors = async (editor, selection, saveContentCallback)
     saveContentCallback(HTMLNoCursors);
 
     //print editor content
-    console.log('after:\n',editor.getHTML());
+    // console.log('after:\n',editor.getHTML());
 
     return HTMLWithCursors;
 }
