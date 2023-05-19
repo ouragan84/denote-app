@@ -84,6 +84,7 @@ export const InlineMathBox = props => {
               onKeyDown={handleKeyDown}
               style={{
                 border: 'none',
+                outline: (props.node.attrs.latex === '') ? '1px solid #ccc' : 'none',
               }}
               mathquillDidMount={mathField => {
                 setField(mathField);
@@ -118,7 +119,7 @@ const InlineMathBoxNode = Node.create({
     addAttributes() {
         return {
           latex: {
-            default: "x",
+            default: "",
             renderHTML: (attributes) => {
               return {
                 latex: attributes.latex
