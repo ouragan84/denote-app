@@ -6,7 +6,7 @@ import Text from '@tiptap/extension-text'
 // import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
-import { EditorContent, useEditor, ReactNodeViewRenderer} from '@tiptap/react'
+import { EditorContent, useEditor, ReactNodeViewRenderer, Extension} from '@tiptap/react'
 import Placeholder from '@tiptap/extension-placeholder'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -19,7 +19,7 @@ import Modal from 'react-modal'
 import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
 import {SmilieReplacer} from './EmojiReplacerExtension'
-import DrawBoxNode from './DrawBoxExtentsion'
+// import DrawBoxNode from './DrawBoxExtentsion'
 import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 
@@ -29,7 +29,7 @@ import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, F
 import { HiSparkles } from "react-icons/hi2";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { BiMath } from 'react-icons/bi'
-import { TbBracketsContain } from 'react-icons/tb'
+import { TbBracketsContain, TbMath } from 'react-icons/tb'
 
 export function resetEditorContent(editor, newContent) {
   editor.commands.setContent(newContent);
@@ -253,7 +253,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 >
                   horizontal rule
                 </RiBarChartHorizontalLine>
-                <BiMath
+                <TbMath
                 onMouseDown={()=>cols[14] = 'gray'}
                 onMouseUp={()=>cols[14] = 'black'}
                 style={{color:cols[14]}}
@@ -262,7 +262,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Insert Math"
                 >
                   maf
-                </BiMath>
+                </TbMath>
                 <FaLaptopCode
                 onMouseDown={()=>cols[11] = 'gray'}
                 onMouseUp={()=>cols[11] = 'black'}
@@ -273,7 +273,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 >
                   code block
                 </FaLaptopCode>
-                <FaRegEdit
+                {/* <FaRegEdit
                   onMouseDown={()=>cols[17] = 'gray'}
                   onMouseUp={()=>cols[17] = 'black'}
                   style={{color:cols[17]}}
@@ -282,7 +282,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Insert Draw Box"
                 >
                     Draw
-                </FaRegEdit>
+                </FaRegEdit> */}
 
                 <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
@@ -394,7 +394,6 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             ComponentNode,
             MyMathBoxNode,
             SmilieReplacer,
-            DrawBoxNode,
             Underline,
             Highlight,
             Typography,
@@ -415,11 +414,22 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 }
             }),
             CodeBlockExtension,
+            // new command to save editor content
+            Extension.create({
+                name: 'saveEditorContent',
+                addCommands() {
+                    return {
+                        save: () => ({ editor }) => {
+                            updateContent(editor.getHTML());
+                        }
+                    }
+                }
+            }),
         ],
         onUpdate({ editor }) {
             updateContent(editor.getHTML());
         },
-        content: content,
+        content: content
     })
 
     useEffect(() => {
