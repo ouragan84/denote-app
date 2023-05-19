@@ -11,6 +11,12 @@ export const InlineMathBox = props => {
   const currentField = useRef(field);
 
   useEffect(() => {
+    if (props.selected) {
+      currentField.current.focus();
+    }
+  }, [props.selected]);
+
+  useEffect(() => {
     const prevMathField = currentField.current;
     currentField.current = field;
 
@@ -40,36 +46,6 @@ export const InlineMathBox = props => {
         e.stopPropagation();
         props.editor.chain().focus(pos+1).run();
       }
-
-      // if (key === 'ArrowLeft'){
-      //   e.preventDefault();
-      //   e.stopPropagation();
-
-      //   // get position of cursor in mathfield
-      //   // const cursorPos = currentField.current.__controller.cursor.position();
-      //   // console.log(currentField.current);
-      //   // console.log(currentField.current.__controller);
-      //   // console.log(currentField.current.__controller.cursor);
-
-      //   // console.log(currentField.current.__controller.cursor.offset());
-      //   // console.log(currentField.current);
-      //   // console.log(currentField.current.__controller.cursor.position());
-
-
-      //   // if cursor is at the beginning of the mathfield
-      //   // if (cursorPos === 0){
-      //   //   // move cursor to end of mathfield
-      //   //   // currentField.current.__controller.cursor.moveToRightEnd();
-      //   //   // move cursor to end of mathfield
-      //   //   props.editor.chain().focus(pos-1).run();
-      //   // }
-        
-      // }
-      
-      // if (key === 'ArrowRight'){
-      //   e.preventDefault();
-      //   e.stopPropagation();
-      // }
   }
 
   return (
