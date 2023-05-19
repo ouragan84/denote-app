@@ -34,6 +34,8 @@ export const InlineMathBox = props => {
       latex: mathField.latex(),
     })
 
+    console.log(mathField.latex())
+
     props.editor.commands.save();
   }
 
@@ -60,7 +62,8 @@ export const InlineMathBox = props => {
               onKeyDown={handleKeyDown}
               style={{
                 border: 'none',
-                outline: (props.node.attrs.latex === '') ? '1px solid #ccc' : 'none',
+                // outline if latex is empty or has only spaces (in latex, spaces are represented by '\ ')
+                outline: props.node.attrs.latex.replace(/\\ /g,'') === '' ? '1px solid #ddd' : 'none', 
               }}
               mathquillDidMount={mathField => {
                 setField(mathField);
