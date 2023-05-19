@@ -5,41 +5,24 @@ import fs from "fs";
 import { FaFolder, FaFile, FaAngleDown } from "react-icons/fa"
 
 
+
 function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert=86, openFilePath}) {
+
+    let transformedStyle = {
+        position:'inherit', color:'#444',
+        transition: '1s, transform 0.15s',
+        transform: 'rotate(0deg)',
+    }
+    let normalStyle = {
+        position:'inherit', color:'#444',
+        transition: '1s, transform 0.15s',
+        transform: 'rotate(-90deg)',
+    }
     
     const [explorerData, etExplorerData] = useState(explorer)
     const [expand, setExpand] = useState(isRoot)
     const [bg, setBg] = useState('#eef2f2')
-    const [rot, setRot] = useState(false)
-
-    const [screenSize, setScreenSize] = useState(getCurrentDimension());
-
-  	function getCurrentDimension(){
-    	return {
-      		width: window.innerWidth,
-      		height: window.innerHeight
-    	}
-  	}
-
-    function map (number, inMin, inMax, outMin, outMax) {
-        return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    }
-
-    const swconvert = (w) => {
-        return Math.floor(map(w, 1440, 1038, 20, 100))
-    }
-    // console.log(swconvert(screenSize.width))
-  
-    const transformedStyle = {
-        position:'inherit', color:'#444', marginRight:swconvert(screenSize.width),
-        transition: '1s, transform 0.15s',
-        transform: 'rotate(0deg)',
-    }
-    const normalStyle = {
-        position:'inherit', color:'#444',marginRight:swconvert(screenSize.width),
-        transition: '1s, transform 0.15s',
-        transform: 'rotate(-90deg)',
-    }
+    
 
     const [selected, setSelected] = useState(openFilePath == explorerData.path)
     
@@ -57,7 +40,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
                         flexDirection:'row',
                         justifyContent: 'space-between',
                         padding: '2px',
-                        width: '300px',
+                        width: '20vw',
                         cursor: 'pointer',
                         backgroundColor:bg,
                     }} onClick={()=>{setExpand(!expand)}}
@@ -65,9 +48,9 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
                     onMouseLeave={()=>setBg('#eef2f2')}
                     >
                         <div style={{display:'flex',alignItems:'center', fontSize:14, }}>{indspace}<FaFolder style={{width:30, color:'#fad482'}}/>{explorerData.name}</div>
-                        <div><FaAngleDown style={expand ? transformedStyle : normalStyle} /></div>
+                        <div style={{display:'flex',alignItems:'center', paddingRight:10}}><FaAngleDown style={expand ? transformedStyle : normalStyle} /></div>
                     </div> 
-                    <div style={{display: expand ? 'block': 'none',}}
+                    <div style={{display: expand ? 'block': 'none'}}
                     >
                         {explorerData.items.map((exp, index) => {
                             return <FileButton explorer={exp} key={exp.id} indent={indent+1} vert={vert+((index+1)*29)} openFilePath={openFilePath}/>
@@ -77,7 +60,8 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
             </>
         );
     }else{
-        return <span style={{    
+        return <>
+            <span style={{    
                 marginTop: '5px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -91,6 +75,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
             onMouseEnter={()=>{if(!openFilePath == explorerData.path) setBg('#dde1e1')}}
             onMouseLeave={()=>{if(!openFilePath == explorerData.path) setBg('#eef2f2')}}
         >{indspace}<FaFile style={{width:30, color:'#778978'}}/>{explorerData.name}</div></span>
+        </>
     }
   }
   

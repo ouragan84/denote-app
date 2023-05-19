@@ -457,6 +457,8 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
         callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent, setPaymentModalOpen, serverURL, userID);
     }
 
+    const [h, setH] = useState('87%')
+
     return (
         <>
             {/* PROMPT MODAL */}
@@ -631,7 +633,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               editor={editor} 
               onKeyDown={handleKeyDown}
               style={{
-                height: '87%',
+                height: h,
                 overflowY: 'auto',
                 margin:10,
 
