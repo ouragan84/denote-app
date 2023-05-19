@@ -12,7 +12,8 @@ const Store = require('electron-store');
 const store = new Store();
 
 // IMPORTANT: CHANGE BETWEEN DEV AND PROD
-const serverURL = 'http://localhost:8080';
+// const serverURL = 'http://localhost:8080';
+const serverURL = 'https://www.denote.app';
 
 let userID = null;
 

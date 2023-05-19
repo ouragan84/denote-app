@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from "react";
 // import Editor from "./quill/Editor";
-import Editor from "./tiptap/Editor";
+import Editor, {resetEditorContent} from "./tiptap/Editor";
 import { ipcRenderer } from "electron";
 import FileManager from "./file_manager/FileManager";
 
@@ -77,7 +77,7 @@ export default () => {
 
                 let header = getNewHeader();
                 
-                console.log('header created', header);
+                // console.log('header created', header);
 
                 setFileHeader(header);
                 fileData = header + '\n' + fileData;
@@ -95,7 +95,7 @@ export default () => {
                 header.lastOpened = new Date().toISOString();
                 header = '<head>' + JSON.stringify(header) + '</head>';
 
-                console.log('header updated', header)
+                // console.log('header updated', header)
     
                 setFileHeader(header);
                 fileData = header + '\n' + fileData.split('</head>\n')[1];
@@ -111,7 +111,8 @@ export default () => {
         setFilePath(filepath);
         setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
 
-        editorRef.current.commands.setContent(newData);
+        // editorRef.current.commands.setContent(newData);
+        resetEditorContent(editorRef.current, newData);
     };
 
     useEffect(() => {

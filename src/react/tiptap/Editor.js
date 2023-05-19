@@ -10,6 +10,9 @@ import { EditorContent, useEditor, ReactNodeViewRenderer} from '@tiptap/react'
 import Placeholder from '@tiptap/extension-placeholder'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
+import Highlight from '@tiptap/extension-highlight'
+import Typography from '@tiptap/extension-typography'
+import { EditorState } from 'prosemirror-state';
 import React, {useEffect, useState} from 'react'
 import Modal from 'react-modal'
 
@@ -22,11 +25,23 @@ import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 
 import {Tooltip} from 'react-tooltip'
 
-import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion } from "react-icons/fa";
+import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter} from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { BiMath } from 'react-icons/bi'
 import { TbBracketsContain } from 'react-icons/tb'
+
+export function resetEditorContent(editor, newContent) {
+  editor.commands.setContent(newContent);
+
+  // The following code clears the history. Hopefully without side effects.
+  const newEditorState = EditorState.create({
+      doc: editor.state.doc,
+      plugins: editor.state.plugins,
+      schema: editor.state.schema
+  });
+  editor.view.updateState(newEditorState);
+} 
 
 const MenuBar = ({ editor, fileName, callprompt }) => {
     if (!editor) {
@@ -34,7 +49,8 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
     }
 
     let initCols = []
-    for (let i = 0; i < 21; i++)
+    // number refers to number of icons
+    for (let i = 0; i < 22; i++)
       initCols.push('black')
     const [cols, setCols] = useState(initCols)
   
@@ -172,12 +188,24 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 </FaCode>
 
                 <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().run()} 
-                onMouseDown={()=>cols[5] = 'gray'}
-                onMouseUp={()=>cols[5] = 'black'}
-                style={{color:cols[5]}}
-                data-tooltip-id="tool" data-tooltip-content="Clear Format">
-                  clear nodes
+                  onMouseDown={()=>cols[5] = 'gray'}
+                  onMouseUp={()=>cols[5] = 'black'}
+                  style={{color:cols[5]}}
+                  data-tooltip-id="tool" data-tooltip-content="Clear Format">
+                    clear nodes
                 </FaRemoveFormat>
+
+                <FaHighlighter
+                  onMouseDown={()=>cols[21] = 'gray'}
+                  onMouseUp={()=>cols[21] = 'black'}
+                  style={{color:cols[21]}}
+                  onClick={() => editor.chain().focus().toggleHighlight().run()}
+                  className={editor.isActive('highlight') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Highlight"
+                >
+                  highlight
+                </FaHighlighter>
+
 
                 <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
@@ -337,6 +365,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
     const [promptModalOpen, setPromptModalOpen] = useState(false);
     const [errorModalOpen, setErrorModalOpen] = useState(false);
     const [loadingModalOpen, setLoadingModalOpen] = useState(false);
+    const [paymentModalOpen, setPaymentModalOpen] = useState(false);
     const [error, setError] = useState('');
     const [selection, setSelection] = useState(null);
 
@@ -367,6 +396,8 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             SmilieReplacer,
             DrawBoxNode,
             Underline,
+            Highlight,
+            Typography,
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
             Placeholder.configure({
@@ -413,11 +444,12 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
         setPromptModalOpen(true);
       }
       else
-        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent, serverURL, userID);
+        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent, setPaymentModalOpen, serverURL, userID);
     }
 
     return (
         <>
+            {/* PROMPT MODAL */}
             <Modal
               isOpen={promptModalOpen}
               onRequestClose={() => setPromptModalOpen(false)}
@@ -441,20 +473,21 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             >
               <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                 <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'Open Sans'}}>Prompt</span>
-                <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                   <input type="text" id="prompt-input" name="prompt-input" style={{width: '80%', height: '50%'}}/>
                   <button
                     onClick={() => {
-                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, updateContent, serverURL, userID)
+                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, updateContent, setPaymentModalOpen, serverURL, userID)
                       setPromptModalOpen(false);
                     }}
                   >
                     Submit
                   </button>
-                </form>
+                </div>
               </div>
             </Modal>
 
+            {/* LOADING AI MODAL */}
             <Modal
               isOpen={loadingModalOpen}
               // onRequestClose={() => setLoadingModalOpen(false)}
@@ -482,6 +515,73 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               </div>
             </Modal>
 
+            {/* PAYMENT REQUEST MOAL */}
+            <Modal
+              isOpen={paymentModalOpen}
+              onRequestClose={() => {setPaymentModalOpen(false); setError(''); setLoadingModalOpen(false);}}
+              contentLabel="Payment Modal"
+              ariaHideApp={false}
+              style={{
+                overlay: {
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                },
+                content: {
+                  backgroundColor: 'white',
+                  width: '50%',
+                  height: '50%',
+                  margin: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }
+              }}
+            >
+              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <span style={{fontSize: 20, fontWeight: 'bold'}}>You have exausted your free AI usage</span>
+                <span style={{fontSize: 15, fontWeight: 'default'}}>We will refill your free AI usage within a month.</span>
+                <span style={{fontSize: 15, fontWeight: 'default'}}>$7.99 / month for unlimitted usage. <br/> Fill in your email adress and we will send you payment details shortly.</span>
+                <div>
+                  <input type="text" id="payment-input" name="payment-input" placeholder='email@abc.com' style={{width: '80%', height: '50%'}}/>
+                  <button
+                      onClick={() => {
+                        const email = document.getElementById('payment-input').value;
+                        if(!email || email.length < 5){
+                          setError('Please enter a valid email address.');
+                          return;
+                        }
+                        // TODO: send email to server
+                        fetch(serverURL + '/payment-request', {
+                          method: 'POST',
+                          body: JSON.stringify({
+                              userID: userID,
+                              email: email,
+                          }),
+                          headers: {
+                              'Content-Type': 'application/json'
+                          },
+                          mode: 'cors'
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                          if(data.error){
+                            setError(data.error);
+                          }
+                          else{
+                            setError('Thank you for your interest! We will contact you shortly.');
+                          }
+                        });
+
+                      }}
+                  >
+                    Submit
+                  </button>
+                  <span style={{fontSize: 15, color:'red'}}>{' ' + error}</span>
+                </div>
+              </div>
+            </Modal>
+
+            {/* ERROR MODAL */}
             <Modal
               isOpen={errorModalOpen}
               onRequestClose={() => {setErrorModalOpen(false); setError(''); setLoadingModalOpen(false);}}

@@ -22,7 +22,6 @@ const getContext = (HTMLWithCursors) => {
     return  context;
 }
 
-
 const formatHTML = (HTMLContent) => {
     // add new lines between tags, except for <strong>, <em>, <u>, <s>, <code>, <cursor-start/>, and <cursor-end/>, and <span>, even if they have attributes inside
     const regex = /(<\/?(?!strong|em|u|s|code|cursor-start|cursor-end|span)[^>]+>)/g;
@@ -51,73 +50,95 @@ const replaceSelection = (HTMLWithCursors, HTMLReplaceSelection) => {
 }
 
 
-// export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback) => {
-//     let question;
-//     console.log("Calling AI Prompt: " + promptTitle);
+export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback, paymentCallback, serverURL, userID) => {
 
-//     // temporarily disable the editor
-//     editor.isReadOnly = true;
-//     loadingCallback(true);
+    let question;
 
-//     if( promptTitle === 'Prompt' ){
-//         // get the context
-//         let context;
-//         try {
-//             context = getContext(editor, selection, false);
-//         } catch (error) {
-//             loadingCallback(false);
-//             return errorCallback(error.message);
-//         }
+    console.log("Calling AI Prompt:" + promptTitle);
 
-//         if( !userPrompt || userPrompt === '' ){
-//             loadingCallback(false);
-//             return errorCallback('The prompt is empty.');
-//         }
+    // if the editor is not in focus, throw an erro
+    if( !editor.isActive() ){
+        return errorCallback('The editor is not in focus.');
+    }
 
-//         // get the question
-//         question = xmlFormat(context) + '\n\n----------\n\n' + userPrompt;
-//     }else{
-//         loadingCallback(false);
-//         return errorCallback('Invalid prompt title.');
-//     }
+    if( promptTitle !== 'Prompt' ){
+        return errorCallback('Invalid prompt title.');
+    }
 
-//     console.log('question', question);
+    // we don't need to check if the selection is empty because the userPrompt will be added to the end of the document
+    // if ( selection[0] === selection[1] ){
+    //     return errorCallback('The selection is empty.');
+    // }
 
-//     const data = {
-//         "question": question,
-//     };
+    loadingCallback(true);
 
-//     console.log('data', data);
+    const HTMLWithCursors = await getHTMLWithCursors(editor, selection, saveContentCallback);
 
-//     const answer = await fetch(url + '/' + promptTitle, {
-//         method: 'POST',
-//         headers: {
-//         'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(data),
-//         mode: 'cors'
-//     }).then(response => response.json()).then(data => {
-//         const answer = data.message.content;
-//         return answer;
-//     }).catch(error => {
-//         console.error('Error:', error);
-//     });
+    console.log('HTMLWithCursors:\n', HTMLWithCursors)
 
-//     console.log('answer', answer);
+    let context;
 
-//     // re-enable the editor
-//     editor.isReadOnly = false;
-//     loadingCallback(false);
+    try {
+        context = getContext(HTMLWithCursors);
+    } catch (error) {
+        loadingCallback(false);
+        return errorCallback(error.message);
+    }
 
-//     editor.commands.setTextSelection(editor.state.selection.from, editor.state.selection.to);
+    // console.log('context:\n', context);
 
-//     // replace the selection with the answer
-//     replaceSelection(editor, answer, selection);
-// }
+    question = formatHTML(context) + '\n\n----------\n\n' + userPrompt;
 
-export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback) => {}
 
-export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback, serverURL, userID) => {
+    // console.log('question:\n', question);
+
+    const data = {
+        question: question,
+        userID: userID,
+    };
+
+    const HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(response => response.json()).then(data => {
+        const answer = data.message.content;
+        return answer;
+    }).catch(error => {
+        console.error('Error:', error);
+        return {error: error.message}
+    });
+
+    if( HTMLReplaceSelection.error ){
+        loadingCallback(false);
+        if(HTMLReplaceSelection.error === 'user banned'){
+            return paymentCallback(true);
+        }else{
+            return errorCallback(HTMLReplaceSelection.error);
+        }
+    }
+
+    console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
+
+    const newHTML = replaceSelection(HTMLWithCursors, HTMLReplaceSelection);
+
+    // console.log('newHTML:\n', newHTML);
+
+    // redundant
+    await editor.commands.setContent(newHTML);
+
+    // TODO: Figure out how to set the selection to after the replaced selection
+    await editor.commands.setTextSelection(selection[0], selection[0]);
+
+    saveContentCallback(newHTML);
+
+    loadingCallback(false);
+}
+
+
+export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback, paymentCallback, serverURL, userID) => {
     let question;
 
     console.log("Calling AI Prompt:" + promptTitle);
@@ -152,11 +173,11 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
         return errorCallback(error.message);
     }
 
-    console.log('context:\n', context);
+    // console.log('context:\n', context);
 
     question = formatHTML(context);
 
-    console.log('question:\n', question);
+    // console.log('question:\n', question);
 
     const data = {
         question: question,
@@ -174,20 +195,23 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
         return answer;
     }).catch(error => {
         console.error('Error:', error);
-        loadingCallback(false);
-        errorCallback(error.message);
-        return undefined
+        return {error: error.message}
     });
 
-    if (!HTMLReplaceSelection) {
-        return;
+    if( HTMLReplaceSelection.error ){
+        loadingCallback(false);
+        if(HTMLReplaceSelection.error === 'user banned'){
+            return paymentCallback(true);
+        }else{
+            return errorCallback(HTMLReplaceSelection.error);
+        }
     }
 
     console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
 
     const newHTML = replaceSelection(HTMLWithCursors, HTMLReplaceSelection);
 
-    console.log('newHTML:\n', newHTML);
+    // console.log('newHTML:\n', newHTML);
 
     // redundant
     await editor.commands.setContent(newHTML);
@@ -252,5 +276,3 @@ async function addMarkerTags(editor) {
 
     await dispatch(transaction);
 }
-  
-  
