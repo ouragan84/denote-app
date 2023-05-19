@@ -2,20 +2,25 @@ const { BrowserWindow, app, ipcMain, Menu, dialog} = require('electron');
 const fs = require("fs");
 const path = require('path');
 const homedir = require('os').homedir();
-const { v4: uuid } = require('uuid');
+// const { v4: uuid } = require('uuid');
 const { autoUpdater, AppUpdater} = require('electron-updater');
 const isDev = require('electron-is-dev');
 const ua = require('universal-analytics');
-
+const os = require('os');
 
 const Store = require('electron-store');
 const store = new Store();
-let userID;
+
+// IMPORTANT: CHANGE BETWEEN DEV AND PROD
+const serverURL = 'http://localhost:8080';
+
+let userID = null;
 
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 autoUpdater.logger = require('electron-log');
 autoUpdater.logger.transports.file.level = 'info';
+
 const createWindow = async () => {
 
     // console.log('home directory:', homedir);
@@ -147,6 +152,19 @@ const showUpdateDialog = () => {
         }
     });
 
+    fetch(serverURL + '/event', {
+        method: 'POST',
+        body: JSON.stringify({
+            userID: userID,
+            type: 'update_installed',
+            aditionalData: `${app.getVersion()}`
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+    })
+
     updateLogs.loadURL(path.join('file://', __dirname, 'update_logs.html'));
 
     updateLogs.setTitle('Denote Update');
@@ -156,24 +174,62 @@ const showUpdateDialog = () => {
     store.set('isUpToDate', true);
 }
 
-app.whenReady().then(() => {
-    createWindow();
+app.whenReady().then(async () => {
 
-    console.log('app ready');
+    if(!store.has('userID') || store.get('userID') == null){
 
-    userID = setUserID();
-    console.log(userID);
+        console.log('registering new user')
 
-    const visitor = ua('UA-268494877-1', userID);
-    visitor.set('uid', userID);
-    // Track the app open event
-    visitor.event('App', 'Open').send();
+        userID = await fetch(serverURL + '/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                platform: os.platform(),
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        }).then(response => response.json()).then(data => {
+            const userID = data.userID;
+            return userID;
+        }).catch(error => {
+            console.error('Error:', error);
+            return null;
+        });
+
+        store.set('userID', userID);
+
+        if(!userID)
+            return app.quit();
+
+    } else {
+        userID = store.get('userID');
+
+        console.log('returning user');
+    }
+
+    console.log('userID = ' + userID);
+
+    fetch(serverURL + '/event', {
+        method: 'POST',
+        body: JSON.stringify({
+            userID: userID,
+            type: 'app_opened',
+            aditionalData: `${app.getVersion()}`
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+    })
 
     if(!isDev){
         autoUpdater.checkForUpdates();
     }
 
     showUpdateDialog();
+
+    createWindow();
 });
 
 autoUpdater.on('checking-for-update', () => {
@@ -196,18 +252,41 @@ autoUpdater.on('download-progress', (progressObj) => {
 autoUpdater.on('update-downloaded', (info) => {
     console.log('update downloaded');
     store.set('isUpToDate', false);
+    fetch(serverURL + '/event', {
+        method: 'POST',
+        body: JSON.stringify({
+            userID: userID,
+            type: 'update_downloaded',
+            aditionalData: `${info.version}`
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+    })
     autoUpdater.quitAndInstall();
 });
 
 autoUpdater.on('error', (err) => {
     console.error(err);
+    fetch(serverURL + '/event', {
+        method: 'POST',
+        body: JSON.stringify({
+            userID: userID,
+            type: 'update_error',
+            aditionalData: `${err.message}`
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+    })
 });
 
-ipcMain.on('app_version', (event) => {
+ipcMain.on('app_info', (event) => {
     version = app.getVersion();
-    event.sender.send('app_version', {version: version, isDev: isDev, isUpToDate: store.get('isUpToDate')});
+    event.sender.send('app_info', {version: version, isDev: isDev, platform: os.platform(), userID: userID, serverURL: serverURL});
 });
-
 
 const openFolder = async (event) => {
     const folderpath = homedir;
@@ -227,7 +306,20 @@ const openFolder = async (event) => {
             event.reply('open-folder-reply', dirPath);
         }  
     }).catch(err => {
-      console.log(err)
+        console.log(err)
+
+        fetch(serverURL + '/event', {
+            method: 'POST',
+            body: JSON.stringify({
+                userID: userID,
+                type: 'folder_open_error',
+                aditionalData: `${err.message}`
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        })
     });
 }
 
@@ -285,8 +377,20 @@ ipcMain.on('file-saved', (event) => {
 
     }).catch(err => {
         console.log(err)
-        }
-    );
+
+        fetch(serverURL + '/event', {
+            method: 'POST',
+            body: JSON.stringify({
+                userID: userID,
+                type: 'file_save_error',
+                aditionalData: `${err.message}`
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        })
+    });
 });
 
 // Quit when all windows are closed.
@@ -297,16 +401,6 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 });
-
-const setUserID = () => {
-    if(store.has('userID'))
-        return store.get('userID');
-    const id = uuid();
-    store.set('userID', id);
-    return id;
-}
-
-
 
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the 

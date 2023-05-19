@@ -332,7 +332,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
     )
 }
 
-export default ({content, updateContent, setEditorCallback, fileName}) => {
+export default ({content, updateContent, setEditorCallback, fileName, version, userID, serverURL, platform}) => {
 
     const [promptModalOpen, setPromptModalOpen] = useState(false);
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -341,6 +341,18 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
     const [selection, setSelection] = useState(null);
 
     const setErrorMessage = (message) => {
+      fetch(serverURL + '/event', {
+        method: 'POST',
+        body: JSON.stringify({
+            userID: userID,
+            type: 'ai_error',
+            aditionalData: `${message}`
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+      })
       setError(message);
       setErrorModalOpen(true);
     }
@@ -372,8 +384,6 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
                 }
             }),
             CodeBlockExtension,
-            
-
         ],
         onUpdate({ editor }) {
             updateContent(editor.getHTML());
@@ -397,13 +407,13 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
       if(prompt === 'Prompt'){
         if (!editor.state.selection.empty) {
           return errorCallback('Place your cursor in the editor.');
-      }
+        }
     
-        setSelection(editor.getHTML(editor.state.selection.from, editor.state.selection.to))
+        setSelection([editor.state.selection.from, editor.state.selection.to])
         setPromptModalOpen(true);
       }
       else
-        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent);
+        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent, serverURL, userID);
     }
 
     return (
@@ -435,7 +445,7 @@ export default ({content, updateContent, setEditorCallback, fileName}) => {
                   <input type="text" id="prompt-input" name="prompt-input" style={{width: '80%', height: '50%'}}/>
                   <button
                     onClick={() => {
-                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, updateContent)
+                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, updateContent, serverURL, userID)
                       setPromptModalOpen(false);
                     }}
                   >

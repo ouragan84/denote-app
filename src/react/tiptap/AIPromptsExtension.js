@@ -1,5 +1,4 @@
-import xmlFormat from 'xml-formatter';
-const url = 'http://localhost:8080/ai';
+// import xmlFormat from 'xml-formatter';
 
 const getContext = (HTMLWithCursors) => {
     
@@ -118,7 +117,7 @@ const replaceSelection = (HTMLWithCursors, HTMLReplaceSelection) => {
 
 export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback) => {}
 
-export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback) => {
+export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback, serverURL, userID) => {
     let question;
 
     console.log("Calling AI Prompt:" + promptTitle);
@@ -160,15 +159,16 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
     console.log('question:\n', question);
 
     const data = {
-        "question": question,
+        question: question,
+        userID: userID,
     };
 
-    const HTMLReplaceSelection = await fetch(url + '/' + promptTitle, {
+    const HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
         method: 'POST',
         headers: {
-        'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
     }).then(response => response.json()).then(data => {
         const answer = data.message.content;
         return answer;

@@ -11,27 +11,45 @@ import { Tooltip } from "react-tooltip";
 export default () => {
 
     const [data, setData] = useState('');
-    const [version, setVersion] = useState(null);
     const [editor, setEditor] = useState(null);
     const [isEditorLoaded, setIsEditorLoaded] = useState(false);
     const [filePath, setFilePath] = useState(null); // null means unsaved
     const [fileName, setFileName] = useState("Unsaved Notes - (Cmd+S to save)");
     const [fileHeader, setFileHeader] = useState(null); // null means unsaved
+    
+    const [userID, setUserID] = useState(null);
+    const [serverURL, setServerURL] = useState(null);
+    const [version, setVersion] = useState(null);
+    const [platform, setPlatform] = useState(null);
 
     // ref to last editor
     const editorRef = useRef(editor);
+
     const versionRef = useRef(version);
+    const serverURLRef = useRef(serverURL);
+    const userIDRef = useRef(userID);
+    const platformRef = useRef(platform);
 
     // update ref to last editor
     useEffect(() => {
         editorRef.current = editor;
-        console.log('editor updated', editorRef.current);
     }, [editor]);
 
     useEffect(() => {
         versionRef.current = version;
-        console.log('version updated', versionRef.current);
     }, [version]);
+
+    useEffect(() => {
+        serverURLRef.current = serverURL;
+    }, [serverURL]);
+
+    useEffect(() => {
+        userIDRef.current = userID;
+    }, [userID]);
+
+    useEffect(() => {
+        platformRef.current = platform;
+    }, [platform]);
 
 
     const handleDataUpdate = (newData) => {
@@ -97,15 +115,15 @@ export default () => {
     };
 
     useEffect(() => {
-        ipcRenderer.on('app_version', (event, arg) => {
-            ipcRenderer.removeAllListeners('app_version');
-            console.log('loaded version', arg.version)
+        ipcRenderer.on('app_info', (event, arg) => {
             setVersion(arg.version);
+            setPlatform(arg.platform);
+            setUserID(arg.userID);
+            setServerURL(arg.serverURL);
         });
 
-        ipcRenderer.send('app_version');
+        ipcRenderer.send('app_info');
     }, []);
-
     
     return (
         <div 
@@ -156,7 +174,7 @@ export default () => {
                 }}
             >
 
-                {isEditorLoaded?
+                {isEditorLoaded && version && userID && serverURL?
                     <Editor
                         style={{
                             height: '100%',
@@ -167,9 +185,16 @@ export default () => {
                         setEditorCallback={setEditor}
                         updateContent={handleDataUpdate}
                         fileName={fileName}
+                        version={version}
+                        userID={userID}
+                        serverURL={serverURL}
+                        platform={platform}
                     />
                     :
-                    <></>
+                    isEditorLoaded?
+                        <h2>You must be connected to internet the first time you open the app to set up your profile</h2>
+                    :
+                    <h2>Please select a folder to start writing in</h2>
                 }   
 
             </div>
