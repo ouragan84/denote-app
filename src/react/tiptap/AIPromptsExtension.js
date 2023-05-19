@@ -103,9 +103,9 @@ export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, 
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }).then(response => response.json()).then(data => {
-        const answer = data.message.content;
-        return answer;
+    }).then(response => response.json())
+    .then(data => {
+        return data;
     }).catch(error => {
         console.error('Error:', error);
         return {error: error.message}
@@ -119,6 +119,26 @@ export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, 
             return errorCallback(HTMLReplaceSelection.error);
         }
     }
+
+    if(!HTMLReplaceSelection.message || !HTMLReplaceSelection.message.content){
+        loadingCallback(false);
+
+        fetch(serverURL + '/event', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userID: userID,
+                event: 'ai_empty_response',
+                additionalData: 'promptTitle: ' + promptTitle
+            })
+        })
+
+        return errorCallback('Error fetching, please try again, no AI usage was deducted.');
+    }
+
+    HTMLReplaceSelection = HTMLReplaceSelection.message.content;
 
     console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
 
@@ -190,9 +210,9 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }).then(response => response.json()).then(data => {
-        const answer = data.message.content;
-        return answer;
+    }).then(response => response.json())
+    .then(data => {
+        return data;
     }).catch(error => {
         console.error('Error:', error);
         return {error: error.message}
@@ -207,6 +227,26 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
         }
     }
 
+    if(!HTMLReplaceSelection.message || !HTMLReplaceSelection.message.content){
+        loadingCallback(false);
+
+        fetch(serverURL + '/event', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userID: userID,
+                event: 'ai_empty_response',
+                additionalData: 'promptTitle: ' + promptTitle
+            })
+        })
+
+        return errorCallback('Error fetching, please try again, no AI usage was deducted.');
+    }
+
+    HTMLReplaceSelection = HTMLReplaceSelection.message.content;
+    
     console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
 
     const newHTML = replaceSelection(HTMLWithCursors, HTMLReplaceSelection);
