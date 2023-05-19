@@ -27,6 +27,8 @@ export const InlineMathBox = props => {
     props.updateAttributes({
       latex: mathField.latex(),
     })
+
+    props.editor.commands.save();
   }
 
   const handleKeyDown = (e) => {
@@ -91,7 +93,7 @@ export const InlineMathBox = props => {
                 autoCommands: 'pi theta sqrt sum',
                 autoOperatorNames: 'sin cos',
                 handlers: {
-                  edit: (mathField) => { props.editor.commands.save() },
+                  // edit: (mathField) => { props.editor.commands.save() },
                   upOutOf: (mathField) => { props.editor.chain().focus(props.getPos()-1).run(); },
                   downOutOf: (mathField) => { props.editor.chain().focus(props.getPos()+1).run(); },
                   moveOutOf: (dir, mathField) => { props.editor.chain().focus(props.getPos()+dir).run();},
