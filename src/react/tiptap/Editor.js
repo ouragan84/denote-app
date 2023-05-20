@@ -478,7 +478,8 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
     }
 
     const [h, setH] = useState('87%')
-
+    const [buttonBG, setButtonBG] = useState('#2f80ed')
+    
     return (
         <>
             {/* PROMPT MODAL */}
@@ -494,9 +495,10 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 content: {
                   backgroundColor: 'white',
                   width: '50%',
-                  height: '50%',
+                  height: '30%',
                   margin: 'auto',
                   display: 'flex',
+                  borderRadius:18,
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -504,11 +506,23 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               }}
             >
               <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'Open Sans'}}>Prompt</span>
+                <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'Open Sans'}}>Enter your prompt to the AI</span>
                 <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <input type="text" id="prompt-input" name="prompt-input" style={{width: '80%', height: '50%'}}/>
+                  <textarea type="text" id="prompt-input" name="prompt-input" style={{width: '500px', height: '50px', borderRadius:18, padding:20, margin:30}}/>
                   <button
+                    style={{
+                      paddingTop: 10,
+                      paddingBottom:10,
+                      width:130,
+                      borderRadius: 12,
+                      backgroundColor: buttonBG,
+                      color:'white',
+                      border:0,
+                    }}
+                    onMouseEnter={()=>setButtonBG('#3f91fe')}
+                    onMouseLeave={()=>setButtonBG('#2f80ed')}
                     onClick={() => {
+                      setButtonBG('#1e70dc')
                       callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, updateContent, setPaymentModalOpen, serverURL, userID)
                       setPromptModalOpen(false);
                     }}
@@ -531,19 +545,20 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 },
                 content: {
                   backgroundColor: 'white',
-                  width: '50%',
-                  height: '50%',
+                  width: '10%',
+                  height: '10%',
                   margin: 'auto',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  borderRadius:1000,
                 }
               }}
             >
-              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <span style={{fontSize: 20, fontWeight: 'bold', }}>Loading</span>
-                <span style={{fontSize: 15, fontWeight: 'default',}}>Loading...</span>
+              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontFamily:'sans-serif'}}>
+                {/* <img src={'/load.gif'}/> */}
+                Loading...
               </div>
             </Modal>
 

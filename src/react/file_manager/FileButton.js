@@ -66,14 +66,14 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
                 display: 'flex',
                 flexDirection: 'column',
                 padding: '2px',
-                cursor: 'pointer',backgroundColor:(openFilePath == explorerData.path ? '#96d1f2' : '#eef2f2'),
+                cursor: 'pointer',backgroundColor:(openFilePath == explorerData.path ? '#96d1f2' : bg),
             }}
             onClick={() => {explorerData.onClick()
                 // console.log(openFilePath == explorerData.path)
             }}
         > <div style={{display:'flex',alignItems:'center', fontSize:14}}
-            onMouseEnter={()=>{if(!openFilePath == explorerData.path) setBg('#dde1e1')}}
-            onMouseLeave={()=>{if(!openFilePath == explorerData.path) setBg('#eef2f2')}}
+            onMouseEnter={()=>{ setBg('#dde1e1')}}
+            onMouseLeave={()=>{ setBg('#eef2f2')}}
         >{indspace}<FaFile style={{width:30, color:'#778978'}}/>{explorerData.name}</div></span>
         </>
     }

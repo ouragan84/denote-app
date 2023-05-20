@@ -33,6 +33,10 @@ module.exports = {
           // Compiles Sass to CSS
           'sass-loader',
         ],
+      },
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'url?limit=25000'
       }
     ]
   },
@@ -43,4 +47,5 @@ module.exports = {
     filename: 'app.js',
     path: path.resolve(__dirname, 'build', 'js'),
   },
+  
 };
