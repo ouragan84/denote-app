@@ -193,7 +193,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   onMouseUp={()=>cols[5] = 'black'}
                   style={{color:cols[5]}}
                   // create a shortcut for this
-                  data-tooltip-id="tool" data-tooltip-content="Clear Format (Cmd )">
+                  data-tooltip-id="tool" data-tooltip-content="Clear Format (Cmd Shft x)">
                     clear nodes
                 </FaRemoveFormat>
 
@@ -440,6 +440,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                       'Mod-Alt-b': () => callprompt(this.editor, 'Beautify'),
                       'Mod-Alt-f': () => callprompt(this.editor, 'FillBlanks'),
                       'Mod-Alt-p': () => callprompt(this.editor, 'Prompt'),
+                      'Mod-Shift-x': () => this.editor.chain().focus().clearNodes().unsetAllMarks().run(),
                       'Mod-Alt-Shift-Control-o': () => clearCacheAndQuit(),
                     }
                 }
