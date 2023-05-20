@@ -65,7 +65,7 @@ const createWindow = async () => {
                 {role: 'quit', label: 'Quit Denote', accelerator: 'CmdOrCtrl+Q', click: () => {}},
                 {role: 'close', label: 'Close Window', accelerator: 'CmdOrCtrl+W', click: () => {}},
                 // send to url https://www.denote.app
-                {role: 'about', label: 'About Denote', click: () => {console.log('about clicked')}},
+                {role: 'about', label: 'About Denote', click: () => {shell.openExternal('https://www.denote.app/about')}},
             ]
         },
         {
@@ -137,8 +137,12 @@ if (isDev) {
 
 
 const showUpdateDialog = () => {
+    console.log('showUpdateDialog:', store.has('isUpToDate'), store.get('isUpToDate'));
+
     if(store.has('isUpToDate') && store.get('isUpToDate'))
         return;
+
+    console.log('showing update dialog')
 
     let updateLogs = new BrowserWindow({
         width: 400,
@@ -171,6 +175,8 @@ const showUpdateDialog = () => {
     updateLogs.setTitle('Denote Update');
 
     updateLogs.setMinimumSize(300, 300);
+
+    updateLogs.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
 
     store.set('isUpToDate', true);
 }
@@ -228,9 +234,9 @@ app.whenReady().then(async () => {
         autoUpdater.checkForUpdates();
     }
 
-    showUpdateDialog();
-
     createWindow();
+
+    showUpdateDialog();
 });
 
 autoUpdater.on('checking-for-update', () => {
@@ -239,6 +245,32 @@ autoUpdater.on('checking-for-update', () => {
 
 autoUpdater.on('update-available', (info) => {
     console.log('update available');
+    store.set('isUpToDate', false);
+    let updateAvailableWindow = new BrowserWindow({
+        width: 400,
+        height: 400,
+        backgroundColor: '#ffffff',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            worldSafeExecuteJavaScript: true,
+            enableRemoteModule: true,
+            // preload: path.join(__dirname, 'src', 'preload.js'),
+        }
+    });
+
+    if(os.platform() === 'darwin'){
+        updateAvailableWindow.loadURL(path.join('file://', __dirname, 'update_available_auto.html'));
+        window.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
+    } else {
+        updateAvailableWindow.loadURL(path.join('file://', __dirname, 'update_available_manual.html'));
+        window.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
+    }
+
+    updateAvailableWindow.setTitle('Denote Update');
+
+    updateAvailableWindow.setMinimumSize(300, 300);
+
     console.log(info)
 });
 
@@ -252,7 +284,6 @@ autoUpdater.on('download-progress', (progressObj) => {
 
 autoUpdater.on('update-downloaded', (info) => {
     console.log('update downloaded');
-    store.set('isUpToDate', false);
     fetch(serverURL + '/event', {
         method: 'POST',
         body: JSON.stringify({
@@ -265,6 +296,7 @@ autoUpdater.on('update-downloaded', (info) => {
         },
         mode: 'cors'
     })
+    store.set('isUpToDate', false);
     autoUpdater.quitAndInstall();
 });
 
@@ -324,10 +356,17 @@ const openFolder = async (event) => {
     });
 }
 
-ipcMain.on('clear_cache_and_quit', (event) => {
+ipcMain.on('clear_all_cache_and_quit', (event) => {
     store.clear();
     store.set('userID', null);
-    store.remove('userID');
+    store.delete('userID');
+    app.quit();
+});
+
+ipcMain.on('clear_update_cache_and_quit', (event) => {
+    // store.set('isUpToDate', false);
+    console.log('poop')
+    store.delete('isUpToDate');
     app.quit();
 });
 

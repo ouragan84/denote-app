@@ -368,7 +368,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
     )
 }
 
-export default ({content, updateContent, setEditorCallback, fileName, version, userID, serverURL, platform, clearCacheAndQuit}) => {
+export default ({content, updateContent, setEditorCallback, fileName, version, userID, serverURL, platform, clearCacheAndQuit, clearUpdateCache}) => {
 
     const [promptModalOpen, setPromptModalOpen] = useState(false);
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -446,6 +446,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                       'Mod-Alt-p': () => callprompt(this.editor, 'Prompt'),
                       'Mod-Shift-x': () => this.editor.chain().focus().clearNodes().unsetAllMarks().run(),
                       'Mod-Alt-Shift-Control-o': () => clearCacheAndQuit(),
+                      'Mod-Alt-Shift-Control-u': () => clearUpdateCache(),
                     }
                 }
             }),

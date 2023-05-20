@@ -55,6 +55,10 @@ export default () => {
         ipcRenderer.send('clear_cache_and_quit');
     }
 
+    const clearUpdateCache = () => {
+        ipcRenderer.send('clear_update_cache_and_quit');
+    }
+
     const handleDataUpdate = (newData) => {
         setData(newData);
         // save newData to file if filepath is not null using os
@@ -91,8 +95,15 @@ export default () => {
                 let header = JSON.parse(fileData.split('</head>\n')[0].split('<head>')[1])
     
                 if ( header && header.version !== versionRef.current ){
-                    console.log('APP is in version ' + versionRef.current + ', but file is in version ' + header.version + '.');
+
+                    let fileVersion = header.version;
+                    let targetVersion = versionRef.current;
+
+                    console.log('APP is in version ' + targetVersion + ', but file is in version ' + fileVersion + '.');
                     // TODO: handle version mismatch here
+                    
+                    
+                    header.version = targetVersion;
                 }
     
                 header.lastOpened = new Date().toISOString();
@@ -244,6 +255,7 @@ export default () => {
                         serverURL={serverURL}
                         platform={platform}
                         clearCacheAndQuit={clearCacheAndQuit}
+                        clearUpdateCache={clearUpdateCache}
                     />
                     :
                     isEditorLoaded?
