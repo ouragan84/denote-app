@@ -176,7 +176,7 @@ const showUpdateDialog = () => {
 }
 
 app.whenReady().then(async () => {
-
+    //store.delete('userID')
     if(!store.has('userID') || store.get('userID') == null){
 
         console.log('registering new user')
