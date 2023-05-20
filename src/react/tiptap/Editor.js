@@ -508,7 +508,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                 <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'Open Sans'}}>Enter your prompt to the AI</span>
                 <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <textarea type="text" id="prompt-input" name="prompt-input" style={{width: '500px', height: '50px', borderRadius:18, padding:20, margin:30}}/>
+                  <textarea type="text" id="prompt-input" name="prompt-input" style={{width: '45vw', height: '50px', borderRadius:18, padding:20, margin:30}}/>
                   <button
                     style={{
                       paddingTop: 10,
