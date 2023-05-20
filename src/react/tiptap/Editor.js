@@ -32,6 +32,10 @@ import { RxDividerHorizontal } from 'react-icons/rx'
 import { BiMath } from 'react-icons/bi'
 import { TbBracketsContain, TbMath } from 'react-icons/tb'
 
+import styled, { keyframes } from 'styled-components'
+
+
+
 export function resetEditorContent(editor, newContent) {
   editor.commands.setContent(newContent);
 
@@ -479,6 +483,25 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
 
     const [h, setH] = useState('87%')
     const [buttonBG, setButtonBG] = useState('#2f80ed')
+    const spin = keyframes`
+      from {
+        transform: rotate(0deg); 
+      }
+
+      to {
+        transform: rotate(360deg); 
+      }
+    `
+
+    const Loader = styled.div`
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 90px;
+      height: 90px;
+      -webkit-animation: spin 2s linear infinite; /* Safari */
+      animation: ${spin} 2s linear infinite;
+    `
     
     return (
         <>
@@ -505,10 +528,10 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 }
               }}
             >
-              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width:'100%'}}>
                 <span style={{fontSize: 20, fontWeight: 'bold', fontFamily:'Open Sans'}}>Enter your prompt to the AI</span>
-                <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <textarea type="text" id="prompt-input" name="prompt-input" style={{width: '45vw', height: '50px', borderRadius:18, padding:20, margin:30}}/>
+                <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width:'100%'}}>
+                  <textarea type="text" id="prompt-input" name="prompt-input" style={{width: '80%', height: '50px', borderRadius:18, padding:20, margin:30, fontFamily:'Open Sans', fontSize:15}}/>
                   <button
                     style={{
                       paddingTop: 10,
@@ -545,21 +568,20 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 },
                 content: {
                   backgroundColor: 'white',
-                  width: '10%',
-                  height: '10%',
+                  width: '50%',
+                  height: '30%',
                   margin: 'auto',
                   display: 'flex',
+                  borderRadius:18,
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  borderRadius:1000,
+                  fontFamily: 'Open Sans'
                 }
               }}
             >
-              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontFamily:'sans-serif'}}>
-                {/* <img src={'/load.gif'}/> */}
-                Loading...
-              </div>
+              <Loader/>
+              <h3>Loading...</h3>
             </Modal>
 
             {/* PAYMENT REQUEST MOAL */}
@@ -664,6 +686,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               }}
               callprompt={callprompt}
             />
+            
             <EditorContent 
               editor={editor} 
               onKeyDown={handleKeyDown}

@@ -35,7 +35,11 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpg)$/,
+        test: /\.(svg|png|jpg|gif)$/,
+        include: [
+          path.resolve(__dirname, "resources/images")
+        ],
+        type: "asset/inline",
         loader: 'url-loader',
         options: {
           limit: 25000
