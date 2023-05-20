@@ -1,4 +1,4 @@
-const { BrowserWindow, app, ipcMain, Menu, dialog} = require('electron');
+const { BrowserWindow, app, ipcMain, Menu, dialog, shell} = require('electron');
 const fs = require("fs");
 const path = require('path');
 const homedir = require('os').homedir();
@@ -62,9 +62,10 @@ const createWindow = async () => {
         {
             label: 'Denote',
             submenu: [
-                {role: 'quit', label: 'Quit Denote', accelerator: 'CmdOrCtrl+Q', click: () => {console.log('quit clicked')}},
-                {role: 'close', label: 'Close Window', accelerator: 'CmdOrCtrl+W', click: () => {console.log('close clicked')}},
-                {role: 'about', label: 'About Denote', accelerator: 'CmdOrCtrl+I', click: () => {console.log('about clicked')}},
+                {role: 'quit', label: 'Quit Denote', accelerator: 'CmdOrCtrl+Q', click: () => {}},
+                {role: 'close', label: 'Close Window', accelerator: 'CmdOrCtrl+W', click: () => {}},
+                // send to url https://www.denote.app
+                {role: 'about', label: 'About Denote', click: () => {console.log('about clicked')}},
             ]
         },
         {
@@ -73,17 +74,17 @@ const createWindow = async () => {
                 {role: 'new', label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {window.webContents.send('new-file-shortcut')}},
                 {role: 'open', label: 'Open Folder', accelerator: 'CmdOrCtrl+O', click: () => {window.webContents.send('open-folder')}},
                 {role: 'save', label: 'Save File', accelerator: 'CmdOrCtrl+S', click: () => {window.webContents.send('file-saved-shortcut')}},
-                {type: 'separator'},
-                {role: 'export', label: 'Export File', accelerator: 'CmdOrCtrl+E', click: () => {console.log('export clicked')}},
-                {type: 'separator'},
-                {role: 'print', label: 'Print File', accelerator: 'CmdOrCtrl+P', click: () => {console.log('print clicked')}},
+                // {type: 'separator'},
+                // {role: 'export', label: 'Export File', accelerator: 'CmdOrCtrl+E', click: () => {console.log('export clicked')}},
+                // {type: 'separator'},
+                // {role: 'print', label: 'Print File', accelerator: 'CmdOrCtrl+P', click: () => {console.log('print clicked')}},
             ]
         },
         {
             label: 'Edit',
             submenu: [
-                {role: 'undo', label: 'Undo', accelerator: 'CmdOrCtrl+Z', click: () => {console.log('undo clicked')}},
-                {role: 'redo', label: 'Redo', accelerator: 'CmdOrCtrl+Y', click: () => {console.log('redo clicked')}},
+                {role: 'undo', label: 'Undo', accelerator: 'CmdOrCtrl+Z', click: () => {}},
+                {role: 'redo', label: 'Redo', accelerator: 'CmdOrCtrl+Y', click: () => {}},
                 {type: 'separator'},
                 {role: 'cut', label: 'Cut', accelerator: 'CmdOrCtrl+X'},
                 {role: 'copy', label: 'Copy', accelerator: 'CmdOrCtrl+C'},
@@ -92,23 +93,22 @@ const createWindow = async () => {
                 {type: 'separator'},
                 {role: 'selectAll', label: 'Select All', accelerator: 'CmdOrCtrl+A'},
                 {role: 'deselectAll', label: 'Deselect All', accelerator: 'CmdOrCtrl+D'},
-                {type: 'separator'},
-                {role: 'find', label: 'Find', accelerator: 'CmdOrCtrl+F', click: () => {console.log('find clicked')}},
-                {role: 'replace', label: 'Replace', accelerator: 'CmdOrCtrl+H', click: () => {console.log('replace clicked')}},
             ]
 
         },
         {
             label: 'View',
             submenu: [
-                {role: 'toggleDevTools', label: 'Toggle Developer Tools', accelerator: 'CmdOrCtrl+Shift+I', click: () => {console.log('toggle dev tools clicked')}},
-                {role: 'reload', label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => {console.log('reload clicked')}},
+                // {role: 'toggleDevTools', label: 'Toggle Developer Tools', accelerator: 'CmdOrCtrl+Shift+I', click: () => {console.log('toggle dev tools clicked')}},
+                {role: 'reload', label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => {}},
             ]
         },
         {
             label: 'Help',
             submenu: [
-                {role: 'help', label: 'Help', accelerator: 'CmdOrCtrl+H', click: () => {console.log('help clicked')}},
+                {role: 'help', label: 'Help', click: () => {shell.openExternal('https://www.denote.app/guide')}},
+                {type: 'separator'},
+                {label: 'Contact Us', click: () => {shell.openExternal('https://www.denote.app/contact')}},
             ]
         },
         {

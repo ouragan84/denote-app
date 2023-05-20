@@ -1,6 +1,6 @@
   
   import React, { useState, useEffect, useRef } from "react";
-  import { ipcRenderer } from "electron";
+  import { ipcRenderer, shell } from "electron";
   import path from "path";
   import fs from "fs";
   import File from "./FileButton";
@@ -147,7 +147,13 @@
       return (
           <>
             <div style={{backgroundColor:'#eef2f2', boxShadow: "0px 1px 1px lightgray", paddingTop:1,display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                <h3 style={{paddingLeft:10, color:'#000'}}>Denote</h3>
+                <button 
+                  style={{backgroundColor:'transparent', border:'none', color:'#000',  
+                  display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',
+                  // show cursor as pointer when hovering over button
+                  cursor: 'pointer',
+                  }} onClick={() => {shell.openExternal('https://www.denote.app')}}>
+                    <h3 style={{paddingLeft:10, color:'#000'}}>Denote</h3></button>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                 <FaFolderOpen style={{marginRight:20, fontSize:18}} onClick={() => {ipcRenderer.send('open-folder')}}/>
                 <FaFileMedical style={{marginRight:20}} onClick={() => {openNewFile();}}/>

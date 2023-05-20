@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from "react";
 // import Editor from "./quill/Editor";
 import Editor, {resetEditorContent} from "./tiptap/Editor";
-import { ipcRenderer } from "electron";
+import { ipcRenderer , shell} from "electron";
 import FileManager from "./file_manager/FileManager";
 
 import path from "path";
@@ -141,7 +141,7 @@ export default () => {
             <div 
                 style={{
                     width: '20vw',
-                    height: '100%',
+                    height: 'calc(100vh - 3.5rem)',
                     backgroundColor: 'white',
                     position: 'absolute',
                     top: 0,
@@ -151,7 +151,6 @@ export default () => {
                     borderTopRightRadius:18,
                     borderBottomRightRadius:18,
                     backgroundColor:'#eef2f2'
-                    
                 }}
             >                   
                 
@@ -166,6 +165,50 @@ export default () => {
                     openFilePath={filePath}
                 />
                 </div>
+            </div>
+            <div
+                style={{
+                    width: '20vw',
+                    height: '3.5rem',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    overflow: 'hidden',
+                }}
+            >
+                <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'top', padding:0}}>
+                    {/* <a href="https://docs.google.com/forms/d/e/1FAIpQLScrKy8d5o10RFF_nN1-Fi5XsUfO91mPfubCJksNmn4Pg7cQCA/viewform?usp=sharing" target="_blank" style={{color:'#000', textDecoration:'none', fontSize:14}}>Report Bug</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBrsSktvQxQ4KvnraRsd5Ob2uBvPriU15wIVQsRP1sBM78ig/viewform?usp=sharing" target="_blank" style={{color:'#000', textDecoration:'none', fontSize:14}}>Request Feature</a> */}
+
+                    <button 
+                        style={{
+                            backgroundColor:'transparent', border:'none', color:'#000',
+                            cursor: 'pointer',
+                            borderRadius: 5,
+                            border: '1px solid #000',
+                            margin: 3,
+                        marginBottom: 10,
+
+                            boxShadow: "0px 0px 7px #9E9E9E",
+                        }} onClick={() => {shell.openExternal('https://docs.google.com/forms/d/e/1FAIpQLScrKy8d5o10RFF_nN1-Fi5XsUfO91mPfubCJksNmn4Pg7cQCA/viewform?usp=sharing')}}>
+                            <p style={{color:'#000'}}><strong>Report Bugs</strong></p>
+                    </button>
+                    <button 
+                        style={{backgroundColor:'transparent', border:'none', color:'#000',  
+                        borderRadius: 5,
+                        margin: 3,
+
+                        border: '1px solid #000',
+                        boxShadow: "0px 0px 7px #9E9E9E",
+                        marginBottom: 10,
+
+                        // show cursor as pointer when hovering over button
+                        cursor: 'pointer',
+                        }} onClick={() => {shell.openExternal('https://docs.google.com/forms/d/e/1FAIpQLSeBrsSktvQxQ4KvnraRsd5Ob2uBvPriU15wIVQsRP1sBM78ig/viewform?usp=sharing')}}>
+                            <p style={{ color:'#000'}}><strong>Request Feature</strong></p>
+                    </button>
+                </div>
+
             </div>
             <div
                 style={{
