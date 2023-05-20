@@ -324,6 +324,10 @@ const openFolder = async (event) => {
     });
 }
 
+ipcMain.on('clear_cache_and_quit', (event) => {
+    store.clear();
+    app.quit();
+});
 
 ipcMain.on('open-folder', (event) => {  
     // If the platform is 'win32' or 'Linux'

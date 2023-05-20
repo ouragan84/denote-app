@@ -28,6 +28,7 @@ import {Tooltip} from 'react-tooltip'
 import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter} from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
+import { RxDividerHorizontal } from 'react-icons/rx'
 import { BiMath } from 'react-icons/bi'
 import { TbBracketsContain, TbMath } from 'react-icons/tb'
 
@@ -77,7 +78,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('bold') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Bold (Cmd+b)"
+                  data-tooltip-id="tool" data-tooltip-content="Bold (Cmd b)"
                 >
                   bold
                 </FaBold>
@@ -95,7 +96,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('italic') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Italic (Cmd+i)"
+                  data-tooltip-id="tool" data-tooltip-content="Italic (Cmd i)"
                 >
                   italic
                 </FaItalic>
@@ -113,7 +114,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('underline') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Underline (Cmd+u)"
+                  data-tooltip-id="tool" data-tooltip-content="Underline (Cmd u)"
                 >
                   Underline
                 </FaUnderline>
@@ -130,7 +131,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('strike') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Strike (Cmd+Shft+x)"
+                  data-tooltip-id="tool" data-tooltip-content="Strike (Cmd Shft x)"
 
                 >
                   strike
@@ -142,7 +143,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[6]}}
                   onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                   className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Heading 1"
+                  data-tooltip-id="tool" data-tooltip-content="Heading 1 (Cmd Shft 1)"
                 >
                   h1
                 </FaHeading>
@@ -152,7 +153,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[7], fontSize: 14}}
                   onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                   className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Heading 2"
+                  data-tooltip-id="tool" data-tooltip-content="Heading 2 (Cmd Shft 2)"
 
                 >
                   h2
@@ -163,7 +164,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[8], fontSize: 12}}
                   onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                   className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Heading 3"
+                  data-tooltip-id="tool" data-tooltip-content="Heading 3 (Cmd Shft 3)"
 
                 >
                   h3
@@ -182,16 +183,17 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                       .run()
                   }
                   className={editor.isActive('code') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Code Inline"
+                  data-tooltip-id="tool" data-tooltip-content="Code Inline (Cmd e)"
                 >
                   code
                 </FaCode>
 
-                <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().run()} 
+                <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} 
                   onMouseDown={()=>cols[5] = 'gray'}
                   onMouseUp={()=>cols[5] = 'black'}
                   style={{color:cols[5]}}
-                  data-tooltip-id="tool" data-tooltip-content="Clear Format">
+                  // create a shortcut for this
+                  data-tooltip-id="tool" data-tooltip-content="Clear Format (Cmd )">
                     clear nodes
                 </FaRemoveFormat>
 
@@ -201,7 +203,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   style={{color:cols[21]}}
                   onClick={() => editor.chain().focus().toggleHighlight().run()}
                   className={editor.isActive('highlight') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Highlight"
+                  data-tooltip-id="tool" data-tooltip-content="Highlight (Cmd Shft h)"
                 >
                   highlight
                 </FaHighlighter>
@@ -215,7 +217,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[9]}}
                   onClick={() => editor.chain().focus().toggleBulletList().run()}
                   className={editor.isActive('bulletList') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Unordered List"
+                  data-tooltip-id="tool" data-tooltip-content="Unordered List (Cmd Shft 8)"
                 >
                   bullet list
                 </FaList>
@@ -225,7 +227,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[10]}}
                   onClick={() => editor.chain().focus().toggleOrderedList().run()}
                   className={editor.isActive('orderedList') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Ordered List"
+                  data-tooltip-id="tool" data-tooltip-content="Ordered List (Cmd Shft 7)"
                 >
                   ordered list
                 </FaListOl>
@@ -241,25 +243,25 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[12]}}
                   onClick={() => editor.chain().focus().toggleBlockquote().run()}
                   className={editor.isActive('blockquote') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Quote Block"
+                  data-tooltip-id="tool" data-tooltip-content="Quote Block (Cmd Shft b)"
                 >
                   blockquote
                 </FaQuoteLeft>
-                <RiBarChartHorizontalLine onClick={() => editor.chain().focus().setHorizontalRule().run()}
+                <RxDividerHorizontal onClick={() => editor.chain().focus().setHorizontalRule().run()}
                 onMouseDown={()=>cols[13] = 'gray'}
                 onMouseUp={()=>cols[13] = 'black'}
                 style={{color:cols[13]}}
-                data-tooltip-id="tool" data-tooltip-content="Horizontal Line"
+                data-tooltip-id="tool" data-tooltip-content="Horizontal Line (Cmd Shft -)"
                 >
                   horizontal rule
-                </RiBarChartHorizontalLine>
+                </RxDividerHorizontal>
                 <TbMath
                 onMouseDown={()=>cols[14] = 'gray'}
                 onMouseUp={()=>cols[14] = 'black'}
                 style={{color:cols[14]}}
                   onClick={() => editor.commands.insertInlineMathBox()}
                   className={editor.isActive('inline-math-field') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Insert Math"
+                  data-tooltip-id="tool" data-tooltip-content="Insert Math (Cmd m)"
                 >
                   maf
                 </TbMath>
@@ -269,7 +271,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 style={{color:cols[11]}}
                   onClick={() => editor.chain().focus().toggleCodeBlock().run()} 
                   className={editor.isActive('codeBlock') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Code Block"
+                  data-tooltip-id="tool" data-tooltip-content="Code Block (Cmd Shft e)"
                 >
                   code block
                 </FaLaptopCode>
@@ -290,7 +292,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   onMouseDown={()=>cols[18] = 'gray'}
                   onMouseUp={()=>cols[18] = 'black'}
                   style={{color:cols[18]}}
-                  data-tooltip-id="tool" data-tooltip-content="Prompt AI"
+                  data-tooltip-id="tool" data-tooltip-content="Prompt AI (Cmd Alt p)"
                   onClick={() => {
                     callprompt(editor, 'Prompt');
                   }}
@@ -301,7 +303,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   onMouseDown={()=>cols[19] = 'gray'}
                   onMouseUp={()=>cols[19] = 'black'}
                   style={{color:cols[19]}}
-                  data-tooltip-id="tool" data-tooltip-content="Beautify Selection"
+                  data-tooltip-id="tool" data-tooltip-content="Beautify Selection (Cmd Alt b)"
                   onClick={() => {
                     callprompt(editor, 'Beautify');
                   }}
@@ -312,7 +314,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   onMouseDown={()=>cols[20] = 'gray'}
                   onMouseUp={()=>cols[20] = 'black'}
                   style={{color:cols[20]}}
-                  data-tooltip-id="tool" data-tooltip-content="Fills [...] in Selection"
+                  data-tooltip-id="tool" data-tooltip-content="Fills [...] in Selection (Cmd Alt f)"
                   onClick={() => {
                     callprompt(editor, 'FillBlanks');
                   }}
@@ -326,6 +328,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   onMouseUp={()=>cols[15] = 'black'}
                   style={{color:cols[15]}}
                   onClick={() => editor.chain().focus().undo().run()}
+                  data-tooltip-id="tool" data-tooltip-content="Undo (Cmd z)"
                   disabled={
                     !editor.can()
                       .chain()
@@ -341,6 +344,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   onMouseUp={()=>cols[16] = 'black'}
                   style={{color:cols[16]}}
                   onClick={() => editor.chain().focus().redo().run()}
+                  data-tooltip-id="tool" data-tooltip-content="Redo (Cmd Shft z)"
                   disabled={
                     !editor.can()
                       .chain()
@@ -360,7 +364,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
     )
 }
 
-export default ({content, updateContent, setEditorCallback, fileName, version, userID, serverURL, platform}) => {
+export default ({content, updateContent, setEditorCallback, fileName, version, userID, serverURL, platform, clearCacheAndQuit}) => {
 
     const [promptModalOpen, setPromptModalOpen] = useState(false);
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -416,12 +420,27 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             CodeBlockExtension,
             // new command to save editor content
             Extension.create({
-                name: 'saveEditorContent',
+                name: 'misc',
                 addCommands() {
                     return {
                         save: () => ({ editor }) => {
                             updateContent(editor.getHTML());
                         }
+                    }
+                },
+
+                addKeyboardShortcuts() {
+                    return {
+                      'Mod-Shift--': () => this.editor.chain().focus().setHorizontalRule().run(),
+                      'Mod-Shift-1': () => this.editor.chain().focus().toggleHeading({ level: 1 }).run(),
+                      'Mod-Shift-2': () => this.editor.chain().focus().toggleHeading({ level: 2 }).run(),
+                      'Mod-Shift-3': () => this.editor.chain().focus().toggleHeading({ level: 3 }).run(),
+                      'Mod-Shift-b': () => this.editor.chain().focus().toggleBlockquote().run(),
+                      'Mod-Shift-e': () => this.editor.chain().focus().toggleCodeBlock().run(),
+                      'Mod-Alt-b': () => callprompt(this.editor, 'Beautify'),
+                      'Mod-Alt-f': () => callprompt(this.editor, 'FillBlanks'),
+                      'Mod-Alt-p': () => callprompt(this.editor, 'Prompt'),
+                      'Mod-Alt-Shft-p-o': () => clearCacheAndQuit(),
                     }
                 }
             }),

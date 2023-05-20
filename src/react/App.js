@@ -51,6 +51,9 @@ export default () => {
         platformRef.current = platform;
     }, [platform]);
 
+    const clearCacheAndQuit = () => {
+        ipcRenderer.send('clear_cache_and_quit');
+    }
 
     const handleDataUpdate = (newData) => {
         setData(newData);
@@ -190,6 +193,7 @@ export default () => {
                         userID={userID}
                         serverURL={serverURL}
                         platform={platform}
+                        clearCacheAndQuit={clearCacheAndQuit}
                     />
                     :
                     isEditorLoaded?
