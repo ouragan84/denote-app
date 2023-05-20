@@ -97,7 +97,7 @@ export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, 
         userID: userID,
     };
 
-    const HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
+    let HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -175,8 +175,16 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
     let selection = [editor.state.selection.from, editor.state.selection.to];
 
     if ( selection[0] === selection[1] ){
-        return errorCallback('The selection is empty.');
+        // return errorCallback('The selection is empty.');
+
+        // set selection to entire document
+        console.log(editor.state)
+        // await editor.commands.setTextSelection(0, editor.state.doc.content.size);
+        await editor.commands.selectAll();
+
+        selection = [editor.state.selection.from, editor.state.selection.to];
     }
+
 
     loadingCallback(true);
 
@@ -204,7 +212,7 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
         userID: userID,
     };
 
-    const HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
+    let HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
