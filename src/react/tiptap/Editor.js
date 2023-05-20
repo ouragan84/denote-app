@@ -440,7 +440,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                       'Mod-Alt-b': () => callprompt(this.editor, 'Beautify'),
                       'Mod-Alt-f': () => callprompt(this.editor, 'FillBlanks'),
                       'Mod-Alt-p': () => callprompt(this.editor, 'Prompt'),
-                      'Mod-Alt-Shift-p-o': () => clearCacheAndQuit(),
+                      'Mod-Alt-Shift-Control-o': () => clearCacheAndQuit(),
                     }
                 }
             }),
