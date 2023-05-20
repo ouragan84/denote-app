@@ -326,6 +326,8 @@ const openFolder = async (event) => {
 
 ipcMain.on('clear_cache_and_quit', (event) => {
     store.clear();
+    store.set('userID', null);
+    store.remove('userID');
     app.quit();
 });
 
