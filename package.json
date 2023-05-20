@@ -32,10 +32,12 @@
     ],
     "mac": {
       "target": {
-        "target": "default",
-        "arch": [
-          "universal",
+        "target": [
+          "dmg",
           "zip"
+        ],
+        "arch": [
+          "universal"
         ]
       },
       "category": "public.app-category.productivity",
@@ -62,10 +64,13 @@
     },
     "win": {
       "target": {
-        "target": "nsis",
+        "target": [
+          "nsis",
+          "zip",
+          "msi"
+        ],
         "arch": [
-          "x64",
-          "ia32"
+          "x64"
         ]
       },
       "icon": "assets/Denote-Icon-Rounded-256.ico"
