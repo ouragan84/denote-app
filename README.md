@@ -91,3 +91,5 @@ This one may help resolve some libraries like `excalidraw` for example:
       - Hit Publish!
 
  - Make sure that when you download from the website, you're getting the latest version, if not contact Edgar. 
+
+ - Change Version in .env of website

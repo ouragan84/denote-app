@@ -328,7 +328,7 @@ const openFolder = async (event) => {
         title: 'Select the Directory to be opened',
         defaultPath: folderpath,
         buttonLabel: 'Open',
-        properties: process.platform === 'darwin' ? ['openDirectory'] : []
+        properties: process.platform === 'darwin' ? ['openDirectory', 'createDirectory'] : ['openDirectory', 'createDirectory']
     }).then(dir => {
         // Stating whether dialog operation was
         // cancelled or not.

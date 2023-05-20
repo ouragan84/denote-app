@@ -16,7 +16,7 @@ import { EditorState } from 'prosemirror-state';
 import React, {useEffect, useState} from 'react'
 import Modal from 'react-modal'
 
-import ComponentNode from './ExampleExtension'
+// import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
 import {SmilieReplacer} from './EmojiReplacerExtension'
 // import DrawBoxNode from './DrawBoxExtentsion'
@@ -399,7 +399,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Document,
             Paragraph,
             Text,
-            ComponentNode,
+            // ComponentNode,
             MyMathBoxNode,
             SmilieReplacer,
             Underline,
