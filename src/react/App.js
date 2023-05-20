@@ -179,6 +179,7 @@ export default () => {
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'top', padding:0}}>
                     {/* <a href="https://docs.google.com/forms/d/e/1FAIpQLScrKy8d5o10RFF_nN1-Fi5XsUfO91mPfubCJksNmn4Pg7cQCA/viewform?usp=sharing" target="_blank" style={{color:'#000', textDecoration:'none', fontSize:14}}>Report Bug</a>
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBrsSktvQxQ4KvnraRsd5Ob2uBvPriU15wIVQsRP1sBM78ig/viewform?usp=sharing" target="_blank" style={{color:'#000', textDecoration:'none', fontSize:14}}>Request Feature</a> */}
+                    <Tooltip place='top' id='feedback'/>
 
                     <button 
                         style={{
@@ -190,7 +191,10 @@ export default () => {
                         marginBottom: 10,
 
                             boxShadow: "0px 0px 7px #9E9E9E",
-                        }} onClick={() => {shell.openExternal('https://docs.google.com/forms/d/e/1FAIpQLScrKy8d5o10RFF_nN1-Fi5XsUfO91mPfubCJksNmn4Pg7cQCA/viewform?usp=sharing')}}>
+                        }} onClick={() => {shell.openExternal('https://docs.google.com/forms/d/e/1FAIpQLScrKy8d5o10RFF_nN1-Fi5XsUfO91mPfubCJksNmn4Pg7cQCA/viewform?usp=sharing')}}
+                        data-tooltip-id="feedback" data-tooltip-content="Report Bugs"
+                        
+                        >
                             <p style={{color:'#000'}}><strong>Report Bugs</strong></p>
                     </button>
                     <button 
@@ -201,10 +205,13 @@ export default () => {
                         border: '1px solid #000',
                         boxShadow: "0px 0px 7px #9E9E9E",
                         marginBottom: 10,
-
+                        
                         // show cursor as pointer when hovering over button
                         cursor: 'pointer',
-                        }} onClick={() => {shell.openExternal('https://docs.google.com/forms/d/e/1FAIpQLSeBrsSktvQxQ4KvnraRsd5Ob2uBvPriU15wIVQsRP1sBM78ig/viewform?usp=sharing')}}>
+                        }} onClick={() => {shell.openExternal('https://docs.google.com/forms/d/e/1FAIpQLSeBrsSktvQxQ4KvnraRsd5Ob2uBvPriU15wIVQsRP1sBM78ig/viewform?usp=sharing')}}
+                        data-tooltip-id="feedback" data-tooltip-content="Request Features"
+                        
+                        >
                             <p style={{ color:'#000'}}><strong>Request Feature</strong></p>
                     </button>
                 </div>

@@ -8,6 +8,8 @@
   import {FaFolderOpen, FaFileMedical} from 'react-icons/fa'
   import {MdFeedback} from 'react-icons/md'
 
+  import { Tooltip } from "react-tooltip";
+
   const { v4: uuid } = require('uuid');
 
   const ignoreList = [
@@ -147,16 +149,24 @@
       return (
           <>
             <div style={{backgroundColor:'#eef2f2', boxShadow: "0px 1px 1px lightgray", paddingTop:1,display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                <Tooltip place='bottom' id='filetool'/>
                 <button 
                   style={{backgroundColor:'transparent', border:'none', color:'#000',  
                   display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center',
                   // show cursor as pointer when hovering over button
                   cursor: 'pointer',
-                  }} onClick={() => {shell.openExternal('https://www.denote.app')}}>
+                  }} 
+                  onClick={() => {shell.openExternal('https://www.denote.app')}}
+                  data-tooltip-id="filetool" data-tooltip-content="Visit Denote's website"
+                  >
                     <h3 style={{paddingLeft:10, color:'#000'}}>Denote</h3></button>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                <FaFolderOpen style={{marginRight:20, fontSize:18}} onClick={() => {ipcRenderer.send('open-folder')}}/>
-                <FaFileMedical style={{marginRight:20}} onClick={() => {openNewFile();}}/>
+                <FaFolderOpen style={{marginRight:20, fontSize:18}} onClick={() => {ipcRenderer.send('open-folder')}}
+                  data-tooltip-id="filetool" data-tooltip-content="Open Folder (Cmd o)"
+                />
+                <FaFileMedical style={{marginRight:20}} onClick={() => {openNewFile();}}
+                  data-tooltip-id="filetool" data-tooltip-content="Create File (Cmd n)"
+                />
                 </div>
             </div>
             <div style={{height:720, overflowY:'scroll'}}>
