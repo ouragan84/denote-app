@@ -32,10 +32,7 @@
     ],
     "mac": {
       "target": {
-        "target": [
-          "dmg",
-          "zip"
-        ],
+        "target": "default",
         "arch": [
           "universal"
         ]
@@ -64,11 +61,7 @@
     },
     "win": {
       "target": {
-        "target": [
-          "nsis",
-          "zip",
-          "msi"
-        ],
+        "target": "nsis",
         "arch": [
           "x64"
         ]
@@ -195,6 +188,7 @@
     "electron": "^24.2.0",
     "electron-builder": "^24.4.0",
     "electron-builder-notarize": "^1.5.1",
+    "electron-builder-squirrel-windows": "^24.4.0",
     "electron-notarize": "^1.2.2",
     "electron-packager": "^17.1.1",
     "electron-reload": "^2.0.0-alpha.1",
