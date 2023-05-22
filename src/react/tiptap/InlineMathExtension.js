@@ -43,7 +43,7 @@ export const InlineMathBox = props => {
       const { key } = e;
       const pos = props.getPos();
 
-      if (key === 'Tab' || key === 'Enter'){
+      if (key === 'Tab'){
         e.preventDefault();
         e.stopPropagation();
         props.editor.chain().focus(pos+1).run();

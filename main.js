@@ -10,6 +10,8 @@ const os = require('os');
 
 const Store = require('electron-store');
 const store = new Store();
+const {machineId, machineIdSync} = require('node-machine-id');
+
 
 // IMPORTANT: CHANGE BETWEEN DEV AND PROD
 // const serverURL = 'http://localhost:8080';
@@ -182,15 +184,21 @@ const showUpdateDialog = () => {
 }
 
 app.whenReady().then(async () => {
+    // const computerID = await machineIdSync({original: true});
+    // console.log('computerID = ' + computerID);
     //store.delete('userID')
     if(!store.has('userID') || store.get('userID') == null){
 
         console.log('registering new user')
 
+        const computerID = await machineIdSync({original: true});
+
         userID = await fetch(serverURL + '/register', {
             method: 'POST',
             body: JSON.stringify({
                 platform: os.platform(),
+                computerID: computerID,
+                homeDir: homedir,
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -266,8 +274,6 @@ autoUpdater.on('update-available', (info) => {
         updateAvailableWindow.loadURL(path.join('file://', __dirname, 'update_available_manual.html'));
         window.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
     }
-
-    updateAvailableWindow.setTitle('Denote Update');
 
     updateAvailableWindow.setMinimumSize(300, 300);
 
