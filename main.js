@@ -10,6 +10,11 @@ const os = require('os');
 
 const Store = require('electron-store');
 const store = new Store();
+const {machineId, machineIdSync} = require('node-machine-id');
+
+
+// IMPORTANT: CHANGE BETWEEN DEV AND PROD
+// const serverURL = 'http://localhost:8080';
 const serverURL = 'https://www.denote.app';
 
 let userID = null;
@@ -183,11 +188,14 @@ app.whenReady().then(async () => {
 
         console.log('registering new user')
 
+        const computerID = await machineIdSync({original: true});
+
         userID = await fetch(serverURL + '/register', {
             method: 'POST',
             body: JSON.stringify({
                 platform: os.platform(),
-                homeDir: homedir,
+                computerID: computerID,
+                homedir: homedir,
             }),
             headers: {
                 'Content-Type': 'application/json'
