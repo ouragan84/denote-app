@@ -695,8 +695,10 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 height: h,
                 overflowY: 'auto',
                 margin:10,
+                
 
               }}
+              
             />
         </>
     )
