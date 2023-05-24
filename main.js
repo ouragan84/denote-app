@@ -116,7 +116,7 @@ const createWindow = async () => {
         {
             label: 'Window',
             submenu: [
-                {role: 'minimize', label: 'Minimize', accelerator: 'CmdOrCtrl+M', click: () => {console.log('minimize clicked')}},
+                // {role: 'minimize', label: 'Minimize', accelerator: 'CmdOrCtrl+M', click: () => {console.log('minimize clicked')}},
                 {role: 'zoom', label: 'Zoom', accelerator: 'CmdOrCtrl+Shift+M', click: () => {console.log('zoom clicked')}},
                 {role: 'toggleFullScreen', label: 'Toggle Full Screen', accelerator: 'CmdOrCtrl+Shift+F', click: () => {console.log('toggle full screen clicked')}},
             ]
