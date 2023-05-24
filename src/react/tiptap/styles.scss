@@ -197,3 +197,22 @@
       top: 0.5rem;
     }
 }
+
+.image-resizer {
+  display: inline-flex;
+  position: relative;
+  flex-grow: 0;
+  
+  .resize-trigger {
+    position: absolute;
+    right: -6px;
+    bottom: -9px;
+    opacity: 0;
+    transition: opacity .3s ease;
+    color: #3259a5;
+  }
+  
+  &:hover .resize-trigger {
+    opacity: 1;
+  }
+}

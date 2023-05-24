@@ -12,10 +12,10 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
-import Image from '@tiptap/extension-image'
+import { Image } from '@tiptap/extension-image'
 
 import { EditorState } from 'prosemirror-state';
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import Dropcursor from '@tiptap/extension-dropcursor'
 
 const { ipcRenderer } = require('electron');
@@ -28,6 +28,8 @@ import {SmilieReplacer} from './EmojiReplacerExtension'
 // import DrawBoxNode from './DrawBoxExtentsion'
 import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
+import ImageExtension from './ImageExtension'
+
 
 import {Tooltip} from 'react-tooltip'
 
@@ -286,7 +288,7 @@ const MenuBar = ({ editor, fileName, callprompt, addImage }) => {
                 >
                   code block
                 </FaLaptopCode>
-                <FaImage onClick={()=>addImage('https://source.unsplash.com/8xznAGy4HcY/800x400')}
+                <FaImage onClick={()=> {ipcRenderer.send('open-image')}}
                 onMouseDown={()=>cols[22] = 'gray'}
                 onMouseUp={()=>cols[22] = 'black'}
                 style={{color:cols[22]}}
@@ -392,6 +394,9 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
     const [error, setError] = useState('');
     const [selection, setSelection] = useState(null);
 
+    const [editorState, setEditorState] = useState(null);
+    const editorStateRef = useRef(editorState);
+
     const setErrorMessage = (message) => {
       fetch(serverURL + '/event', {
         method: 'POST',
@@ -414,7 +419,6 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Document,
             Paragraph,
             Text,
-            Image,
             Dropcursor,
             // ComponentNode,
             MyMathBoxNode,
@@ -422,6 +426,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Underline,
             Highlight,
             Typography,
+            ImageExtension.configure({resizeIcon: <>ResizeMe</>}),
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
             Placeholder.configure({
@@ -446,6 +451,11 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                     return {
                         save: () => ({ editor }) => {
                             updateContent(editor.getHTML());
+                        },
+                        addImage: () => ({ editor, uri }) => {
+                            if (uri) {
+                                editor.chain().focus().setImage({src: uri}).run();
+                            }
                         }
                     }
                 },
@@ -475,7 +485,20 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
     })
 
     useEffect(() => {
+      ipcRenderer.on('open-image-reply', (event, filePath) => {
+        console.log('open-image-reply', filePath);
+        addImage(filePath);
+      })
+
+      return () => {
+        ipcRenderer.removeAllListeners('open-image-reply');
+      }
+    }, [])
+
+    useEffect(() => {
       setEditorCallback(editor);
+      setEditorState(editor);
+      editorStateRef.current = editor;
     }, [editor])
 
     const handleKeyDown = (event) => {
@@ -526,7 +549,9 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
 
     const addImage = (url) => {  
       if (url) {
-        editor.chain().focus().setImage({ src: url }).run()
+        console.log(editorStateRef.current.getHTML())
+        // editorStateRef.current.chain().focus().setImage({ src: url }).run()
+        editorStateRef.current.chain().focus().setImage({ src: url }).run()
       }
     }
 

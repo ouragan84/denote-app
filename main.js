@@ -14,8 +14,8 @@ const {machineId, machineIdSync} = require('node-machine-id');
 
 
 // IMPORTANT: CHANGE BETWEEN DEV AND PROD
-// const serverURL = 'http://localhost:8080';
-const serverURL = 'https://www.denote.app';
+const serverURL = 'http://localhost:8080';
+// const serverURL = 'https://www.denote.app';
 
 let userID = null;
 
@@ -116,7 +116,7 @@ const createWindow = async () => {
         {
             label: 'Window',
             submenu: [
-                {role: 'minimize', label: 'Minimize', accelerator: 'CmdOrCtrl+M', click: () => {console.log('minimize clicked')}},
+                // {role: 'minimize', label: 'Minimize', accelerator: 'CmdOrCtrl+M', click: () => {console.log('minimize clicked')}},
                 {role: 'zoom', label: 'Zoom', accelerator: 'CmdOrCtrl+Shift+M', click: () => {console.log('zoom clicked')}},
                 {role: 'toggleFullScreen', label: 'Toggle Full Screen', accelerator: 'CmdOrCtrl+Shift+F', click: () => {console.log('toggle full screen clicked')}},
             ]
@@ -377,6 +377,51 @@ ipcMain.on('open-folder', (event) => {
     // If the platform is 'win32' or 'Linux'
     // Resolves to a Promise<Object>
     openFolder(event);
+});
+
+ipcMain.on('open-image', (event) => {
+    // If the platform is 'win32' or 'Linux'
+
+    const folderpath = store.get('lastOpenedFolder');
+    if(!folderpath) folderpath = homedir;
+
+    dialog.showOpenDialog({
+        title: 'Select the Image to be opened',
+        defaultPath: folderpath,
+        buttonLabel: 'Open',
+        // Restricting the user to only Image Files.
+        filters: [
+        {
+            name: 'Images',
+            extensions: ['jpg', 'png', 'gif', 'jpeg', 'heic']
+        }, ],
+        // Specifying the File Selector Property
+        properties: ['openFile']
+    }).then(file => {
+        // Stating whether dialog operation was
+        // cancelled or not.
+        if (!file.canceled) {
+            const filePath = file.filePaths[0].toString();
+            // store.set('lastOpenedFolder', filePath);
+            console.log(filePath);
+            event.reply('open-image-reply', filePath);
+        }
+    }).catch(err => {
+        console.log(err)
+
+        fetch(serverURL + '/event', {
+            method: 'POST',
+            body: JSON.stringify({
+                userID: userID,
+                type: 'image_open_error',
+                aditionalData: `${err.message}`
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        })
+    });
 });
 
 
