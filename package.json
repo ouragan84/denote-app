@@ -134,7 +134,9 @@
     "@tiptap/extension-code-block-lowlight": "^2.0.3",
     "@tiptap/extension-color": "^2.0.3",
     "@tiptap/extension-document": "^2.0.3",
+    "@tiptap/extension-dropcursor": "^2.0.3",
     "@tiptap/extension-highlight": "^2.0.3",
+    "@tiptap/extension-image": "^2.0.3",
     "@tiptap/extension-list-item": "^2.0.3",
     "@tiptap/extension-paragraph": "^2.0.3",
     "@tiptap/extension-placeholder": "^2.0.3",
@@ -175,6 +177,8 @@
     "style-loader": "^3.3.2",
     "styled-components": "^6.0.0-rc.1",
     "tiptap": "^1.32.2",
+    "tiptap-extensions": "^1.35.2",
+    "tiptap-imagresize": "^1.0.2",
     "universal-analytics": "^0.5.3",
     "uuid": "^9.0.0",
     "xml-formatter": "^3.4.1"

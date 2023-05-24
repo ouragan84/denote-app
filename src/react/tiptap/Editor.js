@@ -12,8 +12,14 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
+import Image from '@tiptap/extension-image'
+
 import { EditorState } from 'prosemirror-state';
 import React, {useEffect, useState} from 'react'
+import Dropcursor from '@tiptap/extension-dropcursor'
+
+const { ipcRenderer } = require('electron');
+
 import Modal from 'react-modal'
 
 // import ComponentNode from './ExampleExtension'
@@ -25,7 +31,7 @@ import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 
 import {Tooltip} from 'react-tooltip'
 
-import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter} from "react-icons/fa";
+import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter, FaImage} from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { RxDividerHorizontal } from 'react-icons/rx'
@@ -33,7 +39,6 @@ import { BiMath } from 'react-icons/bi'
 import { TbBracketsContain, TbMath } from 'react-icons/tb'
 
 import styled, { keyframes } from 'styled-components'
-
 
 
 export function resetEditorContent(editor, newContent) {
@@ -48,16 +53,18 @@ export function resetEditorContent(editor, newContent) {
   editor.view.updateState(newEditorState);
 } 
 
-const MenuBar = ({ editor, fileName, callprompt }) => {
+const MenuBar = ({ editor, fileName, callprompt, addImage }) => {
     if (!editor) {
       return null
     }
 
     let initCols = []
     // number refers to number of icons
-    for (let i = 0; i < 22; i++)
+    for (let i = 0; i < 23; i++)
       initCols.push('black')
     const [cols, setCols] = useState(initCols)
+
+
   
     return (
       <div style={{display:'flex',flexDirection:'row', justifyContent:'center', marginLeft:15, marginRight:15,}}>
@@ -279,6 +286,14 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 >
                   code block
                 </FaLaptopCode>
+                <FaImage onClick={()=>addImage('https://source.unsplash.com/8xznAGy4HcY/800x400')}
+                onMouseDown={()=>cols[22] = 'gray'}
+                onMouseUp={()=>cols[22] = 'black'}
+                style={{color:cols[22]}}
+                data-tooltip-id="tool" data-tooltip-content="Insert Image"
+                >
+                  insert image
+                </FaImage>
                 {/* <FaRegEdit
                   onMouseDown={()=>cols[17] = 'gray'}
                   onMouseUp={()=>cols[17] = 'black'}
@@ -399,6 +414,8 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Document,
             Paragraph,
             Text,
+            Image,
+            Dropcursor,
             // ComponentNode,
             MyMathBoxNode,
             SmilieReplacer,
@@ -503,6 +520,39 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
       -webkit-animation: spin 2s linear infinite; /* Safari */
       animation: ${spin} 2s linear infinite;
     `
+
+    const [iUrl, setImageUrl] = useState(null)
+    console.log(iUrl)
+
+    const addImage = (url) => {  
+      if (url) {
+        editor.chain().focus().setImage({ src: url }).run()
+      }
+    }
+
+    const handlePaste = (event) => {
+      const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+      
+      for (let item of items) {
+        if (item.type.indexOf('image') === 0) {
+          const blob = item.getAsFile();
+          const imageURL = URL.createObjectURL(blob);
+          setImageUrl(imageURL);
+          break;
+        }
+      }
+    };
+
+    useEffect(() => {
+      ipcRenderer.on('selected-file', (event, filePath) => {
+        // Handle the selected file path
+        addImage(filePath)
+      });
+
+      return () => {
+          ipcRenderer.removeAllListeners();
+      };
+  }, []);
     
     return (
         <>
@@ -679,7 +729,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               </div>
             </Modal>
 
-            <MenuBar editor={editor} fileName={fileName}
+            <MenuBar editor={editor} fileName={fileName} addImage={addImage}
               setErrorMessage={setErrorMessage}
               setPromptModalOpen={setPromptModalOpen}
               style={{
@@ -697,6 +747,10 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 margin:10,
                 
 
+              }}
+              onPaste={(e)=>{
+                // handlePaste(e)
+                addImage('https://source.unsplash.com/8xznAGy4HcY/800x400')
               }}
               
             />
