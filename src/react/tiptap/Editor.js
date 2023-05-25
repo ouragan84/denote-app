@@ -12,13 +12,10 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
-import { Image } from '@tiptap/extension-image'
 
 import { EditorState } from 'prosemirror-state';
 import React, {useEffect, useState, useRef} from 'react'
 import Dropcursor from '@tiptap/extension-dropcursor'
-
-const { ipcRenderer } = require('electron');
 
 import Modal from 'react-modal'
 
@@ -30,7 +27,6 @@ import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 import ImageExtension from './ImageExtension'
 
-
 import {Tooltip} from 'react-tooltip'
 
 import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter, FaImage} from "react-icons/fa";
@@ -41,6 +37,9 @@ import { BiMath } from 'react-icons/bi'
 import { TbBracketsContain, TbMath } from 'react-icons/tb'
 
 import styled, { keyframes } from 'styled-components'
+
+import {ipcRenderer} from 'electron'
+import fs from 'fs'
 
 
 export function resetEditorContent(editor, newContent) {
@@ -55,7 +54,7 @@ export function resetEditorContent(editor, newContent) {
   editor.view.updateState(newEditorState);
 } 
 
-const MenuBar = ({ editor, fileName, callprompt, addImage }) => {
+const MenuBar = ({ editor, fileName, callprompt }) => {
     if (!editor) {
       return null
     }
@@ -288,7 +287,7 @@ const MenuBar = ({ editor, fileName, callprompt, addImage }) => {
                 >
                   code block
                 </FaLaptopCode>
-                <FaImage onClick={()=> {ipcRenderer.send('open-image')}}
+                <FaImage onClick={()=> { ipcRenderer.send('open-image');  }}
                 onMouseDown={()=>cols[22] = 'gray'}
                 onMouseUp={()=>cols[22] = 'black'}
                 style={{color:cols[22]}}
@@ -394,8 +393,9 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
     const [error, setError] = useState('');
     const [selection, setSelection] = useState(null);
 
-    const [editorState, setEditorState] = useState(null);
-    const editorStateRef = useRef(editorState);
+    // const [myEditorState, setMyEditorState] = useState(null);
+
+    const editorRef = useRef(null);
 
     const setErrorMessage = (message) => {
       fetch(serverURL + '/event', {
@@ -426,7 +426,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Underline,
             Highlight,
             Typography,
-            ImageExtension.configure({resizeIcon: <>ResizeMe</>}),
+            ImageExtension,
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
             Placeholder.configure({
@@ -452,11 +452,6 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                         save: () => ({ editor }) => {
                             updateContent(editor.getHTML());
                         },
-                        addImage: () => ({ editor, uri }) => {
-                            if (uri) {
-                                editor.chain().focus().setImage({src: uri}).run();
-                            }
-                        }
                     }
                 },
 
@@ -485,21 +480,68 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
     })
 
     useEffect(() => {
-      ipcRenderer.on('open-image-reply', (event, filePath) => {
-        console.log('open-image-reply', filePath);
-        addImage(filePath);
+      setEditorCallback(editor);
+      // setMyEditorState(editor);
+      editorRef.current = editor;
+    }, [editor])
+
+    function convertImageToBase64(imgUrl, callback) {
+      const image = new Image();
+      image.crossOrigin='anonymous';
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.height = image.naturalHeight;
+        canvas.width = image.naturalWidth;
+        ctx.drawImage(image, 0, 0);
+        const dataUrl = canvas.toDataURL();
+        callback && callback(dataUrl)
+      }
+      image.src = imgUrl;
+    }
+
+    const getImageHeightAndWidth = (base64) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          resolve({width: img.width, height: img.height});
+        };
+        img.onerror = reject;
+        img.src = base64;
+      });
+    }
+
+    useEffect(() => {
+      ipcRenderer.on('open-image-reply', async (event, filePath) => {
+        if (filePath) {
+          // in base64, add data in form "data:image/png;base64,dataHere"
+          const base64Data = fs.readFileSync(filePath, { encoding: 'base64' })
+          const imageType = filePath.split('.').pop();
+
+          const base64 = `data:image/${imageType};base64,${base64Data}` 
+
+          let {width, height} = await getImageHeightAndWidth(base64);
+
+          console.log(width)
+
+          // const editorWidth = editorRef.current.view.dom.clientWidth;
+
+          // console.log(editorWidth, width, height);
+
+          // if(width > editorWidth){
+          //   height = width / editorWidth * height;
+          //   width = editorWidth;
+          // }
+
+          editorRef.current.chain().focus().insertMyImage({ base64: base64, maxWidth: width }).run()
+
+        }
       })
 
       return () => {
-        ipcRenderer.removeAllListeners('open-image-reply');
+        ipcRenderer.removeAllListeners('open-image-reply')
       }
-    }, [])
-
-    useEffect(() => {
-      setEditorCallback(editor);
-      setEditorState(editor);
-      editorStateRef.current = editor;
-    }, [editor])
+    }, []);
 
     const handleKeyDown = (event) => {
       // make sure not in a code block
@@ -522,6 +564,47 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
         callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent, setPaymentModalOpen, serverURL, userID);
     }
 
+    // handle paste, if image, convert to base64 and insert, if not, just handle normally
+    const handlePaste = (event) => {
+      const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+      for (let index in items) {
+        const item = items[index];
+        if (item.kind === 'file') {
+          const blob = item.getAsFile();
+          const reader = new FileReader();
+          reader.onload = function(event){
+            const base64 = event.target.result;
+            editorRef.current.chain().focus().insertMyImage({ base64: base64 }).run()
+          }; // data url!
+          reader.readAsDataURL(blob);
+        }
+      }
+    }
+
+    const handleDrop = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const files = event.dataTransfer.files;
+      for (let index in files) {
+        const file = files[index];
+        const reader = new FileReader();
+        reader.onload = function(event){
+          const base64 = event.target.result;
+          editorRef.current.chain().focus().insertMyImage({ base64: base64 }).run()
+        }; // data url!
+        reader.readAsDataURL(file);
+      }
+    }
+
+    const handleDragOver = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      event.dataTransfer.dropEffect = 'copy';
+    }
+
+  
     const [h, setH] = useState('87%')
     const [buttonBG, setButtonBG] = useState('#2f80ed')
     const spin = keyframes`
@@ -543,41 +626,6 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
       -webkit-animation: spin 2s linear infinite; /* Safari */
       animation: ${spin} 2s linear infinite;
     `
-
-    const [iUrl, setImageUrl] = useState(null)
-    console.log(iUrl)
-
-    const addImage = (url) => {  
-      if (url) {
-        console.log(editorStateRef.current.getHTML())
-        // editorStateRef.current.chain().focus().setImage({ src: url }).run()
-        editorStateRef.current.chain().focus().setImage({ src: url }).run()
-      }
-    }
-
-    const handlePaste = (event) => {
-      const items = (event.clipboardData || event.originalEvent.clipboardData).items;
-      
-      for (let item of items) {
-        if (item.type.indexOf('image') === 0) {
-          const blob = item.getAsFile();
-          const imageURL = URL.createObjectURL(blob);
-          setImageUrl(imageURL);
-          break;
-        }
-      }
-    };
-
-    useEffect(() => {
-      ipcRenderer.on('selected-file', (event, filePath) => {
-        // Handle the selected file path
-        addImage(filePath)
-      });
-
-      return () => {
-          ipcRenderer.removeAllListeners();
-      };
-  }, []);
     
     return (
         <>
@@ -754,7 +802,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               </div>
             </Modal>
 
-            <MenuBar editor={editor} fileName={fileName} addImage={addImage}
+            <MenuBar editor={editor} fileName={fileName}
               setErrorMessage={setErrorMessage}
               setPromptModalOpen={setPromptModalOpen}
               style={{
@@ -770,13 +818,11 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 height: h,
                 overflowY: 'auto',
                 margin:10,
-                
+              }}
 
-              }}
-              onPaste={(e)=>{
-                // handlePaste(e)
-                addImage('https://source.unsplash.com/8xznAGy4HcY/800x400')
-              }}
+              onPaste={handlePaste}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
               
             />
         </>
