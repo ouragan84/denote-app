@@ -819,11 +819,12 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               onKeyDown={handleKeyDown}
               style={{
                 height: '87%',
-                width: '100%',
+                width: '95%',
                 overflowY: 'auto',
                 margin:10,
                 position: 'absolute',
                 bottom: 0,
+                backgroundColor:'silver',
               }}
 
               onPaste={handlePaste}

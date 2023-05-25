@@ -1,36 +1,79 @@
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
+import {RxSize} from 'react-icons/rx'
+
 
 
 export const MyImageComponent = props => {
 
-    // const updateSize = (newSize) => {
-    //     props.updateAttributes({
-    //         width: newSize.width,
-    //         height: newSize.height,
-    //     })
-    // }
+  const divRef = useRef(null);
+  const [divRight, setDivWidth] = useState(100)
+  const [clientX, setclientX] = useState(0)
+  const [showResizeIcon, setShowResizeIcon] = useState(false)
+  const [isResizing, setIsResizing] = useState(false);
 
-    const maxWidth = props.node.attrs.maxWidth;
+  const [finalWidth, setFinalWidth] = useState(400)
 
-    console.log("MyImageComponent", maxWidth)
+  const handleMouseMove = (event) => {
+    const div = divRef.current;
+    if (div) {
+
+      const rect = div.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      setclientX(event.clientX)
+      const y = event.clientY - rect.top;
+      const divWidth = rect.width;
+      setDivRight(rect.right)
+      const divHeight = rect.height;
+
+      console.log(`Mouse position: (${x},${y})`);
+    }
+  };
+
+
+  const handleMouseDown = () => {
+    console.log('mouse down')
+    setIsResizing(true);
+  };
+
+  const handleMouseUp = () => {
+    console.log('mouse up')
+
+    if (isResizing){
+      
+      const delta = clientX - divRight
+      setFinalWidth(finalWidth + delta)
+      setIsResizing(false);
+    }
+  };
+
+    const calculatedWidth = `min(100%, auto)`
 
     return (
         <NodeViewWrapper className="my-image"
             style={{
             }}
         >
-            <div style={{
-                // textAlign: 'center',
-                maxWidth:  `min(${maxWidth}, 50%)`,
-                // backgroundColor: 'red',
-            }}>
-                <img
-                    src={props.node.attrs.base64}
-
-                />
+            <div style={{ position: 'relative' , backgroundColor:'red', display: 'inline-flex' }}
+            onMouseMove={(e) => setShowResizeIcon(true)} 
+            onMouseLeave={()=>setShowResizeIcon(false)}
+            >
+            <img
+              ref={divRef}
+              style={{display: 'block'}}
+              
+              src={props.node.attrs.base64}
+              width={finalWidth}
+            />
+            {
+              showResizeIcon &&
+              <RxSize style={{position: 'absolute', top:0, right:0, fontSize:20}}
+              onMouseDown={handleMouseDown}
+              onDrag={handleMouseUp}
+              />
+            }
             </div>
         </NodeViewWrapper>
     )
