@@ -19,12 +19,12 @@ export const MyImageComponent = props => {
 
     const r = dim.width/dim.height
 
-    const divWidth = 800
+    const margin = 32;
+    const divWidth = props.editor.view.dom.parentNode.clientWidth - margin * 2;
 
     return (
         <NodeViewWrapper className="my-image"
         >
-          
               <ResizableBox style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -40,6 +40,17 @@ export const MyImageComponent = props => {
                   src={img_b64}  
                   style={{objectFit:'contain', width:'100%'}}
                 />
+                {props.selected && <div style={{
+                  position: 'absolute',
+                  bottom: '0px',
+                  right: '0px',
+                  width: '10px',
+                  height: '10px',
+                  opacity: '1',
+                  borderRadius: '50%',
+                  backgroundColor: '#1de0e0',
+                }}></div>}
+
               </ResizableBox>
         </NodeViewWrapper>
     )
