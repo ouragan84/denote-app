@@ -1,37 +1,57 @@
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
-import React, {useState} from 'react'
-
+import React, {useRef, useState, useLayoutEffect} from 'react'
+import { ResizableBox } from 'react-resizable'
+import 'react-resizable/css/styles.css';
 
 export const MyImageComponent = props => {
+    const img_b64 = props.node.attrs.base64
+    const [dim, setDim] = useState({width:0, height:0})
 
-    // const updateSize = (newSize) => {
-    //     props.updateAttributes({
-    //         width: newSize.width,
-    //         height: newSize.height,
-    //     })
-    // }
+    var i = new Image();
 
-    const maxWidth = props.node.attrs.maxWidth;
+    i.onload = function(){
+      setDim({width: i.width, height: i.height})
+    };
 
-    console.log("MyImageComponent", maxWidth)
+    i.src = img_b64;
+
+    const r = dim.width/dim.height
+
+    const margin = 32;
+    const divWidth = props.editor.view.dom.parentNode.clientWidth - margin * 2;
 
     return (
         <NodeViewWrapper className="my-image"
-            style={{
-            }}
         >
-            <div style={{
-                // textAlign: 'center',
-                maxWidth:  `min(${maxWidth}, 50%)`,
-                // backgroundColor: 'red',
-            }}>
+              <ResizableBox style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+                boxSizing: 'border-box',
+                marginBottom: '10px',
+                overflow: 'hidden',
+                position: 'relative',
+                margin: '20px',
+              }} width={Math.min(divWidth, dim.width)} height={(Math.min(divWidth, dim.width))/r} lockAspectRatio={true} minConstraints={[100, 100/r]} maxConstraints={[divWidth, divWidth/r]} >
                 <img
-                    src={props.node.attrs.base64}
-
+                  src={img_b64}  
+                  style={{objectFit:'contain', width:'100%'}}
                 />
-            </div>
+                {props.selected && <div style={{
+                  position: 'absolute',
+                  bottom: '0px',
+                  right: '0px',
+                  width: '10px',
+                  height: '10px',
+                  opacity: '1',
+                  borderRadius: '50%',
+                  backgroundColor: '#1de0e0',
+                }}></div>}
+
+              </ResizableBox>
         </NodeViewWrapper>
     )
 
