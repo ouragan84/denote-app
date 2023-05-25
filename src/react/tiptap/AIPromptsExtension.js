@@ -49,6 +49,195 @@ const replaceSelection = (HTMLWithCursors, HTMLReplaceSelection) => {
     return newHTML;
 }
 
+const getSanitizedText = (text) => {
+    // escape all backslashes, $ signs, and backticks
+    let sanitizedText = text.replace(/\\/g, '\\\\');
+    sanitizedText = sanitizedText.replace(/\$/g, '\\$');
+    sanitizedText = sanitizedText.replace(/`/g, '\\`');
+
+    return sanitizedText;
+}
+
+
+const getMarkdownInline = (content) => {
+    let markdown = '';
+    let isBold = false;
+    let isItalic = false;
+    let isUnderline = false;
+    let isStrikethrough = false;
+    let isInlineCode = false;
+    let isHighlight = false;
+
+    content.forEach(sec => {
+        if( sec.type === 'text' ){
+            if(sec.marks){
+                if(sec.marks.find(mark => mark.type === 'bold') != isBold){
+                    markdown += '**';
+                    isBold = !isBold;
+                }
+
+                if(sec.marks.find(mark => mark.type === 'italic') != isItalic){
+                    markdown += '*';
+                    isItalic = !isItalic;
+                }
+
+                if(sec.marks.find(mark => mark.type === 'underline') != isUnderline){
+                    markdown += '__';
+                    isUnderline = !isUnderline;
+                }
+
+                if(sec.marks.find(mark => mark.type === 'strikethrough') != isStrikethrough){
+                    markdown += '~~';
+                    isStrikethrough = !isStrikethrough;
+                }
+
+                if(sec.marks.find(mark => mark.type === 'code') != isInlineCode){
+                    markdown += '`';
+                    isInlineCode = !isInlineCode;
+                }
+
+                if(sec.marks.find(mark => mark.type === 'highlight') != isHighlight){
+                    markdown += '==';
+                    isHighlight = !isHighlight;
+                }
+
+                markdown += getSanitizedText(sec.text);
+
+            }
+            
+        } else if ( sec.type === 'inline-math-box' ){
+
+            let latexCont = '$' + sec.attrs.latex + '$';
+            
+            if( isBold ){
+                latexCont = '**' + latexCont + '**';
+                isBold = false;
+            }
+
+            if( isItalic ){
+                latexCont = '*' + latexCont + '*';
+                isItalic = false;
+            }
+
+            if( isUnderline ){
+                latexCont = '__' + latexCont + '__';
+                isUnderline = false;
+            }
+
+            if( isStrikethrough ){
+                latexCont = '~~' + latexCont + '~~';
+                isStrikethrough = false;
+            }
+
+            if( isInlineCode ){
+                latexCont = '`' + latexCont + '`';
+                isInlineCode = false;
+            }
+
+            if( isHighlight ){
+                latexCont = '==' + latexCont + '==';
+                isHighlight = false;
+            }
+
+            markdown += latexCont;
+        }
+    });
+
+    if(isBold){
+        markdown += '**';
+        isBold = !isBold;
+    }
+
+    if(isItalic){
+        markdown += '*';
+        isItalic = !isItalic;
+    }
+
+    if(isUnderline){
+        markdown += '__';
+        isUnderline = !isUnderline;
+    }
+
+    if(isStrikethrough){
+        markdown += '~~';
+        isStrikethrough = !isStrikethrough;
+    }
+
+    if(isInlineCode){
+        markdown += '`';
+        isInlineCode = !isInlineCode;
+    }
+
+    if(isHighlight){
+        markdown += '==';
+        isHighlight = !isHighlight;
+    }
+
+    return markdown;
+}
+
+
+const getMarkdownForBlock = (block, imageID) => {
+
+    if( block.type === 'paragraph' ){
+        return getMarkdownInline(block.content);
+    }
+
+    if( block.type === 'heading' ){
+        return '#'.repeat(block.attrs.level) + ' ' + getMarkdownInline(block.content);
+    }
+
+    if( block.type === 'code-block' ){
+        return '```' + block.attrs.language + '\n' + block.content[0].text + '\n```';
+    }
+
+    if( block.type === 'bulletList' ){
+        const {md, newImageID} = getMarkdownForList(block.content, 'ul', imageID);
+        imageID = newImageID;
+        return md;
+    }
+
+    if( block.type === 'orderedList' ){
+        const {md, newImageID} = getMarkdownForList(block.content, 'ol', imageID);
+        imageID = newImageID;
+        return md;
+    }
+
+    if( block.type === 'taskList' ){
+        return '  - ' + getMarkdownInline(block.content);
+    }
+
+    if( block.type === 'blockquote' ){
+        return '> ' + getMarkdownInline(block.content);
+    }
+
+    if( block.type === 'horizontal_rule' ){
+        return '---';
+    }
+
+    if( block.type === 'image' ){
+        return '![image_' + imageID + ']'
+    }
+
+    if( block.type === 'math-box' ){
+        return '$$' + block.attrs.latex + '$$';
+    }
+}
+
+// TODO
+const getMarkdownForList = (blockList, type, imageID) => {
+    let md = '\n';
+
+    return {md, newImageID: imageID}
+} 
+
+
+
+const getMarkdownFromJSON = (JSONContent) => {
+    console.log('JSONContent', JSONContent)
+
+
+}
 
 export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback, paymentCallback, serverURL, userID) => {
 
@@ -161,6 +350,10 @@ export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, 
 export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback, paymentCallback, serverURL, userID) => {
     let question;
 
+    let mdContent = getMarkdownFromJSON(editor.getJSON());
+
+    return;
+
     console.log("Calling AI Prompt:" + promptTitle);
 
     // if the editor is not in focus, throw an erro
@@ -271,7 +464,6 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
 
     loadingCallback(false);
 }
-
 
 // export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback) => {
 //     console.log("Calling AI Prompt: " + promptTitle);
