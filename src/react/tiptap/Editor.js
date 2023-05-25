@@ -1,5 +1,7 @@
 import './styles.scss'
 
+import React, {useEffect, useState, useRef} from 'react'
+
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -12,24 +14,18 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
-
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import { EditorState } from 'prosemirror-state';
-import React, {useEffect, useState, useRef} from 'react'
 import Dropcursor from '@tiptap/extension-dropcursor'
 
-import Modal from 'react-modal'
-
-// import ComponentNode from './ExampleExtension'
 import MyMathBoxNode from './InlineMathExtension'
 import {SmilieReplacer} from './EmojiReplacerExtension'
-// import DrawBoxNode from './DrawBoxExtentsion'
 import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 import ImageExtension from './ImageExtension'
 
-import {Tooltip} from 'react-tooltip'
-
-import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter, FaImage} from "react-icons/fa";
+import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter, FaImage, FaRegCheckSquare} from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { RxDividerHorizontal } from 'react-icons/rx'
@@ -40,6 +36,10 @@ import styled, { keyframes } from 'styled-components'
 
 import {ipcRenderer} from 'electron'
 import fs from 'fs'
+import Modal from 'react-modal'
+import {Tooltip} from 'react-tooltip'
+
+
 
 
 export function resetEditorContent(editor, newContent) {
@@ -61,7 +61,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
 
     let initCols = []
     // number refers to number of icons
-    for (let i = 0; i < 23; i++)
+    for (let i = 0; i < 24; i++)
       initCols.push('black')
     const [cols, setCols] = useState(initCols)
 
@@ -243,9 +243,16 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 >
                   ordered list
                 </FaListOl>
-
-
-
+                <FaRegCheckSquare
+                onMouseDown={()=>cols[23] = 'gray'}
+                onMouseUp={()=>cols[23] = 'black'}
+                style={{color:cols[23]}}
+                  onClick={() => editor.chain().focus().toggleTaskList().run()}
+                  className={editor.isActive('taskList') ? 'is-active' : ''}
+                  data-tooltip-id="tool" data-tooltip-content="Task List (Cmd Shft 9)"
+                >
+                  task list
+                </FaRegCheckSquare>
 
                 <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
@@ -420,7 +427,10 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Paragraph,
             Text,
             Dropcursor,
-            // ComponentNode,
+            TaskList,
+            TaskItem.configure({
+              nested: true,
+            }),
             MyMathBoxNode,
             SmilieReplacer,
             Underline,
@@ -583,7 +593,9 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
 
     const handleDrop = (event) => {
       event.preventDefault();
-      event.stopPropagation();
+      event.stopPropagation()
+
+      console.log('dropped', event)
 
       const files = event.dataTransfer.files;
       for (let index in files) {
@@ -602,10 +614,10 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
       event.stopPropagation();
 
       event.dataTransfer.dropEffect = 'copy';
+      // event.target.style.opacity = 0.5;
     }
 
   
-    const [h, setH] = useState('87%')
     const [buttonBG, setButtonBG] = useState('#2f80ed')
     const spin = keyframes`
       from {
@@ -801,29 +813,38 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 <span style={{fontSize: 15, fontWeight: 'default'}}>{error}</span>
               </div>
             </Modal>
+            
+            <EditorContent 
+              editor={editor} 
+              onKeyDown={handleKeyDown}
+              style={{
+                height: '87%',
+                width: '100%',
+                overflowY: 'auto',
+                margin:10,
+                position: 'absolute',
+                bottom: 0,
+              }}
+
+              onPaste={handlePaste}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+
+              onClick={() => {
+                editor.commands.focus();
+              }}
+              
+            />
 
             <MenuBar editor={editor} fileName={fileName}
               setErrorMessage={setErrorMessage}
               setPromptModalOpen={setPromptModalOpen}
               style={{
                 height: '10%',
+                position: 'absolute',
+                top: 0,
               }}
               callprompt={callprompt}
-            />
-            
-            <EditorContent 
-              editor={editor} 
-              onKeyDown={handleKeyDown}
-              style={{
-                height: h,
-                overflowY: 'auto',
-                margin:10,
-              }}
-
-              onPaste={handlePaste}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              
             />
         </>
     )

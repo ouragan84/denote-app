@@ -24,7 +24,7 @@ export const MyImageComponent = props => {
         >
             <div style={{
                 // textAlign: 'center',
-                maxWidth:  `min(${maxWidth}, 100%)`,
+                maxWidth:  `min(${maxWidth}, 50%)`,
                 // backgroundColor: 'red',
             }}>
                 <img

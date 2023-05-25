@@ -219,8 +219,31 @@
 
 my-image {
   display: block;
-  // max-width: 100%;
+  max-width: 50%;
   height: auto;
   object-fit: contain;
   margin: 5 5 5 5;
+}
+
+ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0 0 0 2rem;
+
+  p {
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+
+    > label {
+      flex: 0 0 auto;
+      margin-right: 0rem;
+      user-select: none;
+    }
+
+    > div {
+      flex: 1 1 auto;
+    }
+  }
 }
