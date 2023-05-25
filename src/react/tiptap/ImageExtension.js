@@ -35,7 +35,7 @@ export const MyImageComponent = props => {
                 overflow: 'hidden',
                 position: 'relative',
                 margin: '20px',
-              }} width={Math.min(divWidth, dim.width)} height={(Math.min(divWidth, dim.width))/r} lockAspectRatio={true} minConstraints={[100, 100/r]}>
+              }} width={Math.min(divWidth, dim.width)} height={(Math.min(divWidth, dim.width))/r} lockAspectRatio={true} minConstraints={[100, 100/r]} maxConstraints={[divWidth, divWidth/r]} >
                 <img
                   src={img_b64}  
                   style={{objectFit:'contain', width:'100%'}}
