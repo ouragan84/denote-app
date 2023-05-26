@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from "react";
 import Editor, {resetEditorContent} from "./tiptap/Editor";
 import { ipcRenderer , shell} from "electron";
 import FileManager from "./file_manager/FileManager";
-import DrawBox from './tiptap/DrawBoxComponent';
+// import DrawBox from './tiptap/DrawBoxComponent';
 
 import path from "path";
 import fs from "fs";

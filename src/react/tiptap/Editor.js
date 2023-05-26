@@ -40,7 +40,6 @@ import {ipcRenderer} from 'electron'
 import fs from 'fs'
 import Modal from 'react-modal'
 import {Tooltip} from 'react-tooltip'
-import DrawBoxExtentsion from './DrawBoxExtentsion'
 
 
 
