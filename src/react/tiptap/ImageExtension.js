@@ -6,76 +6,72 @@ import { ResizableBox } from 'react-resizable'
 import 'react-resizable/css/styles.css';
 
 export const MyImageComponent = props => {
-    const img_b64 = props.node.attrs.base64
-    const [dim, setDim] = useState({width:0, height:0})
+  const img_b64 = props.node.attrs.base64
+  const [dim, setDim] = useState({width:0, height:0})
 
-    // initialize dimensions to attribute width if not null negative
-      
-    var i = new Image();
+  // initialize dimensions to attribute width if not null negative
+  var i = new Image();
 
-    i.src = img_b64;
+  i.src = img_b64;
 
-    const r = dim.width/dim.height
+  const r = dim.width/dim.height
 
-    i.onload = function(){
-      if(props.node.attrs.width && props.node.attrs.width > 0)
-        setDim({width: props.node.attrs.width, height: props.node.attrs.width/r})
-      else
-        setDim({width: i.width, height: i.height})
-    };
+  i.onload = function(){
+    if(dim.width == 0 && dim.height == 0)
+      setDim({width: i.width, height: i.height})
+  };
 
-    // useEffect(() => {
-    //   if(props.node.attrs.width && props.node.attrs.width > 0)
-    //     setDim({width: props.node.attrs.width, height: props.node.attrs.width/r})
-    // }, [])
+  const margin = 64;
+  const divWidth = props.editor.view.dom.parentNode.clientWidth - margin * 2;
 
-    const margin = 32;
-    const divWidth = props.editor.view.dom.parentNode.clientWidth - margin * 2;
+  return (
+        <NodeViewWrapper className="my-image">
+            <ResizableBox style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              boxSizing: 'border-box',
+              marginBottom: '10px',
+              overflow: 'hidden',
+              position: 'relative',
+              margin: '20px',
+            }} width={ Math.min(divWidth, dim.width) } height={ Math.min(divWidth/r, dim.height) }
+            lockAspectRatio={true} minConstraints={[100, 100/r]} maxConstraints={[divWidth, divWidth/r]} 
+              onResizeStop={(e, data) => {
+                // props.updateAttributes({
+                //   width: data.size.width,
+                // })
 
-    return (
-        <NodeViewWrapper className="my-image"
-        >
-              <ResizableBox style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                boxSizing: 'border-box',
-                marginBottom: '10px',
-                overflow: 'hidden',
-                position: 'relative',
-                margin: '20px',
-              }} width={Math.min(divWidth, dim.width)} height={(Math.min(divWidth, dim.width))/r} lockAspectRatio={true} minConstraints={[100, 100/r]} maxConstraints={[divWidth, divWidth/r]} 
-                onResizeStop={(e, data) => {
-                  props.updateAttributes({
-                    width: data.size.width,
-                  })
+                // console.log(props.node.attrs.width)
 
-                  setDim({width: data.size.width, height: data.size.width/r})
-                  
-                  props.editor.commands.save();
-                }}
-               >
-                <img
-                  src={img_b64}  
-                  style={{objectFit:'contain', width:'100%'}}
-                />
-                {props.selected && <div style={{
-                  position: 'absolute',
-                  bottom: '0px',
-                  right: '0px',
-                  width: '10px',
-                  height: '10px',
-                  opacity: '1',
-                  borderRadius: '50%',
-                  backgroundColor: '#1de0e0',
-                }}></div>}
+                // setDim({width: data.size.width, height: data.size.width/r})
+                
+                // props.editor.commands.save();
+              }}
+             >
+              <img
+                src={img_b64}  
+                style={{objectFit:'contain', width:'100%'}}
+              />
+              {/* {props.selected && <div style={{
+                position: 'absolute',
+                bottom: '0px',
+                right: '0px',
+                width: '10px',
+                height: '10px',
+                opacity: '1',
+                borderRadius: '50%',
+                backgroundColor: '#1de0e0',
+              }}></div>} */}
 
-              </ResizableBox>
-        </NodeViewWrapper>
-    )
-
+            </ResizableBox>
+      </NodeViewWrapper>
+  )
 }
+
+
+
 
 const MyImageNode = Node.create({
   name: 'my-image',

@@ -1,6 +1,6 @@
 {
   "name": "denote-app",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Note taking app for the STEM students.",
   "main": "main.js",
   "scripts": {
