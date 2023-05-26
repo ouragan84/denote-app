@@ -151,7 +151,7 @@
               
       return (
           <>
-            <div style={{backgroundColor:'#eef2f2', boxShadow: "0px 1px 1px lightgray", paddingTop:1,display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+            <div style={{backgroundColor:'#f7fbff', boxShadow: "0px 1px 1px lightgray", paddingTop:1,display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                 <Tooltip place='bottom' id='filetool'/>
                 <button 
                   style={{backgroundColor:'transparent', border:'none', color:'#000',  

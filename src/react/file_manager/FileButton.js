@@ -21,7 +21,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
     
     const [explorerData, etExplorerData] = useState(explorer)
     const [expand, setExpand] = useState(isRoot)
-    const [bg, setBg] = useState('#eef2f2')
+    const [bg, setBg] = useState('#f7fbff')
     
 
     const [selected, setSelected] = useState(openFilePath == explorerData.path)
@@ -45,7 +45,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
                         backgroundColor:bg,
                     }} onClick={()=>{setExpand(!expand)}}
                     onMouseEnter={()=>setBg('#dde1e1')}
-                    onMouseLeave={()=>setBg('#eef2f2')}
+                    onMouseLeave={()=>setBg('#f7fbff')}
                     >
                         <div style={{display:'flex',alignItems:'center', fontSize:14, }}>{indspace}<FaFolder style={{width:30, color:'#fad482'}}/>{explorerData.name}</div>
                         <div style={{display:'flex',alignItems:'center', paddingRight:10}}><FaAngleDown style={expand ? transformedStyle : normalStyle} /></div>
@@ -73,7 +73,7 @@ function FileButton({explorer, clickCallback, path, isRoot=false, indent=0, vert
             }}
         > <div style={{display:'flex',alignItems:'center', fontSize:14}}
             onMouseEnter={()=>{ setBg('#dde1e1')}}
-            onMouseLeave={()=>{ setBg('#eef2f2')}}
+            onMouseLeave={()=>{ setBg('#f7fbff')}}
         >{indspace}<FaFile style={{width:30, color:'#778978'}}/>{explorerData.name}</div></span>
         </>
     }
