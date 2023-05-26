@@ -266,11 +266,12 @@ autoUpdater.on('update-available', (info) => {
 
     if(os.platform() === 'darwin'){
         updateAvailableWindow.loadURL(path.join('file://', __dirname, 'update_available_auto.html'));
-        window.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
     } else {
         updateAvailableWindow.loadURL(path.join('file://', __dirname, 'update_available_manual.html'));
-        window.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
     }
+
+    // load icon
+    updateAvailableWindow.setIcon(path.join(__dirname, 'assets', 'Denote-Icon-Rounded-1024.png'));
 
     updateAvailableWindow.setMinimumSize(300, 300);
 
@@ -393,7 +394,7 @@ ipcMain.on('open-image', (event) => {
         filters: [
         {
             name: 'Images',
-            extensions: ['jpg', 'png', 'gif', 'jpeg', 'heic']
+            extensions: ['jpg', 'png', 'gif', 'jpeg']
         }, ],
         // Specifying the File Selector Property
         properties: ['openFile']
