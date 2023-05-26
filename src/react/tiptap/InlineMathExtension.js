@@ -2,6 +2,8 @@ import React, {useState, useRef, useEffect} from 'react'
 import { mergeAttributes, Node, nodeInputRule } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { EditableMathField, addStyles } from 'react-mathquill'
+import markdownitContainer from "markdown-it-container";
+
 
 addStyles()
 
@@ -114,6 +116,28 @@ const InlineMathBoxNode = Node.create({
     renderHTML({ HTMLAttributes }) {
         return ['span', mergeAttributes(HTMLAttributes), 0];
     },
+
+    addStorage() {
+      return {
+          markdown: {
+              serialize(state, node) {
+                  // state.write("::: " + (node.attrs.containerClass || "") + "\n");
+                  // state.renderContent(node);
+                  // state.flushClose(1);
+                  // state.write(":::");
+                  // state.closeBlock(node);
+
+                  state.write("$$" + node.attrs.latex + "$$");
+              },
+              parse: {
+                parseMarkdown: (markdown, state) => {
+                  console.log('poopturd', markdown, state)
+                }
+              }
+
+          }
+      }
+  },
 
     parseHTML() {
         return [

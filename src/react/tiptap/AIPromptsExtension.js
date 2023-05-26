@@ -50,6 +50,7 @@ const replaceSelection = (HTMLWithCursors, HTMLReplaceSelection) => {
 }
 
 const getSanitizedText = (text) => {
+
     // escape all backslashes, $ signs, and backticks
     let sanitizedText = text.replace(/\\/g, '\\\\');
     sanitizedText = sanitizedText.replace(/\$/g, '\\$');
@@ -69,41 +70,40 @@ const getMarkdownInline = (content) => {
     let isHighlight = false;
 
     content.forEach(sec => {
+        console.log('sec', sec)
+
         if( sec.type === 'text' ){
-            if(sec.marks){
-                if(sec.marks.find(mark => mark.type === 'bold') != isBold){
-                    markdown += '**';
-                    isBold = !isBold;
-                }
-
-                if(sec.marks.find(mark => mark.type === 'italic') != isItalic){
-                    markdown += '*';
-                    isItalic = !isItalic;
-                }
-
-                if(sec.marks.find(mark => mark.type === 'underline') != isUnderline){
-                    markdown += '__';
-                    isUnderline = !isUnderline;
-                }
-
-                if(sec.marks.find(mark => mark.type === 'strikethrough') != isStrikethrough){
-                    markdown += '~~';
-                    isStrikethrough = !isStrikethrough;
-                }
-
-                if(sec.marks.find(mark => mark.type === 'code') != isInlineCode){
-                    markdown += '`';
-                    isInlineCode = !isInlineCode;
-                }
-
-                if(sec.marks.find(mark => mark.type === 'highlight') != isHighlight){
-                    markdown += '==';
-                    isHighlight = !isHighlight;
-                }
-
-                markdown += getSanitizedText(sec.text);
-
+            if(sec.marks && sec.marks.find(mark => mark.type === 'bold') != isBold){
+                markdown += '**';
+                isBold = !isBold;
             }
+
+            if(sec.marks && sec.marks.find(mark => mark.type === 'italic') != isItalic){
+                markdown += '*';
+                isItalic = !isItalic;
+            }
+
+            if(sec.marks && sec.marks.find(mark => mark.type === 'underline') != isUnderline){
+                markdown += '__';
+                isUnderline = !isUnderline;
+            }
+
+            if(sec.marks && sec.marks.find(mark => mark.type === 'strikethrough') != isStrikethrough){
+                markdown += '~~';
+                isStrikethrough = !isStrikethrough;
+            }
+
+            if(sec.marks && sec.marks.find(mark => mark.type === 'code') != isInlineCode){
+                markdown += '`';
+                isInlineCode = !isInlineCode;
+            }
+
+            if(sec.marks && sec.marks.find(mark => mark.type === 'highlight') != isHighlight){
+                markdown += '==';
+                isHighlight = !isHighlight;
+            }
+
+            markdown += getSanitizedText(sec.text);
             
         } else if ( sec.type === 'inline-math-box' ){
 
@@ -140,6 +140,8 @@ const getMarkdownInline = (content) => {
             }
 
             markdown += latexCont;
+        } else {
+            console.log('sec.type', sec.type)
         }
     });
 
@@ -173,70 +175,134 @@ const getMarkdownInline = (content) => {
         isHighlight = !isHighlight;
     }
 
+    console.log('markdown for inline:\n', markdown)
+
     return markdown;
 }
 
 
 const getMarkdownForBlock = (block, imageID) => {
 
+    let md = '';
+
     if( block.type === 'paragraph' ){
-        return getMarkdownInline(block.content);
+        md = getMarkdownInline(block.content);
     }
 
     if( block.type === 'heading' ){
-        return '#'.repeat(block.attrs.level) + ' ' + getMarkdownInline(block.content);
+        md = '#'.repeat(block.attrs.level) + ' ' + getMarkdownInline(block.content);
     }
 
     if( block.type === 'code-block' ){
-        return '```' + block.attrs.language + '\n' + block.content[0].text + '\n```';
+        md = '```' + block.attrs.language + '\n' + block.content[0].text + '\n```';
     }
 
     if( block.type === 'bulletList' ){
-        const {md, newImageID} = getMarkdownForList(block.content, 'ul', imageID);
+        const {newMd, newImageID} = getMarkdownForList(block.content, 'ul', imageID);
         imageID = newImageID;
-        return md;
+        md = newMd;
     }
 
     if( block.type === 'orderedList' ){
-        const {md, newImageID} = getMarkdownForList(block.content, 'ol', imageID);
+        const {newMd, newImageID} = getMarkdownForList(block.content, 'ol', imageID);
         imageID = newImageID;
-        return md;
+        md = newMd;
     }
 
     if( block.type === 'taskList' ){
-        return '  - ' + getMarkdownInline(block.content);
+        const {newMd, newImageID} = getMarkdownForList(block.content, 'tl', imageID);
+        imageID = newImageID;
+        md = newMd;
     }
 
     if( block.type === 'blockquote' ){
-        return '> ' + getMarkdownInline(block.content);
+        // content are blocks
+        const {newMd, newImageID} = getMarkdownForBlock(block.content[0], imageID);
+        imageID = newImageID;
+        md = '> ' + newMd;
     }
 
     if( block.type === 'horizontal_rule' ){
-        return '---';
+        md = '---';
     }
 
     if( block.type === 'image' ){
-        return '![image_' + imageID + ']'
+        md = '![image_' + imageID + ']'
+        imageID++;
     }
 
     if( block.type === 'math-box' ){
-        return '$$' + block.attrs.latex + '$$';
+        md = '$$' + block.attrs.latex + '$$';
     }
+    
+    md += '\n';
+
+    return {md, newImageID: imageID}
 }
 
 // TODO
 const getMarkdownForList = (blockList, type, imageID) => {
-    let md = '\n';
+
+    let md = '';
+    let olNumber = 1;
+
+    blockList.forEach(block => {
+        if( block.type === 'listItem' ){
+            md += '  '.repeat(block.attrs.level - 1);
+            if( type === 'ul' ){
+                md += ' - ';
+            } else if ( type === 'ol' ){
+                md += olNumber + '. ';
+                olNumber++;
+            } else if ( type === 'tl' ){
+                md += ' - [ ] ';
+            }
+            const {md: blockMD, newImageID} = getMarkdownForBlock(block, imageID);
+            imageID = newImageID;
+            md += blockMD;
+        }
+    });
 
     return {md, newImageID: imageID}
 } 
 
 
 
-const getMarkdownFromJSON = (JSONContent) => {
-    console.log('JSONContent', JSONContent)
+const getMarkdownFromJSON = (editor) => {
+    // console.log('JSONContent', JSONContent)
 
+    // let md = '';
+    // let imageID = 0;
+    
+    // console.log('JSONContent.content', JSONContent.content)
+    // console.log(Array.isArray(JSONContent.content)) // true
 
+    // JSONContent.content.forEach(block => {
+    //     console.log('block', block)
+    //     const {md: blockMD, newImageID} = getMarkdownForBlock(block, imageID);
+    //     console.log('blockMD:\n', blockMD)
+    //     imageID = newImageID;
+    //     md += blockMD;
+    // });
+
+    // console.log('md\n', md)
+
+    let MarkdownContent = editor.storage.markdown.getMarkdown();
+
+    // look for all the <my-image base64="..."></my-image> tags, and replace them with ![image_0], ![image_1], etc. with each number corresponding to the order of the image in the document 
+    // also save the base64 strings to an array so that they can be replaced with the actual images when the document is loaded
+    const imageBase64Strings = [];
+    let imageID = 0;
+
+    // also consider images that have other attributes, in any order so we need to use a regex to find the base64 string
+    MarkdownContent = MarkdownContent.replace(/<my-image.*base64="(.*)".*>\s*<\/my-image>/g, (match, p1) => {
+        imageBase64Strings.push(p1);
+        return '![image_' + imageID++ + ']';
+    });
+
+    console.log('imageBase64Strings', imageBase64Strings)
+
+    return {MarkdownContent, imageBase64Strings};
 }
 
 export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback, paymentCallback, serverURL, userID) => {
@@ -350,7 +416,27 @@ export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, 
 export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback, paymentCallback, serverURL, userID) => {
     let question;
 
-    let mdContent = getMarkdownFromJSON(editor.getJSON());
+    let {MarkdownContent, imageBase64Strings} = getMarkdownFromJSON(editor);
+
+    // wait 3 seconds
+    // await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // replace all  [ ] with [x] in the markdown
+    MarkdownContent = MarkdownContent.replace(/\[ \]/g, '[x]');
+
+    console.log('New MarkdownContent:\n', MarkdownContent);
+
+    // replace all the ![image_0], ![image_1], etc. with the actual images
+    MarkdownContent = MarkdownContent.replace(/\!\[image_(\d+)\]/g, (match, p1) => {
+        return '<my-image base64="' + imageBase64Strings[p1] + '"></my-image>';
+    });
+
+    // apply the markdown to the editor
+    await editor.commands.setContent(MarkdownContent);
+
+
+
+    // console.log("Calling AI Prompt:\n" + editor.storage.markdown.getMarkdown());
 
     return;
 

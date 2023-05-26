@@ -12,12 +12,14 @@ import { EditorContent, useEditor, ReactNodeViewRenderer, Extension} from '@tipt
 import Placeholder from '@tiptap/extension-placeholder'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
-import Highlight from '@tiptap/extension-highlight'
+// import Highlight from '@tiptap/extension-highlight'
+import Highlight from './HighlightExtension'
 import Typography from '@tiptap/extension-typography'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import { EditorState } from 'prosemirror-state';
 import Dropcursor from '@tiptap/extension-dropcursor'
+import { Markdown } from 'tiptap-markdown';
 
 import MyMathBoxNode from './InlineMathExtension'
 import {SmilieReplacer} from './EmojiReplacerExtension'
@@ -435,6 +437,9 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             SmilieReplacer,
             Underline,
             Highlight,
+            Markdown.configure({
+              
+            }),
             Typography,
             ImageExtension,
             TextStyle.configure({ types: [ListItem.name] }),
@@ -451,6 +456,10 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 orderedList: {
                     keepMarks: true,
                     keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+                },
+                // disable spellcheck in inline code
+                code: {
+                    spellCheck: false,
                 }
             }),
             CodeBlockExtension,
@@ -486,7 +495,8 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
         onUpdate({ editor }) {
             updateContent(editor.getHTML());
         },
-        content: content
+        content: content,
+
     })
 
     useEffect(() => {
@@ -543,7 +553,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
           //   width = editorWidth;
           // }
 
-          editorRef.current.chain().focus().insertMyImage({ base64: base64, maxWidth: width }).run()
+          editorRef.current.chain().focus().insertMyImage({ base64: base64 }).run()
 
         }
       })

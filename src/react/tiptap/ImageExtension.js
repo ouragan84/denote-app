@@ -98,8 +98,8 @@ const MyImageNode = Node.create({
         let parameters = ""
         if(attributes && attributes.base64)
           parameters += ` base64 = "${attributes.base64}"`;
-        if(attributes && attributes.maxWidth)
-          parameters += ` maxWidth = "${attributes.maxWidth}"`;
+        // if(attributes && attributes.maxWidth)
+        //   parameters += ` maxWidth = "${attributes.maxWidth}"`;
         // if(attributes && attributes.height)
         //   parameters += ` height = "${attributes.height}"`;
           
