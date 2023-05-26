@@ -3,8 +3,7 @@ import { ReactNodeViewRenderer } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
 import React, {useState} from 'react'
 import ReactDOM from "react-dom";
-import CanvasDraw from "react-canvas-draw";
-
+import DrawBoxComponent from './DrawBoxComponent'
 
 
 export const DrawBox = props => {
@@ -15,27 +14,16 @@ export const DrawBox = props => {
     })
   }
 
-  const onInputFieldUpdate = (event) => {
-    updateData(event.target.value);
-  }
-  
-
   return (
     <NodeViewWrapper className="draw-box">
-    <div style={{
-      textAlign: 'center',
-    
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      <CanvasDraw
+      <DrawBoxComponent 
+        updateData={updateData} 
+        initialData={props.node.attrs.data} 
         style={{
-
+          width: "500px", 
+          height: "100px",
         }}
       />
-    </div>
     </NodeViewWrapper>
   )
 
@@ -84,7 +72,7 @@ const DrawBoxNode = Node.create({
 
   addKeyboardShortcuts() {
     return {
-      'Mod-d': () => this.editor.commands.insertDrawBox({}),
+      'Mod-Shift-d': () => this.editor.commands.insertDrawBox({}),
     }
   }
 })

@@ -3,6 +3,7 @@ import React, {useState, useEffect, useRef} from "react";
 import Editor, {resetEditorContent} from "./tiptap/Editor";
 import { ipcRenderer , shell} from "electron";
 import FileManager from "./file_manager/FileManager";
+import DrawBox from './tiptap/DrawBoxComponent';
 
 import path from "path";
 import fs from "fs";
@@ -214,6 +215,8 @@ export default () => {
                     :
                     <h2>Please select a folder to start writing in</h2>
                 }   
+
+                {/* <DrawBox /> */}
 
             </div>
             

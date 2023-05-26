@@ -24,6 +24,7 @@ import {SmilieReplacer} from './EmojiReplacerExtension'
 import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 import ImageExtension from './ImageExtension'
+import DrawBoxNode from './DrawBoxExtension'
 
 import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter, FaImage, FaRegCheckSquare} from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
@@ -31,6 +32,7 @@ import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { RxDividerHorizontal } from 'react-icons/rx'
 import { BiMath } from 'react-icons/bi'
 import { TbBracketsContain, TbMath } from 'react-icons/tb'
+import { MdDraw } from 'react-icons/md'
 
 import styled, { keyframes } from 'styled-components'
 
@@ -298,20 +300,20 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 onMouseDown={()=>cols[22] = 'gray'}
                 onMouseUp={()=>cols[22] = 'black'}
                 style={{color:cols[22]}}
-                data-tooltip-id="tool" data-tooltip-content="Insert Image"
+                data-tooltip-id="tool" data-tooltip-content="Insert Image (Cmd Shft i)"
                 >
                   insert image
                 </FaImage>
-                {/* <FaRegEdit
+                <MdDraw
                   onMouseDown={()=>cols[17] = 'gray'}
                   onMouseUp={()=>cols[17] = 'black'}
                   style={{color:cols[17]}}
                   onClick={() => editor.commands.insertDrawBox()}
                   className={editor.isActive('draw-box') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Insert Draw Box"
+                  data-tooltip-id="tool" data-tooltip-content="Insert Draw Box (Cmd Shft d)"
                 >
                     Draw
-                </FaRegEdit> */}
+                </MdDraw>
 
                 <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
@@ -437,6 +439,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Highlight,
             Typography,
             ImageExtension,
+            DrawBoxNode,
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
             Placeholder.configure({
