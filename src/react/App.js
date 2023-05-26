@@ -160,13 +160,13 @@ export default () => {
                     left: 0,
                     overflow: 'hidden',
                     boxShadow: "0px 0px 7px #9E9E9E",
-                    borderTopRightRadius:18,
-                    borderBottomRightRadius:18,
-                    backgroundColor:'#eef2f2'
+                    // borderTopRightRadius:18,
+                    // borderBottomRightRadius:18,
+                    backgroundColor:'#f7fbff'
                 }}
             >                   
                 
-                <div style={{backgroundColor:'#eef2f2', height:720}}>
+                <div style={{backgroundColor:'#f7fbff', height:720}}>
                 <FileManager
                     content={data}
                     updateContent={handleFileChange}

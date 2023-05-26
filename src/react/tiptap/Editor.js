@@ -40,6 +40,7 @@ import {ipcRenderer} from 'electron'
 import fs from 'fs'
 import Modal from 'react-modal'
 import {Tooltip} from 'react-tooltip'
+import DrawBoxExtentsion from './DrawBoxExtentsion'
 
 
 
@@ -70,13 +71,15 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
 
   
     return (
-      <div style={{display:'flex',flexDirection:'row', justifyContent:'center', marginLeft:15, marginRight:15,}}>
-        <div style={{paddingLeft:'1rem',backgroundColor:'#eef2f2', borderBottomLeftRadius:18, borderBottomRightRadius:18 , paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'1rem', boxShadow: "0px 0px 7px #9E9E9E"}}>
+      <div style={{display:'flex',flexDirection:'row', justifyContent:'left',}}>
+        <div style={{paddingLeft:'1rem',backgroundColor:'#f7fbff',paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'0.5rem', boxShadow: "0px 0px 7px #9E9E9E", width:'100%'}}>
           <div style={{marginBottom:'10px'}}>
-            <span style={{fontSize: 15, fontWeight: 'default'}}>{fileName}</span>
+            <span style={{fontSize: 15, fontWeight: 'default', }}>{fileName}</span>
             </div>
-            <div style={{width:'70vw',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:500, alignItems:'center'}}>
+            <div style={{backgroundColor:'#dfeaf7', borderRadius:100, height: '2.5rem', width:'100%',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+            <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem', paddingLeft:15}}>
+            </div>
+              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:600, alignItems:'center', fontSize:17, paddingLeft:15}}>
                 <FaBold
                   onClick={() => {
                     editor.chain().focus().toggleBold().run()
@@ -223,7 +226,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 </FaHighlighter>
 
 
-                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+                <div style={{backgroundColor:'gray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
                 <FaList
                 onMouseDown={()=>cols[9] = 'gray'}
@@ -256,7 +259,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   task list
                 </FaRegCheckSquare>
 
-                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+                <div style={{backgroundColor:'gray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
                 <FaQuoteLeft
                 onMouseDown={()=>cols[12] = 'gray'}
@@ -315,7 +318,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                     Draw
                 </MdDraw>
 
-                <div style={{backgroundColor:'lightgray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
+                <div style={{backgroundColor:'gray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
                 <FaQuestion
                   onMouseDown={()=>cols[18] = 'gray'}
@@ -351,7 +354,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   FillBlanks
                 </TbBracketsContain>
               </div>
-              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem'}}>
+              <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem', paddingRight:15}}>
                 <FaUndo
                   onMouseDown={()=>cols[15] = 'gray'}
                   onMouseUp={()=>cols[15] = 'black'}
@@ -821,8 +824,8 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
               editor={editor} 
               onKeyDown={handleKeyDown}
               style={{
-                height: '87%',
-                width: '100%',
+                height: '86%',
+                width: '98%',
                 overflowY: 'auto',
                 margin:10,
                 position: 'absolute',
