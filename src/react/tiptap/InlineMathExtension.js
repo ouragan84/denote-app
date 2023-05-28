@@ -5,6 +5,7 @@ import { EditableMathField, addStyles } from 'react-mathquill'
 import markdownitContainer from "markdown-it-container";
 
 
+
 addStyles()
 
 export const InlineMathBox = props => {
@@ -96,6 +97,7 @@ const InlineMathBoxNode = Node.create({
     inline: true,
     selectable: true,
     atom: false,
+    selectable: true,
 
     addAttributes() {
         return {
@@ -119,25 +121,26 @@ const InlineMathBoxNode = Node.create({
 
     addStorage() {
       return {
-          markdown: {
-              serialize(state, node) {
-                  // state.write("::: " + (node.attrs.containerClass || "") + "\n");
-                  // state.renderContent(node);
-                  // state.flushClose(1);
-                  // state.write(":::");
-                  // state.closeBlock(node);
-
-                  state.write("$$" + node.attrs.latex + "$$");
-              },
-              parse: {
-                parseMarkdown: (markdown, state) => {
-                  console.log('poopturd', markdown, state)
-                }
-              }
-
+        markdown: {
+          parse: (markdown) => {
+            const regex = /<span data-type="inline-math-box" latex="(.*?)"><\/span>/g;
+            let newMarkdown = markdown;
+            let match;
+            while ((match = regex.exec(markdown))) {
+              const latex = match[1];
+              const mathbox = `<span data-type="inline-math-box" latex="${latex}"></span>`;
+              newMarkdown = newMarkdown.replace(match[0], `$$${latex}$$`);
+            }
+            return newMarkdown;
+          },
+          render: ({ node }) => {
+            const latex = node.attrs.latex;
+            return `<span data-type="inline-math-box" latex="${latex}"></span>`;
           }
-      }
-  },
+        }
+      };
+    },
+    
 
     parseHTML() {
         return [

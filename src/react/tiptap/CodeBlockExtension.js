@@ -6,6 +6,7 @@ import React from 'react'
 import { lowlight } from 'lowlight'
 
 // TODO: use highlight.js for syntax highlighting, and remove useless language options
+// q: how I make the 
 
 export const CodeBlockComponent = ({ node: { attrs: { language: defaultLanguage } }, updateAttributes, extension }) => (
   <NodeViewWrapper className="code-block">

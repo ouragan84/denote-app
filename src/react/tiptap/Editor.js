@@ -440,9 +440,6 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             SmilieReplacer,
             Underline,
             Highlight,
-            Markdown.configure({
-              
-            }),
             Typography,
             ImageExtension,
             DrawBoxExtentsion,
@@ -495,6 +492,9 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                     }
                 }
             }),
+            Markdown.configure({
+              breaks: true,
+            }),
         ],
         onUpdate({ editor }) {
             updateContent(editor.getHTML());
@@ -502,7 +502,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
         content: content,
 
     })
-
+    
     useEffect(() => {
       setEditorCallback(editor);
       // setMyEditorState(editor);
