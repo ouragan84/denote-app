@@ -1,3 +1,7 @@
+// TODO: Add a function that checks if the selection is empty, and if it is, then it selects up to 5000 characters around where the cursor
+// TODO: Add a function before calling anything that limits the cursor selection length to about 5000 characters, so it would actually change the selection to that length
+// TODO: Add a function that replaces the selection chosen by the previous functions with the output of the AI, and converts it to HTML
+
 async function addMarkerTags(editor) {
     const { state, dispatch } = editor.view;
   
