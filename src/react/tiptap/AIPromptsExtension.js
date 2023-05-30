@@ -85,6 +85,67 @@ const convertToMarkdown = async (editor) => {
     return {MarkdownContent, imageArray};
 }
 
+
+// this function returns a new M 
+const getContext = (MDwithCursros, isPrompt, characterLimit) => {
+    let MD = MDwithCursros;
+
+    let startSelIndex = MD.indexOf('<cursor-start/>');
+
+    MD = MD.replace('<cursor-start/>', '');
+
+    let endSelIndex = MD.indexOf('<cursor-end/>');
+
+    MD = MD.replace('<cursor-end/>', '');
+
+    let context = '';
+
+    if ( isPrompt ) {
+
+        // get as many lines as we can from before the selection to give as context
+
+        let start = startSelIndex;
+        let end = startSelIndex;
+
+        context = MD.substring( start, end )
+        let prevContext = context;
+
+        let lastNewLine = MD.lastIndexOf('\n') + 1
+        if (lastNewLine == -1) lastNewLine = 0
+
+        while ( context.length <= characterLimit && lastNewLine != 0) {
+
+            prevContext = context;
+
+            let lastNewLine = MD.lastIndexOf('\n') + 1
+            if (lastNewLine == -1) {
+                lastNewLine = 0;
+                prevContext = MD.substring( 0, end )
+            }
+
+            start = lastNewLine;
+
+            context = MD.substring( start, end )
+        }
+
+        context = prevContext;
+    }
+    else
+    {
+        
+        // if selection is non empty, just return the selection if under limit
+        // otherwise, select the current line, then as many lines to the top as possible, then if there is no more line on top, 
+        // add as many lines to the bottom as possible without going over the limit
+
+
+
+
+    }
+
+    return {userContext: context, MDBefore: MD.substring(0, startSelIndex), MDAfter: MD.substring(endSelIndex)};
+}
+
+
 const convertBackToHTML = async (editor, MarkdownContent, imageArray) => {
     // replace all the ![image_0], ![image_1], etc. with the actual images
     MarkdownContent = MarkdownContent.replace(/\!\[image_(\d+)\]/g, (match, p1) => {
@@ -115,6 +176,8 @@ const convertBackToHTML = async (editor, MarkdownContent, imageArray) => {
 export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback, paymentCallback, serverURL, userID) => {
 
     let question;
+
+    return;
 
     console.log("Calling AI Prompt:" + promptTitle);
 
@@ -226,6 +289,12 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
     let {MarkdownContent, imageArray} = await convertToMarkdown(editor);
 
     console.log('MarkdownContent Before:\n\n' + MarkdownContent);
+
+    let {userContext, newSelctionMD} = getContext(MarkdownContent, true, 200);
+
+    console.log('userContext:\n\n' + userContext);
+
+    console.log('newSelctionMD:\n\n' + newSelctionMD);
 
     // wait 3 s
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -352,34 +421,34 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
 //     console.log("Calling AI Prompt: " + promptTitle);
 // }
 
-export const getHTMLWithCursors = async (editor, selection, saveContentCallback) => {
-    console.log('before:\n',editor.getHTML())
+// export const getHTMLWithCursors = async (editor, selection, saveContentCallback) => {
+//     console.log('before:\n',editor.getHTML())
 
-    const startTag = '℥♨︎☈';
-    const endTag = '🀒⚒︎🃗';
+//     const startTag = '℥♨︎☈';
+//     const endTag = '🀒⚒︎🃗';
 
-    await addMarkerTags(editor);
+//     await addMarkerTags(editor);
 
-    const HTMLContent = editor.getHTML();
+//     const HTMLContent = editor.getHTML();
 
-    // console.log('HTMLContent1', HTMLContent);
+//     // console.log('HTMLContent1', HTMLContent);
 
-    const HTMLWithCursors = HTMLContent.replace(startTag, '<cursor-start/>').replace(endTag, '<cursor-end/>');
-    const HTMLNoCursors = HTMLContent.replace(startTag, '').replace(endTag, '');
+//     const HTMLWithCursors = HTMLContent.replace(startTag, '<cursor-start/>').replace(endTag, '<cursor-end/>');
+//     const HTMLNoCursors = HTMLContent.replace(startTag, '').replace(endTag, '');
 
-    // console.log('HTMLContent2', HTMLWithCursors);
+//     // console.log('HTMLContent2', HTMLWithCursors);
 
-    await editor.commands.setContent(HTMLNoCursors);
+//     await editor.commands.setContent(HTMLNoCursors);
 
-    // set selection to what it was originally
-    await editor.commands.setTextSelection(selection[0], selection[1]);
+//     // set selection to what it was originally
+//     await editor.commands.setTextSelection(selection[0], selection[1]);
 
-    saveContentCallback(HTMLNoCursors);
+//     saveContentCallback(HTMLNoCursors);
 
-    //print editor content
-    // console.log('after:\n',editor.getHTML());
+//     //print editor content
+//     // console.log('after:\n',editor.getHTML());
 
-    return HTMLWithCursors;
-}
+//     return HTMLWithCursors;
+// }
   
 

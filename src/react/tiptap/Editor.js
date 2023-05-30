@@ -43,6 +43,26 @@ import {Tooltip} from 'react-tooltip'
 import DrawBoxExtentsion from './DrawBoxExtentsion'
 
 
+const spin = keyframes`
+      from {
+        transform: rotate(0deg); 
+      }
+
+      to {
+        transform: rotate(360deg); 
+      }
+    `
+
+    const Loader = styled.div`
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 90px;
+      height: 90px;
+      -webkit-animation: spin 2s linear infinite; /* Safari */
+      animation: ${spin} 2s linear infinite;
+    `
+
 
 
 export function resetEditorContent(editor, newContent) {
@@ -633,25 +653,6 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
 
   
     const [buttonBG, setButtonBG] = useState('#2f80ed')
-    const spin = keyframes`
-      from {
-        transform: rotate(0deg); 
-      }
-
-      to {
-        transform: rotate(360deg); 
-      }
-    `
-
-    const Loader = styled.div`
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 90px;
-      height: 90px;
-      -webkit-animation: spin 2s linear infinite; /* Safari */
-      animation: ${spin} 2s linear infinite;
-    `
     
     return (
         <>
