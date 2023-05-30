@@ -162,7 +162,7 @@
                   onClick={() => {shell.openExternal('https://www.denote.app')}}
                   data-tooltip-id="filetool" data-tooltip-content="Visit Denote's website"
                   >
-                    <h3 style={{paddingLeft:10, color:'#000', fontFamily: 'Open Sans',}}>Denote</h3></button>
+                    <h3 style={{paddingLeft:10, color:'#000', fontFamily: 'Open Sans', fontSize:15.5}}>Denote</h3></button>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                 <FaFolderOpen style={{marginRight:20, fontSize:18}} onClick={() => {ipcRenderer.send('open-folder')}}
                   data-tooltip-id="filetool" data-tooltip-content="Open Folder (Cmd o)"

@@ -153,17 +153,18 @@
 // a: . for class, # for id
 
 .draw-box {
-    background: whitesmoke;
+    background: white;
+
 
   .react-p5 {
-    display: block;
     margin: 0 auto;
     visibility: visible;
 
+
     .p5Canvas {
-      display: block;
       margin: 0 auto;
       visibility: visible !important;
+      cursor: none;
     }
   }
 

@@ -22,7 +22,7 @@ export const MyImageComponent = props => {
   };
 
   const margin = 64;
-  const divWidth = props.editor.view.dom.parentNode.clientWidth - margin * 2;
+  const divWidth = 0.8 * (props.editor.view.dom.parentNode.clientWidth - margin * 2);
 
   return (
         <NodeViewWrapper className="my-image">

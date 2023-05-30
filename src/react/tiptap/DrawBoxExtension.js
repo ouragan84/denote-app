@@ -19,10 +19,8 @@ export const DrawBox = props => {
       <DrawBoxComponent 
         updateData={updateData} 
         initialData={props.node.attrs.data} 
-        style={{
-          width: "500px", 
-          height: "100px",
-        }}
+        editorWidth={props.editor.view.dom.parentNode.clientWidth * 0.8}
+        editorHeight={props.editor.view.dom.parentNode.clientHeight * 0.8}
       />
     </NodeViewWrapper>
   )
