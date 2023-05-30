@@ -64,16 +64,20 @@ const convertToMarkdown = async (editor) => {
 
     MarkdownContent = MarkdownContent.replace(/℥♨︎☈/g, '<cursor-start/>');
     MarkdownContent = MarkdownContent.replace(/🀒⚒︎🃗/g, '<cursor-end/>');
-
     
     // make sure to recvoer the base64 strings and width of the images and store it in imageArray
-    MarkdownContent = MarkdownContent.replace(/<my-image\s+base64="(.*)"\s+width="(.*)">\s*<\/my-image>/g, (match, base64, width) => {
+    MarkdownContent = MarkdownContent.replace(/<my-image\s+base64="([^<>"']*)"\s+width="([^<>"']*)">\s*<\/my-image>/g, (match, base64, width) => {
         imageArray.push({base64, width});
+        return '![image_' + (imageID++) + ']';
+    });     
+
+    MarkdownContent = MarkdownContent.replace(/<my-image\s+base64="([^<>"']*)">\s*<\/my-image>/g, (match, base64) => {
+        imageArray.push({base64, width:null});
         return '![image_' + (imageID++) + ']';
     });
     
     // This is a hack, but it works lmao
-    MarkdownContent = MarkdownContent.replace(/<span\s+data-type="inline-math-box"\s+latex="(.*)"\s+isnew=".*">\s*<\/span>/g, (match, latex) => {
+    MarkdownContent = MarkdownContent.replace(/<span\s+data-type="inline-math-box"\s+latex="([^<>]*)"\s+isnew="[^<>]*">\s*<\/span>/g, (match, latex) => {
         return '$$' + latex + '$$';
     });
 
@@ -84,11 +88,11 @@ const convertToMarkdown = async (editor) => {
 const convertBackToHTML = async (editor, MarkdownContent, imageArray) => {
     // replace all the ![image_0], ![image_1], etc. with the actual images
     MarkdownContent = MarkdownContent.replace(/\!\[image_(\d+)\]/g, (match, p1) => {
-        return '<my-image base64="' + imageArray[p1].base64 + '" width="' + imageArray[p1].width + '"></my-image>';
+        return '<my-image base64="' + imageArray[p1].base64 + (imageArray[p1].width ?  '" width="' + imageArray[p1].width : '' ) + '"></my-image>';
     });
     
     // This is a hack, but it works lmao
-    MarkdownContent = MarkdownContent.replace(/\$\$(.*)\$\$/g, (match, p1) => {
+    MarkdownContent = MarkdownContent.replace(/\$\$([^$]*)\$\$/g, (match, p1) => {
         return '<span data-type="inline-math-box" latex="' + p1 + '" isnew="false"></span>';
     });
     
