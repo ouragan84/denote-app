@@ -15,7 +15,7 @@ export default () => {
     const [editor, setEditor] = useState(null);
     const [isEditorLoaded, setIsEditorLoaded] = useState(false);
     const [filePath, setFilePath] = useState(null); // null means unsaved
-    const [fileName, setFileName] = useState("Unsaved Notes - (Cmd+S to save)");
+    const [fileName, setFileName] = useState("Unsaved Notes");
     const [fileHeader, setFileHeader] = useState(null); // null means unsaved
     
     const [userID, setUserID] = useState(null);
@@ -124,7 +124,7 @@ export default () => {
 
         setData(newData);
         setFilePath(filepath);
-        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
+        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes');
 
         // editorRef.current.commands.setContent(newData);
         resetEditorContent(editorRef.current, newData);
