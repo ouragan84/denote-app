@@ -595,17 +595,18 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
       }
     }
 
-    const callprompt = (editor, prompt, errorCallback) => {
+    const callprompt = (editor, prompt) => {
       if(prompt === 'Prompt'){
         if (!editor.state.selection.empty) {
-          return errorCallback('Place your cursor in the editor.');
+          return setErrorMessage('Place your cursor in the editor.');
         }
     
-        setSelection([editor.state.selection.from, editor.state.selection.to])
+        setSelection({from: editor.view.state.selection.from, to: editor.view.state.selection.to});
         setPromptModalOpen(true);
       }
       else
-        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, updateContent, setPaymentModalOpen, serverURL, userID);
+        // editor, promptTitle, errorCallback, loadingCallback, paymentCallback, serverURL, userID, version
+        callAIPrompt(editor, prompt, setErrorMessage, setLoadingModalOpen, setPaymentModalOpen, serverURL, userID, version)
     }
 
     // handle paste, if image, convert to base64 and insert, if not, just handle normally
@@ -697,7 +698,8 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                     onMouseLeave={()=>setButtonBG('#2f80ed')}
                     onClick={() => {
                       setButtonBG('#1e70dc')
-                      callAIPromptWithQuestion(editor, 'Prompt', document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, updateContent, setPaymentModalOpen, serverURL, userID)
+                      // editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, paymentCallback, serverURL, userID, version
+                      callAIPromptWithQuestion(editor, "Prompt", document.getElementById('prompt-input').value, setErrorMessage, setLoadingModalOpen, selection, setPaymentModalOpen, serverURL, userID, version)
                       setPromptModalOpen(false);
                     }}
                   >

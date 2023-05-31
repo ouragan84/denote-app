@@ -4,11 +4,13 @@
 // TODO: Actually call the AI model, also pass in editor version to select the correct model
 // TODO: Design the AI model in the backend.
 
-async function addMarkerTags(editor) {
+const characterLimit = 5000;
+
+async function addMarkerTags(editor, mySelection = null) {
     const { state, dispatch } = editor.view;
   
     // Get the start and end positions of the selection
-    const { from, to } = state.selection;
+    const { from, to } = mySelection == null ? state.selection : mySelection;
   
     // Create marker tags
     const startTag = '℥♨︎☈';
@@ -22,15 +24,15 @@ async function addMarkerTags(editor) {
     await dispatch(transaction);
 }
 
-const convertToMarkdown = async (editor) => {
+const convertToMarkdown = async (editor, mySelection = null) => {
 
     editor.commands.save();
 
-    await addMarkerTags(editor);
+    await addMarkerTags(editor, mySelection);
 
     let htmlContent = editor.getHTML();
 
-    console.log('htmlContent', htmlContent)
+    // console.log('htmlContent', htmlContent)
 
     // replace all empty paragraphs and headings with <br>
     htmlContent = htmlContent.replace(/<p>\s*<\/p>/g, '<p>_</p>');
@@ -41,7 +43,7 @@ const convertToMarkdown = async (editor) => {
     // replace editor's conetnt with the html content
     await editor.commands.setContent(htmlContent);
     
-    console.log('htmlContent', editor.getHTML())
+    // console.log('htmlContent', editor.getHTML())
 
     let MarkdownContent = editor.storage.markdown.getMarkdown();
 
@@ -60,7 +62,11 @@ const convertToMarkdown = async (editor) => {
 
     editor.commands.setContent(htmlContent);
 
+    // also replace univode character U+2026 with ...
+    MarkdownContent = MarkdownContent.replace(/\u2026/g, '...');
+
     MarkdownContent = MarkdownContent.replace(/\[\.\.\.+\]/g, '[...]');
+    
 
     MarkdownContent = MarkdownContent.replace(/℥♨︎☈/g, '<cursor-start/>');
     MarkdownContent = MarkdownContent.replace(/🀒⚒︎🃗/g, '<cursor-end/>');
@@ -87,7 +93,7 @@ const convertToMarkdown = async (editor) => {
 
 
 // this function returns a new M 
-const getContext = (MDwithCursros, isPrompt, characterLimit) => {
+const getContext = (MDwithCursros, isPrompt, characterLimit, errorCallback) => {
     let MD = MDwithCursros;
 
     let startSelIndex = MD.indexOf('<cursor-start/>');
@@ -104,31 +110,17 @@ const getContext = (MDwithCursros, isPrompt, characterLimit) => {
 
         // get as many lines as we can from before the selection to give as context
 
-        let start = startSelIndex;
+        let start = 0;
         let end = startSelIndex;
 
-        context = MD.substring( start, end )
-        let prevContext = context;
+        context = MD.substring( 0, end )
+        let newContext = context;
 
-        let lastNewLine = MD.lastIndexOf('\n') + 1
-        if (lastNewLine == -1) lastNewLine = 0
-
-        while ( context.length <= characterLimit && lastNewLine != 0) {
-
-            prevContext = context;
-
-            let lastNewLine = MD.lastIndexOf('\n') + 1
-            if (lastNewLine == -1) {
-                lastNewLine = 0;
-                prevContext = MD.substring( 0, end )
-            }
-
-            start = lastNewLine;
-
-            context = MD.substring( start, end )
+        while ( newContext.length > characterLimit ) {
+            context = newContext;
+            start = MD.indexOf('\n', start + 1);
+            newContext = MD.substring( start, end );
         }
-
-        context = prevContext;
     }
     else
     {
@@ -137,8 +129,61 @@ const getContext = (MDwithCursros, isPrompt, characterLimit) => {
         // otherwise, select the current line, then as many lines to the top as possible, then if there is no more line on top, 
         // add as many lines to the bottom as possible without going over the limit
 
+        if ( endSelIndex - startSelIndex < 5) {
+            // selection is empty
+            let start = startSelIndex;
+            let end = endSelIndex;
 
+            context = MD.substring( start, end );
 
+            let newContext = context;
+
+            while ( newContext.length < characterLimit ) {
+                context = newContext;
+                startSelIndex = start;
+                start = MD.lastIndexOf('\n', start - 1);
+
+                if ( start == -1 ){
+                    start = 0;
+                    newContext = MD.substring( start, end );
+                    if ( newContext.length < characterLimit ){
+                        context = newContext;
+                        startSelIndex = start;
+                    }
+                    break;
+                }
+
+                newContext = MD.substring( start, end );
+            }
+
+            newContext = context;
+
+            while ( newContext.length < characterLimit ) {
+                context = newContext;
+                endSelIndex = end;
+                end = MD.indexOf('\n', end + 1);
+
+                if ( end == -1 ){
+                    end = MD.length;
+                    newContext = MD.substring( startSelIndex, end );
+                    if ( newContext.length < characterLimit ){
+                        context = newContext;
+                        endSelIndex = end;
+                    }
+                    break;
+                }
+
+                newContext = MD.substring( startSelIndex, end );
+            }
+
+        } else {
+            context = MD.substring( startSelIndex, endSelIndex );
+
+            if ( context.length > characterLimit){
+                errorCallback('Selection is too long. You can select a smaller portion (around 5000 characters), or keep your selection empty, and we\'ll select the biggest portion we can find around your cursor.');
+                return null;
+            }
+        }
 
     }
 
@@ -173,141 +218,85 @@ const convertBackToHTML = async (editor, MarkdownContent, imageArray) => {
 }
 
 
-export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback, paymentCallback, serverURL, userID) => {
+export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, paymentCallback, serverURL, userID, version) => {
 
-    let question;
-
-    return;
-
-    console.log("Calling AI Prompt:" + promptTitle);
-
-    // if the editor is not in focus, throw an erro
-    if( !editor.isActive() ){
-        return errorCallback('The editor is not in focus.');
-    }
-
-    if( promptTitle !== 'Prompt' ){
+    if(promptTitle !== 'Prompt'){
         return errorCallback('Invalid prompt title.');
     }
 
-    // we don't need to check if the selection is empty because the userPrompt will be added to the end of the document
-    // if ( selection[0] === selection[1] ){
-    //     return errorCallback('The selection is empty.');
-    // }
+    let {MarkdownContent, imageArray} = await convertToMarkdown(editor, selection);
+
+    // console.log('MarkdownContent Before:\n\n' + MarkdownContent);
+
+    let contextRes = getContext(MarkdownContent, true, characterLimit, errorCallback);
+    if ( !contextRes ) return;
+
+    const {userContext, MDBefore, MDAfter} = contextRes;
 
     loadingCallback(true);
 
-    const HTMLWithCursors = await getHTMLWithCursors(editor, selection, saveContentCallback);
-
-    console.log('HTMLWithCursors:\n', HTMLWithCursors)
-
-    let context;
-
-    try {
-        context = getContext(HTMLWithCursors);
-    } catch (error) {
-        loadingCallback(false);
-        return errorCallback(error.message);
-    }
-
-    // console.log('context:\n', context);
-
-    question = formatHTML(context) + '\n\n----------\n\n' + userPrompt;
-
-
-    // console.log('question:\n', question);
-
     const data = {
-        question: question,
+        context: userContext,
+        prompt: userPrompt,
         userID: userID,
+        version: version
     };
 
-    let HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
+    let AIResponse = await fetch(serverURL + '/ai/' + promptTitle, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }).then(response => response.json())
+    })
+    .then(response => response.json())
     .then(data => {
         return data;
     }).catch(error => {
         console.error('Error:', error);
         return {error: error.message}
     });
-
-    if( HTMLReplaceSelection.error ){
+        
+    if ( ! AIResponse ) {
         loadingCallback(false);
-        if(HTMLReplaceSelection.error === 'user banned'){
-            return paymentCallback(true);
-        }else{
-            return errorCallback(HTMLReplaceSelection.error);
-        }
-    }
-
-    if(!HTMLReplaceSelection.message || !HTMLReplaceSelection.message.content){
-        loadingCallback(false);
-
-        fetch(serverURL + '/event', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userID: userID,
-                event: 'ai_empty_response',
-                additionalData: 'promptTitle: ' + promptTitle
-            })
-        })
-
         return errorCallback('Error fetching, please try again, no AI usage was deducted.');
     }
 
-    HTMLReplaceSelection = HTMLReplaceSelection.message.content;
+    if( AIResponse.error ){
+        loadingCallback(false);
+        if(AIResponse.error === 'user banned'){
+            return paymentCallback(true);
+        }else{
+            return errorCallback(AIResponse.error);
+        }
+    }
 
-    console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
+    if( ! AIResponse[0] ){
+        loadingCallback(false);
+        return errorCallback('Error fetching, please try again, no AI usage was deducted.');
+    }
 
-    const newHTML = replaceSelection(HTMLWithCursors, HTMLReplaceSelection);
+    if( ! AIResponse[0].candidates || AIResponse[0].candidates.length === 0 ){
+        loadingCallback(false);
+        if ( AIResponse[0].filters.length > 0 )
+            return errorCallback('Your request was blocked due to ' + AIResponse[0].filters[0].reason + ' filter. Please try again with a different selection.');
+        return errorCallback('Error fetching, please try again, no AI usage was deducted.');
+    }
 
-    // console.log('newHTML:\n', newHTML);
+    const MDAnswer = AIResponse[0].candidates[0].output;
 
-    // redundant
-    await editor.commands.setContent(newHTML);
+    console.log('MDAnswer:\n\n', MDAnswer);
 
-    // TODO: Figure out how to set the selection to after the replaced selection
-    await editor.commands.setTextSelection(selection[0], selection[0]);
+    const newMD = MDBefore + MDAnswer + MDAfter; 
 
-    saveContentCallback(newHTML);
+    convertBackToHTML(editor, newMD, imageArray);
 
     loadingCallback(false);
+
 }
 
 
-export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, saveContentCallback, paymentCallback, serverURL, userID) => {
-    let question;
-
-    let {MarkdownContent, imageArray} = await convertToMarkdown(editor);
-
-    console.log('MarkdownContent Before:\n\n' + MarkdownContent);
-
-    let {userContext, newSelctionMD} = getContext(MarkdownContent, true, 200);
-
-    console.log('userContext:\n\n' + userContext);
-
-    console.log('newSelctionMD:\n\n' + newSelctionMD);
-
-    // wait 3 s
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    convertBackToHTML(editor, MarkdownContent, imageArray);
-
-
-    // console.log("Calling AI Prompt:\n" + editor.storage.markdown.getMarkdown());
-
-    return;
-
-    console.log("Calling AI Prompt:" + promptTitle);
-
+export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCallback, paymentCallback, serverURL, userID, version) => {
     // if the editor is not in focus, throw an erro
     if( !editor.isActive() ){
         return errorCallback('The editor is not in focus.');
@@ -317,138 +306,112 @@ export const callAIPrompt = async (editor, promptTitle, errorCallback, loadingCa
         return errorCallback('Invalid prompt title.');
     }
 
-    let selection = [editor.state.selection.from, editor.state.selection.to];
 
-    if ( selection[0] === selection[1] ){
-        // return errorCallback('The selection is empty.');
+    let {MarkdownContent, imageArray} = await convertToMarkdown(editor);
 
-        // set selection to entire document
-        console.log(editor.state)
-        // await editor.commands.setTextSelection(0, editor.state.doc.content.size);
-        await editor.commands.selectAll();
+    console.log('MarkdownContent Before:\n\n' + MarkdownContent);
 
-        selection = [editor.state.selection.from, editor.state.selection.to];
+    let contextRes = getContext(MarkdownContent, false, characterLimit, errorCallback);
+    if ( !contextRes ) return;
+
+    const {userContext, MDBefore, MDAfter} = contextRes;
+
+    let question;
+
+    if(promptTitle === 'Beautify'){
+        question = userContext;
+    } else if (promptTitle === 'FillBlanks') {
+        question = userContext;
+    } else {
+        return errorCallback('Invalid prompt title.');
     }
-
 
     loadingCallback(true);
 
-    const HTMLWithCursors = await getHTMLWithCursors(editor, selection, saveContentCallback);
-
-    console.log('HTMLWithCursors:\n', HTMLWithCursors)
-
-    let context;
-
-    try {
-        context = getContext(HTMLWithCursors);
-    } catch (error) {
-        loadingCallback(false);
-        return errorCallback(error.message);
-    }
-
-    // console.log('context:\n', context);
-
-    question = formatHTML(context);
-
-    // console.log('question:\n', question);
-
     const data = {
-        question: question,
+        context: question,
         userID: userID,
+        version: version
     };
 
-    let HTMLReplaceSelection = await fetch(serverURL + '/ai/' + promptTitle, {
+    let AIResponse = await fetch(serverURL + '/ai/' + promptTitle, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }).then(response => response.json())
+    })
+    .then(response => response.json())
     .then(data => {
         return data;
     }).catch(error => {
         console.error('Error:', error);
         return {error: error.message}
     });
-
-    if( HTMLReplaceSelection.error ){
+        
+    if ( ! AIResponse ) {
         loadingCallback(false);
-        if(HTMLReplaceSelection.error === 'user banned'){
-            return paymentCallback(true);
-        }else{
-            return errorCallback(HTMLReplaceSelection.error);
-        }
-    }
-
-    if(!HTMLReplaceSelection.message || !HTMLReplaceSelection.message.content){
-        loadingCallback(false);
-
-        fetch(serverURL + '/event', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userID: userID,
-                event: 'ai_empty_response',
-                additionalData: 'promptTitle: ' + promptTitle
-            })
-        })
-
         return errorCallback('Error fetching, please try again, no AI usage was deducted.');
     }
 
-    HTMLReplaceSelection = HTMLReplaceSelection.message.content;
+    if( AIResponse.error ){
+        loadingCallback(false);
+        if(AIResponse.error === 'user banned'){
+            return paymentCallback(true);
+        }else{
+            return errorCallback(AIResponse.error);
+        }
+    }
+
+    if( ! AIResponse[0] ){
+        loadingCallback(false);
+        return errorCallback('Error fetching, please try again, no AI usage was deducted.');
+    }
+
+    if( ! AIResponse[0].candidates || AIResponse[0].candidates.length === 0 ){
+        loadingCallback(false);
+        if ( AIResponse[0].filters.length > 0 )
+            return errorCallback('Your request was blocked due to ' + AIResponse[0].filters[0].reason + ' filter. Please try again with a different selection.');
+        return errorCallback('Error fetching, please try again, no AI usage was deducted.');
+    }
+
+    const MDAnswer = AIResponse[0].candidates[0].output;
+
+    console.log('MDAnswer:\n\n', MDAnswer);
+
+    let newMD;
     
-    console.log('HTMLReplaceSelection:\n', HTMLReplaceSelection);
+    if ( promptTitle === 'Beautify' )
+        newMD = MDBefore + MDAnswer + MDAfter; 
+    else if ( promptTitle === 'FillBlanks' ){
+        // each block is separated by ===== with 5 or more = signs
+        const blocks = MDAnswer.split(/={5,}/g);
 
-    const newHTML = replaceSelection(HTMLWithCursors, HTMLReplaceSelection);
+        // for each block, remove up to one trailing and one leading new lines
+        for ( let i = 0; i < blocks.length; i++ ){
+            blocks[i] = blocks[i].replace(/^\n/, '');
+            blocks[i] = blocks[i].replace(/\n$/, '');
+        }
 
-    // console.log('newHTML:\n', newHTML);
+        console.log('blocks', blocks);
 
-    // redundant
-    await editor.commands.setContent(newHTML);
+        let partReplace = userContext;
 
-    // TODO: Figure out how to set the selection to after the replaced selection
-    await editor.commands.setTextSelection(selection[0], selection[0]);
+        // replace each \[...\] in newMD with the corresponding block in order
+        let blockIndex = 0;
+        
+        partReplace = partReplace.replace(/\\\[\.\.\.+\\\]/g, (match) => {
+            if ( blockIndex >= blocks.length ) return match;
+            return blocks[blockIndex++];
+        });
 
-    saveContentCallback(newHTML);
+        console.log('partReplace', partReplace);
+
+        newMD = MDBefore + partReplace + MDAfter; 
+    }
+
+    convertBackToHTML(editor, newMD, imageArray);
 
     loadingCallback(false);
 }
-
-// export const callAIPromptWithQuestion = async (editor, promptTitle, userPrompt, errorCallback, loadingCallback, selection, saveContentCallback) => {
-//     console.log("Calling AI Prompt: " + promptTitle);
-// }
-
-// export const getHTMLWithCursors = async (editor, selection, saveContentCallback) => {
-//     console.log('before:\n',editor.getHTML())
-
-//     const startTag = '℥♨︎☈';
-//     const endTag = '🀒⚒︎🃗';
-
-//     await addMarkerTags(editor);
-
-//     const HTMLContent = editor.getHTML();
-
-//     // console.log('HTMLContent1', HTMLContent);
-
-//     const HTMLWithCursors = HTMLContent.replace(startTag, '<cursor-start/>').replace(endTag, '<cursor-end/>');
-//     const HTMLNoCursors = HTMLContent.replace(startTag, '').replace(endTag, '');
-
-//     // console.log('HTMLContent2', HTMLWithCursors);
-
-//     await editor.commands.setContent(HTMLNoCursors);
-
-//     // set selection to what it was originally
-//     await editor.commands.setTextSelection(selection[0], selection[1]);
-
-//     saveContentCallback(HTMLNoCursors);
-
-//     //print editor content
-//     // console.log('after:\n',editor.getHTML());
-
-//     return HTMLWithCursors;
-// }
-  
 
