@@ -3,6 +3,8 @@ import React, {useState, useEffect, useRef} from "react";
 import Editor, {resetEditorContent} from "./tiptap/Editor";
 import { ipcRenderer , shell} from "electron";
 import FileManager from "./file_manager/FileManager";
+// import DrawBox from './tiptap/DrawBoxComponent';
+import {BsDot} from 'react-icons/bs'
 
 import path from "path";
 import fs from "fs";
@@ -14,7 +16,7 @@ export default () => {
     const [editor, setEditor] = useState(null);
     const [isEditorLoaded, setIsEditorLoaded] = useState(false);
     const [filePath, setFilePath] = useState(null); // null means unsaved
-    const [fileName, setFileName] = useState("Unsaved Notes - (Cmd+S to save)");
+    const [fileName, setFileName] = useState(`Unsaved Notes •`);
     const [fileHeader, setFileHeader] = useState(null); // null means unsaved
     
     const [userID, setUserID] = useState(null);
@@ -123,7 +125,7 @@ export default () => {
 
         setData(newData);
         setFilePath(filepath);
-        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes - (Cmd+S to save)');
+        setFileName(filepath ? path.basename(filepath).split('.dnt')[0] : 'Unsaved Notes •');
 
         // editorRef.current.commands.setContent(newData);
         resetEditorContent(editorRef.current, newData);
@@ -214,6 +216,8 @@ export default () => {
                     :
                     <h2>Please select a folder to start writing in</h2>
                 }   
+
+                {/* <DrawBox /> */}
 
             </div>
             

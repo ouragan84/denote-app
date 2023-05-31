@@ -24,13 +24,16 @@ import {SmilieReplacer} from './EmojiReplacerExtension'
 import CodeBlockExtension from './CodeBlockExtension'
 import {callAIPrompt, callAIPromptWithQuestion} from './AIPromptsExtension'
 import ImageExtension from './ImageExtension'
+import DrawBoxNode from './DrawBoxExtension'
 
-import { FaBold, FaItalic, FaStrikethrough, FaCode, FaRemoveFormat, FaHeading, FaList, FaListOl, FaLaptopCode, FaQuoteLeft, FaUnderline, FaUndo, FaRedo, FaRegEdit, FaQuestion, FaHighlighter, FaImage, FaRegCheckSquare} from "react-icons/fa";
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiFormatClear, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxFill, RiDoubleQuotesL, RiUnderline,RiRegEdit, RiQuestionMark, RiMarkPenFill, RiImageAddFill, RiCheckboxLine} from "react-icons/ri";
 import { HiSparkles } from "react-icons/hi2";
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
 import { RxDividerHorizontal } from 'react-icons/rx'
 import { BiMath } from 'react-icons/bi'
 import { TbBracketsContain, TbMath } from 'react-icons/tb'
+import { MdDraw } from 'react-icons/md'
+import {FaUndo, FaRedo} from 'react-icons/fa'
 
 import styled, { keyframes } from 'styled-components'
 
@@ -38,7 +41,6 @@ import {ipcRenderer} from 'electron'
 import fs from 'fs'
 import Modal from 'react-modal'
 import {Tooltip} from 'react-tooltip'
-import DrawBoxExtentsion from './DrawBoxExtentsion'
 
 
 
@@ -70,15 +72,15 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
   
     return (
       <div style={{display:'flex',flexDirection:'row', justifyContent:'left',}}>
-        <div style={{paddingLeft:'1rem',backgroundColor:'#f7fbff',paddingRight:'1rem', paddingTop:'1rem', paddingBottom:'0.5rem', boxShadow: "0px 0px 7px #9E9E9E", width:'100%'}}>
-          <div style={{marginBottom:'10px'}}>
-            <span style={{fontSize: 15, fontWeight: 'default', }}>{fileName}</span>
-            </div>
-            <div style={{backgroundColor:'#dfeaf7', borderRadius:100, height: '2.5rem', width:'100%',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+        <div style={{background:'transparent',paddingRight:'1rem', paddingBottom:'0.5rem', width:'100%'}}>
+          <div style={{backgroundColor:'#f7fbff', paddingLeft:'1rem',boxShadow: "0px 1px 1px lightgray", width:'80vw', height:'3.45rem', display:'flex', alignItems:'center', justifyContent:'center'}}>
+            <span style={{fontSize: 15.5, fontWeight: 'default', }}>{fileName}</span>
+          </div>
+          <div style={{marginLeft:'2rem', marginRight:'2rem',backgroundColor:'#dfeaf7',boxShadow: "0px 1px 1px lightgray", borderBottomLeftRadius:22, borderBottomRightRadius:22, height: '2.5rem',display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
             <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:'2.8rem', paddingLeft:15}}>
             </div>
               <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', width:600, alignItems:'center', fontSize:17, paddingLeft:15}}>
-                <FaBold
+                <RiBold
                   onClick={() => {
                     editor.chain().focus().toggleBold().run()
                   }}
@@ -96,9 +98,9 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Bold (Cmd b)"
                 >
                   bold
-                </FaBold>
+                </RiBold>
                 <Tooltip place='bottom' id='tool'/>
-                <FaItalic
+                <RiItalic
                   onMouseDown={()=>cols[1] = 'gray'}
                   onMouseUp={()=>cols[1] = 'black'}
                   style={{color:cols[1]}}
@@ -114,9 +116,9 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Italic (Cmd i)"
                 >
                   italic
-                </FaItalic>
+                </RiItalic>
                 
-                <FaUnderline
+                <RiUnderline
                   onMouseDown={()=>cols[2] = 'gray'}
                   onMouseUp={()=>cols[2] = 'black'}
                   style={{color:cols[2]}}
@@ -132,8 +134,8 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Underline (Cmd u)"
                 >
                   Underline
-                </FaUnderline>
-                <FaStrikethrough
+                </RiUnderline>
+                <RiStrikethrough
                   onMouseDown={()=>cols[3] = 'gray'}
                   onMouseUp={()=>cols[3] = 'black'}
                   style={{color:cols[3]}}
@@ -150,9 +152,9 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
 
                 >
                   strike
-                </FaStrikethrough>
+                </RiStrikethrough>
 
-                <FaHeading
+                <RiH1
                 onMouseDown={()=>cols[6] = 'gray'}
                 onMouseUp={()=>cols[6] = 'black'}
                 style={{color:cols[6]}}
@@ -161,31 +163,31 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Heading 1 (Cmd Shft 1)"
                 >
                   h1
-                </FaHeading>
-                <FaHeading
+                </RiH1>
+                <RiH2
                 onMouseDown={()=>cols[7] = 'gray'}
                 onMouseUp={()=>cols[7] = 'black'}
-                style={{color:cols[7], fontSize: 14}}
+                style={{color:cols[7]}}
                   onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                   className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
                   data-tooltip-id="tool" data-tooltip-content="Heading 2 (Cmd Shft 2)"
 
                 >
                   h2
-                </FaHeading>
-                <FaHeading
+                </RiH2>
+                <RiH3
                 onMouseDown={()=>cols[8] = 'gray'}
                 onMouseUp={()=>cols[8] = 'black'}
-                style={{color:cols[8], fontSize: 12}}
+                style={{color:cols[8]}}
                   onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                   className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
                   data-tooltip-id="tool" data-tooltip-content="Heading 3 (Cmd Shft 3)"
 
                 >
                   h3
-                </FaHeading>
+                </RiH3>
 
-                <FaCode
+                <RiCodeSSlashLine
                   onMouseDown={()=>cols[4] = 'gray'}
                   onMouseUp={()=>cols[4] = 'black'}
                   style={{color:cols[4]}}
@@ -201,18 +203,18 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Code Inline (Cmd e)"
                 >
                   code
-                </FaCode>
+                </RiCodeSSlashLine>
 
-                <FaRemoveFormat onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} 
+                <RiFormatClear onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} 
                   onMouseDown={()=>cols[5] = 'gray'}
                   onMouseUp={()=>cols[5] = 'black'}
                   style={{color:cols[5]}}
                   // create a shortcut for this
                   data-tooltip-id="tool" data-tooltip-content="Clear Format (Cmd Shft x)">
                     clear nodes
-                </FaRemoveFormat>
+                </RiFormatClear>
 
-                <FaHighlighter
+                <RiMarkPenFill
                   onMouseDown={()=>cols[21] = 'gray'}
                   onMouseUp={()=>cols[21] = 'black'}
                   style={{color:cols[21]}}
@@ -221,12 +223,12 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Highlight (Cmd Shft h)"
                 >
                   highlight
-                </FaHighlighter>
+                </RiMarkPenFill>
 
 
                 <div style={{backgroundColor:'gray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
-                <FaList
+                <RiListUnordered
                 onMouseDown={()=>cols[9] = 'gray'}
                 onMouseUp={()=>cols[9] = 'black'}
                 style={{color:cols[9]}}
@@ -235,8 +237,8 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Unordered List (Cmd Shft 8)"
                 >
                   bullet list
-                </FaList>
-                <FaListOl
+                </RiListUnordered>
+                <RiListOrdered
                 onMouseDown={()=>cols[10] = 'gray'}
                 onMouseUp={()=>cols[10] = 'black'}
                 style={{color:cols[10]}}
@@ -245,8 +247,8 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Ordered List (Cmd Shft 7)"
                 >
                   ordered list
-                </FaListOl>
-                <FaRegCheckSquare
+                </RiListOrdered>
+                <RiCheckboxLine
                 onMouseDown={()=>cols[23] = 'gray'}
                 onMouseUp={()=>cols[23] = 'black'}
                 style={{color:cols[23]}}
@@ -255,11 +257,11 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Task List (Cmd Shft 9)"
                 >
                   task list
-                </FaRegCheckSquare>
+                </RiCheckboxLine>
 
                 <div style={{backgroundColor:'gray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
-                <FaQuoteLeft
+                <RiDoubleQuotesL
                 onMouseDown={()=>cols[12] = 'gray'}
                 onMouseUp={()=>cols[12] = 'black'}
                 style={{color:cols[12]}}
@@ -268,7 +270,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Quote Block (Cmd Shft b)"
                 >
                   blockquote
-                </FaQuoteLeft>
+                </RiDoubleQuotesL>
                 <RxDividerHorizontal onClick={() => editor.chain().focus().setHorizontalRule().run()}
                 onMouseDown={()=>cols[13] = 'gray'}
                 onMouseUp={()=>cols[13] = 'black'}
@@ -287,7 +289,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 >
                   maf
                 </TbMath>
-                <FaLaptopCode
+                <RiCodeBoxFill
                 onMouseDown={()=>cols[11] = 'gray'}
                 onMouseUp={()=>cols[11] = 'black'}
                 style={{color:cols[11]}}
@@ -296,29 +298,29 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Code Block (Cmd Shft e)"
                 >
                   code block
-                </FaLaptopCode>
-                <FaImage onClick={()=> { ipcRenderer.send('open-image');  }}
+                </RiCodeBoxFill>
+                <RiImageAddFill onClick={()=> { ipcRenderer.send('open-image');  }}
                 onMouseDown={()=>cols[22] = 'gray'}
                 onMouseUp={()=>cols[22] = 'black'}
                 style={{color:cols[22]}}
-                data-tooltip-id="tool" data-tooltip-content="Insert Image"
+                data-tooltip-id="tool" data-tooltip-content="Insert Image (Cmd Shft i)"
                 >
                   insert image
-                </FaImage>
-                <FaRegEdit
+                </RiImageAddFill>
+                <MdDraw
                   onMouseDown={()=>cols[17] = 'gray'}
                   onMouseUp={()=>cols[17] = 'black'}
                   style={{color:cols[17]}}
                   onClick={() => editor.commands.insertDrawBox()}
                   className={editor.isActive('draw-box') ? 'is-active' : ''}
-                  data-tooltip-id="tool" data-tooltip-content="Insert Draw Box"
+                  data-tooltip-id="tool" data-tooltip-content="Insert Draw Box (Cmd Shft d)"
                 >
                     Draw
-                </FaRegEdit>
+                </MdDraw>
 
                 <div style={{backgroundColor:'gray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
-                <FaQuestion
+                <RiQuestionMark
                   onMouseDown={()=>cols[18] = 'gray'}
                   onMouseUp={()=>cols[18] = 'black'}
                   style={{color:cols[18]}}
@@ -328,7 +330,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   }}
                 >
                   Prompt
-                </FaQuestion>
+                </RiQuestionMark>
                 <HiSparkles
                   onMouseDown={()=>cols[19] = 'gray'}
                   onMouseUp={()=>cols[19] = 'black'}
@@ -440,7 +442,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Highlight,
             Typography,
             ImageExtension,
-            DrawBoxExtentsion,
+            DrawBoxNode,
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
             Placeholder.configure({
@@ -828,6 +830,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
                 margin:10,
                 position: 'absolute',
                 bottom: 0,
+                top:'5.5rem',
               }}
 
               onPaste={handlePaste}
