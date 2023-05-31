@@ -14,8 +14,8 @@ const {machineId, machineIdSync} = require('node-machine-id');
 
 
 // IMPORTANT: CHANGE BETWEEN DEV AND PROD
-const serverURL = 'http://localhost:8080';
-// const serverURL = 'https://www.denote.app';
+// const serverURL = 'http://localhost:8080';
+const serverURL = 'https://www.denote.app';
 
 let userID = null;
 
