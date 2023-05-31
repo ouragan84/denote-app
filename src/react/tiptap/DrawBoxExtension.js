@@ -3,8 +3,7 @@ import { ReactNodeViewRenderer } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
 import React, {useState} from 'react'
 import ReactDOM from "react-dom";
-import Sketch from 'react-p5';
-
+import DrawBoxComponent from './DrawBoxComponent'
 
 
 export const DrawBox = props => {
@@ -15,31 +14,14 @@ export const DrawBox = props => {
     })
   }
 
-  const onInputFieldUpdate = (event) => {
-    updateData(event.target.value);
-  }
-  
-  let x = 250;
-  let y = 250;
-
-  const setup = (p5, canvasParentRef) => {
-    // use parent to render the canvas in this ref
-    // (without that p5 will render the canvas outside of your component)
-    
-    p5.createCanvas(500, 500).parent(canvasParentRef);
-  };
-
-  const draw = (p5) => {
-    p5.background(240);
-    p5.ellipse(x, y, 70, 70);
-    // NOTE: Do not use setState in the draw function or in functions that are executed
-    // in the draw function...
-    // please use normal variables or class properties for these purposes
-  };
-
   return (
     <NodeViewWrapper className="draw-box">
-      <Sketch setup={setup} draw={draw}/>
+      <DrawBoxComponent 
+        updateData={updateData} 
+        initialData={props.node.attrs.data} 
+        editorWidth={props.editor.view.dom.parentNode.clientWidth * 0.8}
+        editorHeight={props.editor.view.dom.parentNode.clientHeight * 0.8}
+      />
     </NodeViewWrapper>
   )
 
@@ -88,7 +70,7 @@ const DrawBoxNode = Node.create({
 
   addKeyboardShortcuts() {
     return {
-      'Mod-d': () => this.editor.commands.insertDrawBox({}),
+      'Mod-Shift-d': () => this.editor.commands.insertDrawBox({}),
     }
   }
 })

@@ -149,8 +149,25 @@
     }
 }
 
+// q: Do I refer to classname with a . or # ?
+// a: . for class, # for id
+
 .draw-box {
-  display:block
+    background: white;
+
+
+  .react-p5 {
+    margin: 0 auto;
+    visibility: visible;
+
+
+    .p5Canvas {
+      margin: 0 auto;
+      visibility: visible !important;
+      cursor: crosshair;
+    }
+  }
+
 }
 
 .inline-math-box {
@@ -195,7 +212,7 @@
   }
 }
 
-my-image {
+.my-image {
   width: 800px;
 }
 
