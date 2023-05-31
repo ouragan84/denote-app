@@ -329,7 +329,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                 >
                   insert image
                 </RiImageAddFill>
-                <MdDraw
+                {/* <MdDraw
                   onMouseDown={()=>cols[17] = 'gray'}
                   onMouseUp={()=>cols[17] = 'black'}
                   style={{color:cols[17]}}
@@ -338,7 +338,7 @@ const MenuBar = ({ editor, fileName, callprompt }) => {
                   data-tooltip-id="tool" data-tooltip-content="Insert Draw Box (Cmd Shft d)"
                 >
                     Draw
-                </MdDraw>
+                </MdDraw> */}
 
                 <div style={{backgroundColor:'gray', width:1, height:15, marginLeft:2, marginRight:2}}></div>
 
@@ -464,7 +464,7 @@ export default ({content, updateContent, setEditorCallback, fileName, version, u
             Highlight,
             Typography,
             ImageExtension,
-            DrawBoxNode,
+            // DrawBoxNode,
             TextStyle.configure({ types: [ListItem.name] }),
             // add placeholder
             Placeholder.configure({
