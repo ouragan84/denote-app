@@ -12,7 +12,7 @@ export const DrawBox = props => {
     props.updateAttributes({
       data: data,
     })
-  }
+  }  
 
   return (
     <NodeViewWrapper className="draw-box">
@@ -35,7 +35,7 @@ const DrawBoxNode = Node.create({
   addAttributes() {
     return {
       data: {
-        default: "default data",
+        default: []
       }
     }
   },

@@ -9,6 +9,7 @@ import {BsDot} from 'react-icons/bs'
 import path from "path";
 import fs from "fs";
 import { Tooltip } from "react-tooltip";
+import DrawBox from "./tiptap/DrawBoxComponent";
 
 export default () => {
 
@@ -141,6 +142,9 @@ export default () => {
 
         ipcRenderer.send('app_info');
     }, []);
+
+    // temp
+    const [objs, setObjs] = useState([])
     
     return (
         <div 
@@ -151,7 +155,11 @@ export default () => {
                 
             }}
         >
-            <div 
+            <DrawBox 
+            initialData = {objs}
+            updateData = {setObjs}
+            />
+            {/* <div 
                 style={{
                     width: '20vw',
                     height: '100vh',
@@ -217,9 +225,8 @@ export default () => {
                     <h2>Please select a folder to start writing in</h2>
                 }   
 
-                {/* <DrawBox /> */}
 
-            </div>
+            </div> */}
             
         </div>
     )
