@@ -1,5 +1,43 @@
 # **Denote App**
 
+## Introduction
+Note-taking app for College Students, enhanced by AI
+
+<img width="1065" alt="image" src="https://github.com/ouragan84/denote-app/assets/77756530/f9b3e157-a48f-4679-a377-3e1a535c4785">
+
+
+## Details
+
+* Easy to use math fields
+* AI based prompt responses
+* Fill in the blanks using GPT
+* Beautify notes using a button!
+
+
+## Preview
+##### Main view:
+![main](https://user-images.githubusercontent.com/77756530/146632339-d08d5ba3-887b-4977-9f8b-0c26cc60ff9f.jpeg)
+
+##### Easy to use math fields:
+
+[![Watch the video](<img src="https://github.com/ouragan84/denote-app/assets/77756530/93ef08df-10e6-4a78-9d90-9d6fb09e9a09" alt="Image" style="width: 60%;">
+)](https://github.com/ouragan84/denote-app/assets/77756530/a5caa278-936c-4da5-a0df-c5413a44fcc5)
+
+
+##### AI - Question:
+
+<img src="https://github.com/ouragan84/denote-app/assets/77756530/59c2e58c-341c-4e20-8eae-d50415deb192" alt="image"  style="width: 60%;">
+
+##### AI - Fill Blanks \[..\]
+Before:
+
+<img src="https://github.com/ouragan84/denote-app/assets/77756530/c63023b3-ab4c-4f85-b907-78884623971a" alt="Image 1" style="width: 60%;">
+
+After:
+
+<img src="https://github.com/ouragan84/denote-app/assets/77756530/7f889f14-b229-41ce-af2d-522636b1b249" alt="Image 2" style="width: 60%;">
+
+
 ## **Get Started**
 
 ### **To Run Locally:**
