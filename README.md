@@ -1,4 +1,5 @@
 # **Denote App**
+by Anieerudh Gokulakrishnan, Edgar Baudry, Pranav Patel
 
 ## Introduction
 Note-taking app for College Students, enhanced by AI
